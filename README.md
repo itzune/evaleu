@@ -16,7 +16,21 @@ uv run evaleu.py <command> [options]
 ```bash
 uv run evaleu.py eval --model latxa-qwen3-vl-4b
 ```
-Runs all 9 benchmarks for seeds `42,123,777` (default), writes per-seed JSONs into `eval/`, refreshes `eval/summary.json`, and rebuilds `site/data.json`.
+Runs the default benchmarks (EusTrivia, XNLIeu, BasqueGLUE_qnli) for seeds `42,123,777`, writes per-seed JSONs into `eval/`, refreshes `eval/summary.json`, and rebuilds `site/data.json`.
+
+Select specific benchmarks with `--benchmark`:
+```bash
+# Run only EusTrivia
+uv run evaleu.py eval --model latxa-qwen3-vl-4b --benchmark EusTrivia
+
+# Custom limits per benchmark (comma-separated)
+uv run evaleu.py eval --model latxa-qwen3-vl-4b --benchmark EusTrivia/200,BasqueGLUE_bec/50
+
+# Repeat the flag for multiple benchmarks
+uv run evaleu.py eval --model latxa-qwen3-vl-4b --benchmark EusTrivia --benchmark LatxaEval_eusexams/30
+```
+
+Available benchmarks: `EusTrivia`, `XNLIeu`, `BasqueGLUE_qnli`, `BasqueGLUE_bec`, `BasqueGLUE_wic`, `BasqueGLUE_intent`, `LatxaEval_eusexams`, `LatxaEval_eusproficiency`, `LatxaEval_eusreading`.
 
 Back-compat shortcut also works:
 ```bash
