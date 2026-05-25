@@ -62,7 +62,21 @@ def _load_or_build_bank() -> list[dict[str, Any]]:
     return bank
 
 
-def build_items(limit: int, seed: int) -> list[dict[str, Any]]:
+def build_items(limit: int, seed: int, spec: dict | None = None) -> list[dict[str, Any]]:
+    """Build EusExams items.
+
+    When *spec* is provided, reads bench_id and prompt template from the
+    JSON spec (single source of truth).  Falls back to hardcoded defaults
+    so backward compat is preserved when called without spec (e.g. from
+    old engine code or direct tests).
+    """
+    bench_id = spec["id"] if (spec and "id" in spec) else "LatxaEval_eusexams"
+    prompt_template = (
+        spec["prompt"]["template"]
+        if (spec and isinstance(spec.get("prompt"), dict) and "template" in spec["prompt"])
+        else "Aukeratu aukera zuzena (A/B/C/D... edo 1/2/3/4... bakarrik).\nGaldera: {question}\n{options}\nErantzuna:"
+    )
+
     bank = _load_or_build_bank()
     rng = random.Random(seed)
     idxs = list(range(len(bank)))
@@ -77,14 +91,10 @@ def build_items(limit: int, seed: int) -> list[dict[str, Any]]:
             continue
         letters = [chr(ord("A") + j) for j in range(len(cands))]
         opts = "\n".join(f"{letters[j]}) {cands[j]}" for j in range(len(cands)))
-        prompt = (
-            "Aukeratu aukera zuzena (A/B/C/D... edo 1/2/3/4... bakarrik).\n"
-            f"Galdera: {row['question']}\n{opts}\n"
-            "Erantzuna:"
-        )
+        prompt = prompt_template.format(question=row["question"], options=opts)
         items.append({
-            "bench": "LatxaEval_eusexams",
-            "id": f"latxa_eusexams_{row.get('cfg')}_{row.get('id')}",
+            "bench": bench_id,
+            "id": f"{bench_id.lower()}_{row.get('cfg')}_{row.get('id')}",
             "prompt": prompt,
             "gold": int(row.get("answer", 0)),
             "label_names": letters,

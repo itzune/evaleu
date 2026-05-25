@@ -1,6 +1,6 @@
 {
   "id": "LatxaEval_eusexams",
-  "description": "LatxaEval — EusExams (merged EU configs with caching)",
+  "description": "LatxaEval — EusExams (merged EU configs, data loading handled by plugin)",
   "dataset": {
     "source": "custom"
   },
