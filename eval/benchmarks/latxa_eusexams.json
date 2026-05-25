@@ -1,0 +1,18 @@
+{
+  "id": "LatxaEval_eusexams",
+  "description": "LatxaEval — EusExams (merged EU configs with caching)",
+  "dataset": {
+    "source": "custom"
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C/D... edo 1/2/3/4... bakarrik).\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "plugin": "eusexams",
+  "default_limit": 100
+}

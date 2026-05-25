@@ -1,0 +1,24 @@
+{
+  "id": "BasqueGLUE_bec",
+  "description": "BasqueGLUE BEC — sentiment classification (N/NEU/P)",
+  "dataset": {
+    "source": "huggingface",
+    "path": "orai-nlp/basqueGLUE",
+    "config": "bec",
+    "split": "test",
+    "trust_remote_code": true,
+    "id_field": "idx",
+    "label_field": "label",
+    "label_names_from": "dataset_features"
+  },
+  "prompt": {
+    "type": "text_classification",
+    "template": "Sailkatu testuaren sentimendua. Erantzun ETIKETA BAKARRAREKIN, besterik ez: N, NEU, edo P.\nEz eman azalpenik. Ez erabili beste hitzik.\nTestua: {text}\nErantzuna (N/NEU/P):"
+  },
+  "scoring": {
+    "type": "label_match",
+    "extraction": "number_or_label"
+  },
+  "plugin": "bec",
+  "default_limit": 100
+}

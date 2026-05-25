@@ -1,0 +1,25 @@
+{
+  "id": "LatxaEval_eusreading",
+  "description": "LatxaEval — EusReading reading comprehension",
+  "dataset": {
+    "source": "huggingface",
+    "path": "HiTZ/EusReading",
+    "split": "test",
+    "id_field": "id",
+    "question_field": "question",
+    "candidates_field": "candidates",
+    "answer_field": "answer",
+    "context_field": "context",
+    "meta_fields": []
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C/D... edo 1/2/3/4... bakarrik).\nTestuingurua: {context}\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "default_limit": 100
+}

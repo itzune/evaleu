@@ -1,0 +1,23 @@
+{
+  "id": "BasqueGLUE_qnli",
+  "description": "BasqueGLUE QNLI — question-answering NLI",
+  "dataset": {
+    "source": "huggingface",
+    "path": "orai-nlp/basqueGLUE",
+    "config": "qnli",
+    "split": "test",
+    "trust_remote_code": true,
+    "id_field": "idx",
+    "label_field": "label",
+    "label_names_from": "dataset_features"
+  },
+  "prompt": {
+    "type": "text_classification",
+    "template": "Sailkatu ondorengo bikotea. Erantzun ETIKETA BAKARRAREKIN, besterik ez: entailment edo not_entailment.\nEz eman azalpenik. Ez erabili beste hitzik.\nGaldera: {question}\nEsaldia: {sentence}\nErantzuna (entailment/not_entailment):"
+  },
+  "scoring": {
+    "type": "label_match",
+    "extraction": "number_or_label"
+  },
+  "default_limit": 100
+}
