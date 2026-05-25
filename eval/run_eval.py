@@ -226,8 +226,10 @@ def _build_mc_prompt(template: str, row: dict, candidates: list, context: str | 
     letters = [chr(ord("A") + i) for i in range(len(candidates))]
     opts = "\n".join(f"{letters[j]}) {candidates[j]}" for j in range(len(candidates)))
     ctx = f"Testuingurua: {context}\n" if context else ""
-    # Simple inlined template (mimics current f-string behaviour).
-    prompt = template.format(question=row.get("question", ""), options=opts, context=context or "", **row)
+    # Build format kwargs, avoiding duplicates with named args
+    fmt_kwargs = {**row, "question": row.get("question", ""), "options": opts,
+                  "context": context or ""}
+    prompt = template.format(**fmt_kwargs)
     # If template had {context} but no context, remove the resulting blank line.
     prompt = re.sub(r"Testuingurua: \s*\n", "", prompt)
     return prompt
@@ -294,11 +296,12 @@ def _build_generic_items(spec: dict, limit: int, seed: int) -> list[dict]:
         else:
             gold = int(row[label_field])
             item_label_names = list(label_names)
-            prompt = prompt_cfg["template"].format(**row)
-            # Special: if template uses {label_block}, build it inline
+            # Build format kwargs; handle {label_block} if template uses it
+            fmt_kwargs = dict(row)
             if "{label_block}" in prompt_cfg["template"]:
                 label_block = "\n".join(f"{j}: {name}" for j, name in enumerate(label_names))
-                prompt = prompt_cfg["template"].format(label_block=label_block, **row)
+                fmt_kwargs["label_block"] = label_block
+            prompt = prompt_cfg["template"].format(**fmt_kwargs)
             meta = {}
             for mf in meta_fields:
                 meta[mf] = row.get(mf)
@@ -475,7 +478,12 @@ def build_items(args: argparse.Namespace) -> Tuple[List[Dict[str, Any]], Dict[st
         if spec.get("plugin"):
             plugin = _load_plugin(spec["plugin"])
             if hasattr(plugin, "build_items"):
-                built = plugin.build_items(limit, args.seed)
+                # Pass spec to plugin so it can read dataset configs
+                try:
+                    built = plugin.build_items(limit, args.seed, spec=spec)
+                except TypeError:
+                    # Backward compat: old plugins only take (limit, seed)
+                    built = plugin.build_items(limit, args.seed)
             else:
                 built = _build_generic_items(spec, limit, args.seed)
         else:
