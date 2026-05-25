@@ -163,13 +163,22 @@ def main():
         by_benchmark = {}
         for b in benchmark_ids:
             bm = bench_means.get(b, {})
-            by_benchmark[b] = {
-                "n": 80,
-                "accuracy": bm.get("mean", 0.0),
-                "accuracy_std": bm.get("std", 0.0),
+            entry = {
+                "n": bm.get("n", 80),
+                "accuracy": bm.get("accuracy_mean", 0.0),
+                "accuracy_std": bm.get("accuracy_std", 0.0),
                 "coverage": 1.0,
                 "family": next((x["family"] for x in benchmark_defs if x["id"] == b), "Other"),
             }
+            # Plumb through any additional metric keys (chrF, BLEU, etc.)
+            for key in bm:
+                if key.endswith("_mean") and key not in ("accuracy_mean",):
+                    base = key[:-5]  # strip _mean
+                    entry[base] = bm[key]
+                    std_key = f"{base}_std"
+                    if std_key in bm:
+                        entry[std_key] = bm[std_key]
+            by_benchmark[b] = entry
 
         family_scores = {}
         for fam, fam_bench_ids in family_defs.items():

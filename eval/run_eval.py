@@ -318,7 +318,7 @@ def _build_generic_items(spec: dict, limit: int, seed: int) -> list[dict]:
 
 # ── generic scorer (json-driven + plugin override) ─────────────────────────
 
-def _generic_score_mc(item: dict, answer: str) -> tuple[int | None, bool]:
+def _generic_score_mc(item: dict, answer: str) -> dict:
     label_names = item["label_names"]
     pred = _extract_choice_index(answer, len(label_names))
     if pred is None:
@@ -328,28 +328,38 @@ def _generic_score_mc(item: dict, answer: str) -> tuple[int | None, bool]:
                 pred = i
                 break
     ok = pred == int(item["gold"]) if pred is not None else False
-    return pred, ok
+    return {"pred_label": pred, "accuracy": 1.0 if ok else 0.0, "coverage": 1.0 if pred is not None else 0.0}
 
 
-def _generic_score_label(item: dict, answer: str) -> tuple[int | None, bool]:
+def _generic_score_label(item: dict, answer: str) -> dict:
     pred = _label_from_text(answer, item["label_names"])
     ok = pred == int(item["gold"]) if pred is not None else False
-    return pred, ok
+    return {"pred_label": pred, "accuracy": 1.0 if ok else 0.0, "coverage": 1.0 if pred is not None else 0.0}
 
 
 # ── public API ─────────────────────────────────────────────────────────────
 
-def score_item(bench_spec: dict, item: dict, answer: str) -> tuple[int | None, bool]:
-    """Score an item using the benchmark spec + optional plugin."""
+def score_item(bench_spec: dict, item: dict, answer: str) -> dict:
+    """Score an item using the benchmark spec + optional plugin.
+
+    Returns a dict of metric_name -> value. Classification benchmarks return
+    {"pred_label": int|None, "accuracy": 0.0|1.0, "coverage": 0.0|1.0}.
+    Translation benchmarks return {"chrf": float, "bleu": float, ...}.
+    """
     # Try plugin scorer first
     plugin_name = bench_spec.get("plugin")
     if plugin_name:
         try:
             plugin = _load_plugin(plugin_name)
             if hasattr(plugin, "score_item"):
-                pred, ok = plugin.score_item(item, answer, item["label_names"])
-                if pred is not None:
-                    return pred, ok
+                result = plugin.score_item(item, answer, item["label_names"])
+                if isinstance(result, dict):
+                    return result
+                # Back-compat: old plugins returning (pred, ok) tuple
+                if isinstance(result, tuple) and len(result) == 2:
+                    pred, ok = result
+                    if pred is not None:
+                        return {"pred_label": pred, "accuracy": 1.0 if ok else 0.0, "coverage": 1.0}
                 # plugin returned None → fall through to generic
         except Exception:
             pass
@@ -367,9 +377,8 @@ class Pred:
     bench: str
     item_id: str
     answer: str
-    pred_label: int | None
-    gold_label: int
-    ok: bool
+    gold: Any
+    metrics: dict  # {"accuracy": 0.0|1.0, "chrf": 54.2, "pred_label": 3, ...}
 
 
 def aggregate(preds: List[Pred]) -> Dict[str, Any]:
@@ -377,18 +386,31 @@ def aggregate(preds: List[Pred]) -> Dict[str, Any]:
     for p in preds:
         by_bench.setdefault(p.bench, []).append(p)
 
+    def _mean(vals):
+        return sum(vals) / len(vals) if vals else 0.0
+
     metrics = {}
     total = len(preds)
-    total_ok = sum(1 for p in preds if p.ok)
     for b, ps in by_bench.items():
-        metrics[b] = {
-            "n": len(ps),
-            "accuracy": sum(1 for p in ps if p.ok) / max(1, len(ps)),
-            "coverage": sum(1 for p in ps if p.pred_label is not None) / max(1, len(ps)),
-        }
+        # Discover metric keys from the first pred
+        metric_keys = set()
+        for p in ps:
+            metric_keys.update(p.metrics.keys())
+        # Exclude pred_label from aggregation (it's per-item, not meanable)
+        metric_keys.discard("pred_label")
+
+        bench_metrics = {"n": len(ps)}
+        for key in sorted(metric_keys):
+            vals = [p.metrics[key] for p in ps if key in p.metrics]
+            bench_metrics[key] = _mean(vals)
+        metrics[b] = bench_metrics
+
+    # Overall accuracy: mean of per-benchmark accuracy (only classification)
+    cls_accs = [m["accuracy"] for m in metrics.values() if "accuracy" in m]
+    overall_accuracy = _mean(cls_accs) if cls_accs else 0.0
 
     return {
-        "overall_accuracy": total_ok / max(1, total),
+        "overall_accuracy": overall_accuracy,
         "n_items": total,
         "by_benchmark": metrics,
     }
@@ -507,9 +529,17 @@ def main():
             disable_thinking=args.disable_thinking,
         )
         bench_spec = bench_specs[it["bench"]]
-        pred_label, ok = score_item(bench_spec, it, ans)
-        preds.append(Pred(it["bench"], it["id"], ans, pred_label, int(it["gold"]), ok))
-        print(f"[{i}/{len(items)}] {it['bench']} {it['id']}: {'OK' if ok else 'FAIL'} | ans={ans!r}")
+        m = score_item(bench_spec, it, ans)
+        preds.append(Pred(it["bench"], it["id"], ans, it.get("gold"), m))
+
+        # Human-friendly per-item line
+        if m.get("accuracy") is not None:
+            status = "OK" if m["accuracy"] >= 1.0 else "FAIL"
+        elif m.get("chrf") is not None:
+            status = f"chrF={m['chrf']:.1f}"
+        else:
+            status = ", ".join(f"{k}={v:.1f}" for k, v in m.items() if k != "pred_label")
+        print(f"[{i}/{len(items)}] {it['bench']} {it['id']}: {status} | ans={ans!r}")
 
     summary = aggregate(preds)
     out = {
@@ -525,9 +555,8 @@ def main():
                 "bench": p.bench,
                 "id": p.item_id,
                 "answer": p.answer,
-                "pred_label": p.pred_label,
-                "gold_label": p.gold_label,
-                "ok": p.ok,
+                "gold": p.gold,
+                "metrics": p.metrics,
             }
             for p in preds
         ],
@@ -542,7 +571,18 @@ def main():
     print("Items:", out["n_items"])
     print("Overall accuracy:", f"{out['overall_accuracy']:.3f}")
     for b, m in out["by_benchmark"].items():
-        print(f"- {b}: acc={m['accuracy']:.3f} cov={m['coverage']:.3f} n={m['n']}")
+        parts = []
+        if "accuracy" in m:
+            parts.append(f"acc={m['accuracy']:.3f}")
+        if "coverage" in m:
+            parts.append(f"cov={m['coverage']:.3f}")
+        if "chrf" in m:
+            parts.append(f"chrF={m['chrf']:.1f}")
+        if "bleu" in m:
+            parts.append(f"BLEU={m['bleu']:.1f}")
+        if not parts:
+            parts.append(f"n={m['n']}")
+        print(f"- {b}: {' '.join(parts)} n={m['n']}")
     print("Saved:", str(out_path))
 
 
