@@ -1223,6 +1223,26 @@
               "n": 80,
               "accuracy": 0.7875,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 33.27811078948217,
+              "chrf": 62.30354613682523
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 18.17468836066754,
+              "chrf": 58.73323912205397
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 19.468981131652992,
+              "chrf": 51.081710019845346
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 11.34937327895654,
+              "chrf": 52.71072160594603
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-70b_seed42.json"
@@ -1275,6 +1295,26 @@
               "n": 80,
               "accuracy": 0.8,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 29.92647193052843,
+              "chrf": 60.696804681683695
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 15.98220141289508,
+              "chrf": 57.889878630283775
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 20.4094272796755,
+              "chrf": 50.67017654888697
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 12.665572395517861,
+              "chrf": 52.844002668273106
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-70b_seed123.json"
@@ -1327,6 +1367,26 @@
               "n": 80,
               "accuracy": 0.8375,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 30.963035061296228,
+              "chrf": 62.03451702185013
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 16.339572896717712,
+              "chrf": 58.358983896498486
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 18.216029213400894,
+              "chrf": 48.47050346665497
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 10.863956933837967,
+              "chrf": 52.062248001274476
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-70b_seed777.json"
@@ -1394,6 +1454,34 @@
           "accuracy_std": 0.026020824993326672,
           "coverage_mean": 1.0,
           "coverage_std": 0.0,
+          "n": 3
+        },
+        "FloresTranslation_eu_en": {
+          "bleu_mean": 31.389205927102278,
+          "bleu_std": 1.715979884893349,
+          "chrf_mean": 61.678289280119685,
+          "chrf_std": 0.8605685207473983,
+          "n": 3
+        },
+        "FloresTranslation_en_eu": {
+          "bleu_mean": 16.832154223426777,
+          "bleu_std": 1.1763192706935455,
+          "chrf_mean": 58.32736721627875,
+          "chrf_std": 0.422568267408718,
+          "n": 3
+        },
+        "FloresTranslation_eu_es": {
+          "bleu_mean": 19.364812541576462,
+          "bleu_std": 1.1004031491472548,
+          "chrf_mean": 50.074130011795766,
+          "chrf_std": 1.4039421361437625,
+          "n": 3
+        },
+        "FloresTranslation_es_eu": {
+          "bleu_mean": 11.626300869437456,
+          "bleu_std": 0.9321862666432011,
+          "chrf_mean": 52.53899075849787,
+          "chrf_std": 0.41821490028151964,
           "n": 3
         }
       }
