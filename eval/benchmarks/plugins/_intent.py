@@ -9,7 +9,7 @@ import re
 from typing import Any
 
 
-def score_item(item: dict[str, Any], answer: str, label_names: list[str]) -> tuple[int | None, bool]:
+def score_item(item: dict[str, Any], answer: str, label_names: list[str]) -> dict:
     t = (answer or "").strip()
 
     # Try number extraction first (preferred, prompt asks for 0-11).
@@ -18,7 +18,7 @@ def score_item(item: dict[str, Any], answer: str, label_names: list[str]) -> tup
         idx = int(m.group(1))
         if 0 <= idx < len(label_names):
             ok = idx == int(item["gold"])
-            return idx, ok
+            return {"pred_label": idx, "accuracy": 1.0 if ok else 0.0, "coverage": 1.0}
 
-    # Fallback to generic label matching.
-    return None, False
+    # Fallback: signal to use generic scorer
+    return {}

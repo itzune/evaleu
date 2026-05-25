@@ -23,6 +23,16 @@ def parse_seed(name: str):
     return int(m.group(1)) if m else None
 
 
+def _make_benchmark_entry(metric_vals: dict) -> dict:
+    """Build a benchmark summary entry from {metric_name: [values_across_seeds]}."""
+    entry = {}
+    for k, vals in metric_vals.items():
+        entry[f"{k}_mean"] = mean(vals)
+        entry[f"{k}_std"] = std(vals)
+    entry["n"] = len(next(iter(metric_vals.values()), []))
+    return entry
+
+
 def main():
     ap = argparse.ArgumentParser(description="Summarize multi-seed eval results")
     ap.add_argument("--input-dir", default="eval")
@@ -54,17 +64,24 @@ def main():
         rs = sorted(rs, key=lambda x: (x["seed"] is None, x["seed"]))
         ov = [x["overall"] for x in rs]
 
-        bench_values = defaultdict(list)
+        # Collect per-benchmark metrics across seeds.
+        # metric_keys[bench_id] = set of metric names found.
+        bench_metric_keys: dict = defaultdict(set)
+        bench_metric_vals: dict = defaultdict(lambda: defaultdict(list))
         for x in rs:
-            for b, m in x["by_benchmark"].items():
-                bench_values[b].append(m.get("accuracy", 0.0))
+            for b, bm in x.get("by_benchmark", {}).items():
+                for k, v in bm.items():
+                    if k == "n":
+                        continue
+                    bench_metric_keys[b].add(k)
+                    bench_metric_vals[b][k].append(v)
 
         summary["models"][model] = {
             "runs": [
                 {
                     "seed": x["seed"],
                     "overall": x["overall"],
-                    "by_benchmark": {k: v.get("accuracy", 0.0) for k, v in x["by_benchmark"].items()},
+                    "by_benchmark": x["by_benchmark"],
                     "file": x["file"],
                 }
                 for x in rs
@@ -72,8 +89,8 @@ def main():
             "overall_mean": mean(ov),
             "overall_std": std(ov),
             "benchmarks": {
-                b: {"mean": mean(vals), "std": std(vals), "n": len(vals)}
-                for b, vals in bench_values.items()
+                b: _make_benchmark_entry(mk)
+                for b, mk in bench_metric_vals.items()
             },
         }
 
@@ -84,9 +101,18 @@ def main():
     # Human-readable console summary
     print(f"Runs: {len(rows)}")
     for model, m in sorted(summary["models"].items(), key=lambda kv: kv[1]["overall_mean"], reverse=True):
-      print(f"{model:18s} overall={m['overall_mean']*100:5.2f}% ± {m['overall_std']*100:4.2f}")
-      for b, bm in m["benchmarks"].items():
-          print(f"  - {b:16s} {bm['mean']*100:5.2f}% ± {bm['std']*100:4.2f} (n={bm['n']})")
+        print(f"{model:18s} overall={m['overall_mean']*100:5.2f}% ± {m['overall_std']*100:4.2f}")
+        for b, bm in m["benchmarks"].items():
+            parts = []
+            if "accuracy_mean" in bm:
+                parts.append(f"acc={bm['accuracy_mean']*100:5.2f}% ± {bm['accuracy_std']*100:4.2f}")
+            if "chrf_mean" in bm:
+                parts.append(f"chrF={bm['chrf_mean']:.1f} ± {bm['chrf_std']:.1f}")
+            if "bleu_mean" in bm:
+                parts.append(f"BLEU={bm['bleu_mean']:.1f} ± {bm['bleu_std']:.1f}")
+            if not parts:
+                parts.append("—")
+            print(f"  - {b:16s} {' '.join(parts)} (n={bm['n']})")
 
     print(f"Saved: {out}")
 

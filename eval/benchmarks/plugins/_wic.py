@@ -10,16 +10,19 @@ import re
 from typing import Any
 
 
-def score_item(item: dict[str, Any], answer: str, label_names: list[str]) -> tuple[int | None, bool]:
+def score_item(item: dict[str, Any], answer: str, label_names: list[str]) -> dict:
     t = (answer or "").strip().lower()
     t = re.sub(r"\s+", " ", t)
 
+    pred = None
     if re.search(r"\b(true|berdin(ak?)?|bai|same)\b", t):
         pred = 1
     elif re.search(r"\b(false|desberdin(ak?)?|ezberdin(ak?)?|different)\b", t):
         pred = 0
-    else:
-        return None, False  # signal: use generic scorer
 
-    ok = pred == int(item["gold"])
-    return pred, ok
+    if pred is not None:
+        ok = pred == int(item["gold"])
+        return {"pred_label": pred, "accuracy": 1.0 if ok else 0.0, "coverage": 1.0}
+
+    # Fallback: signal to use generic scorer
+    return {}
