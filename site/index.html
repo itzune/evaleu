@@ -545,7 +545,7 @@
             <tr>
               <td>${i + 1}</td>
               <td>
-                <div class="model-main">${esc(r.display_name)}</div>
+                <div class="model-main"><a href="./model.html?model=${encodeURIComponent(r.model_id)}" style="color:inherit;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='inherit'">${esc(r.display_name)}</a></div>
                 <div class="model-sub mono">${esc(r.model_id)}</div>
               </td>
               <td>${quantLabels.map(q => `<span class="pill">${esc(q)}</span>`).join('')}</td>
