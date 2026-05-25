@@ -301,6 +301,21 @@
       <div class="caption" id="resultsCaption">Accuracy reported as mean ± std across random seeds.</div>
     </section>
 
+    <section class="section">
+      <h2>Figures — Classification</h2>
+      <div class="chart-grid">
+        <div class="plot">
+          <h3>Figure 1. Overall accuracy by model</h3>
+          <div id="barGroupLegend" class="group-legend" aria-label="Figure 1 group legend"></div>
+          <canvas id="barOverall"></canvas>
+        </div>
+        <div class="plot">
+          <h3>Figure 2. Accuracy profile by classification eval</h3>
+          <canvas id="radarBench"></canvas>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="translationSection">
       <div class="section-head">
         <h2>Table 2. Translation results (FLORES)</h2>
@@ -322,24 +337,25 @@
       <div class="caption">chrF ± std / BLEU ± std. Only models with translation evaluations are shown.</div>
     </section>
 
-    <section class="section">
-      <h2>Figures</h2>
+    <section class="section" id="translationFiguresSection">
+      <h2>Figures — Translation</h2>
       <div class="chart-grid">
         <div class="plot">
-          <h3>Figure 1. Overall accuracy by model</h3>
-          <div id="barGroupLegend" class="group-legend" aria-label="Figure 1 group legend"></div>
-          <canvas id="barOverall"></canvas>
+          <h3>Figure 3. chrF by translation direction</h3>
+          <canvas id="transChrfRadar"></canvas>
         </div>
         <div class="plot">
-          <h3>Figure 2. Accuracy profile by classification eval</h3>
-          <canvas id="radarBench"></canvas>
+          <h3>Figure 4. BLEU by translation direction</h3>
+          <canvas id="transBleuRadar"></canvas>
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Figures — Timeline</h2>
+      <div class="chart-grid">
         <div class="plot">
-          <h3>Figure 3. Translation quality (chrF) by direction</h3>
-          <canvas id="translationChart"></canvas>
-        </div>
-        <div class="plot">
-          <h3>Figure 4. Overall accuracy by release date</h3>
+          <h3>Figure 5. Overall accuracy by release date</h3>
           <canvas id="timelineOverall"></canvas>
         </div>
       </div>
@@ -623,7 +639,8 @@
       if (window.__barChart) window.__barChart.destroy();
       if (window.__radarChart) window.__radarChart.destroy();
       if (window.__timelineChart) window.__timelineChart.destroy();
-      if (window.__transChart) window.__transChart.destroy();
+      if (window.__transChrfRadar) window.__transChrfRadar.destroy();
+      if (window.__transBleuRadar) window.__transBleuRadar.destroy();
 
       const sizeCategoryColors = {
         '<4B': '#2563eb',   // vivid blue
@@ -794,109 +811,85 @@
         }
       });
 
-      // Figure 3 — Translation bar chart (chrF by direction)
+      // Figures 3 & 4 — Translation radars (chrF + BLEU)
+      const transFigSection = document.getElementById('translationFiguresSection');
       if (transModels.length > 0) {
+        transFigSection.style.display = '';
         const transDirLabels = ['EU→EN', 'EN→EU', 'EU→ES', 'ES→EU'];
         const transDirIds = TRANS_BENCHES;
-        const transColors = { 'EU→EN': '#7170ff', 'EN→EU': '#f97316', 'EU→ES': '#16a34a', 'ES→EU': '#a855f7' };
 
-        // Per-model chrF and BLEU data arrays for tooltip cross-reference
-        const transDataMap = {};
-        const transChartDatasets = [];
-        const transChartBleuDatasets = [];
-
-        transModels.forEach(r => {
+        const transRadarDatasets = (metricKey) => transModels.map((r, idx) => {
           const bm = r.by_benchmark || {};
-          const color = rowColor(r);
-          const label = compactModelLabel(r.display_name);
-          const chrfVals = transDirIds.map(bid => {
-            const m = bm[bid] || {};
-            return Math.round(((m.chrf || m.chrf_mean || 0)) * 10) / 10;
-          });
-          const bleuVals = transDirIds.map(bid => {
-            const m = bm[bid] || {};
-            return Math.round(((m.bleu || m.bleu_mean || 0)) * 10) / 10;
-          });
-          transDataMap[label] = { chrf: chrfVals, bleu: bleuVals };
-
-          transChartDatasets.push({
-            label: label,
-            data: chrfVals,
-            backgroundColor: color,
-            borderWidth: 0,
-            borderRadius: 4,
-            barPercentage: 0.72,
-            categoryPercentage: 0.78
-          });
-
-          // BLEU as lighter variant of the same color
-          transChartBleuDatasets.push({
-            label: label + ' (BLEU)',
-            data: bleuVals,
-            backgroundColor: shadeHex(color, 0.35),
-            borderWidth: 0,
-            borderRadius: 4,
-            barPercentage: 0.72,
-            categoryPercentage: 0.78
-          });
+          return {
+            label: compactModelLabel(r.display_name),
+            data: transDirIds.map(bid => {
+              const m = bm[bid] || {};
+              return Math.round(((m[metricKey] || 0)) * 10) / 10;
+            }),
+            borderColor: rowColor(r),
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 2.2,
+            pointHoverRadius: 2.8
+          };
         });
 
-        const transCanvas = document.getElementById('translationChart');
-        const transCtx = transCanvas.parentElement;
-        transCtx.style.display = '';
-
-        window.__transChart = new Chart(transCanvas.getContext('2d'), {
-          type: 'bar',
-          data: { labels: transDirLabels, datasets: [...transChartDatasets, ...transChartBleuDatasets] },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: {
-                  color: '#d8deea',
-                  boxWidth: 10,
-                  boxHeight: 10,
-                  padding: 10,
-                  font: { size: 10 },
-                  filter: (item) => !item.text.includes('(BLEU)')
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: (item) => {
-                    const ds = item?.dataset;
-                    const idx = item?.dataIndex ?? 0;
-                    const name = (ds?.label || '').replace(' (BLEU)', '');
-                    const entry = transDataMap[name];
-                    if (!entry) return '';
-                    const chrf = entry.chrf[idx];
-                    const bleu = entry.bleu[idx];
-                    return `chrF ${chrf.toFixed(1)} / BLEU ${bleu.toFixed(1)}`;
-                  }
-                }
-              }
-            },
-            scales: {
-              x: {
-                ticks: { color: '#d4dbe7', font: { size: 12, weight: 500 } },
-                grid: { color: 'rgba(255,255,255,0.05)' }
-              },
-              y: {
-                beginAtZero: true,
-                title: { display: true, text: 'Score', color: '#cfd6e3' },
-                ticks: { color: '#d4dbe7', font: { size: 11 } },
-                grid: { color: 'rgba(255,255,255,0.06)' }
+        const radarOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#d8deea',
+                boxWidth: 10,
+                boxHeight: 10,
+                padding: 10,
+                font: { size: 11 }
               }
             }
+          },
+          scales: {
+            r: {
+              beginAtZero: true,
+              ticks: {
+                color: '#cfd6e3',
+                backdropColor: 'rgba(0,0,0,0)',
+                font: { size: 11 }
+              },
+              pointLabels: {
+                color: '#dce3ef',
+                font: { size: 12, weight: 500 }
+              },
+              grid: { color: 'rgba(255,255,255,0.10)' },
+              angleLines: { color: 'rgba(255,255,255,0.10)' }
+            }
+          },
+          layout: { padding: 4 }
+        };
+
+        // Figure 3 — chrF radar
+        window.__transChrfRadar = new Chart(
+          document.getElementById('transChrfRadar').getContext('2d'),
+          {
+            type: 'radar',
+            data: { labels: transDirLabels, datasets: transRadarDatasets('chrf') },
+            options: radarOptions
           }
-        });
+        );
+
+        // Figure 4 — BLEU radar
+        window.__transBleuRadar = new Chart(
+          document.getElementById('transBleuRadar').getContext('2d'),
+          {
+            type: 'radar',
+            data: { labels: transDirLabels, datasets: transRadarDatasets('bleu') },
+            options: radarOptions
+          }
+        );
       } else {
-        // Hide translation chart
-        const transCtx = document.getElementById('translationChart').parentElement;
-        if (transCtx) transCtx.style.display = 'none';
+        transFigSection.style.display = 'none';
       }
 
       const timelineRows = rows
