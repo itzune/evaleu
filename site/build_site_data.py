@@ -74,6 +74,34 @@ ALL_BENCHMARKS = [
         "metric": "Accuracy",
         "labels": "index of correct choice",
     },
+    {
+        "id": "FloresTranslation_eu_en",
+        "family": "FLORES",
+        "task": "Translation Basque → English",
+        "metric": "chrF / BLEU",
+        "labels": "free-text translation",
+    },
+    {
+        "id": "FloresTranslation_en_eu",
+        "family": "FLORES",
+        "task": "Translation English → Basque",
+        "metric": "chrF / BLEU",
+        "labels": "free-text translation",
+    },
+    {
+        "id": "FloresTranslation_eu_es",
+        "family": "FLORES",
+        "task": "Translation Basque → Spanish",
+        "metric": "chrF / BLEU",
+        "labels": "free-text translation",
+    },
+    {
+        "id": "FloresTranslation_es_eu",
+        "family": "FLORES",
+        "task": "Translation Spanish → Basque",
+        "metric": "chrF / BLEU",
+        "labels": "free-text translation",
+    },
 ]
 
 BENCH_LABELS = {
@@ -84,6 +112,10 @@ BENCH_LABELS = {
     "LatxaEval_eusexams": "LatxaEval-EusExams",
     "LatxaEval_eusproficiency": "LatxaEval-EusProficiency",
     "LatxaEval_eusreading": "LatxaEval-EusReading",
+    "FloresTranslation_eu_en": "FLORES EU→EN",
+    "FloresTranslation_en_eu": "FLORES EN→EU",
+    "FloresTranslation_eu_es": "FLORES EU→ES",
+    "FloresTranslation_es_eu": "FLORES ES→EU",
 }
 
 

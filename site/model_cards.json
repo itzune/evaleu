@@ -134,5 +134,16 @@
     "release_date_utc": "2025-10-06T13:19:11Z",
     "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-9b-it",
     "site_visibility": "draft"
+  },
+  "deepseek-ai/DeepSeek-V4-Pro": {
+    "display_name": "DeepSeek V4 Pro",
+    "family": "DeepSeek V4",
+    "params": "unknown",
+    "weights_quant": "unknown",
+    "kv_cache": "unknown",
+    "upstream_model_id": "deepseek-ai/DeepSeek-V4-Pro",
+    "release_date_utc": "2026-05-25T00:00:00Z",
+    "release_source_url": "https://api-docs.deepseek.com/",
+    "site_visibility": "published"
   }
 }
