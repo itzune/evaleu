@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-25T17:33:42.887210+00:00",
+  "generated_at_utc": "2026-05-25T17:39:27.064238+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "evaluation_protocol": {
     "suite": "Official benchmark subset (multi-seed)",
@@ -686,8 +686,8 @@
       "display_name": "DeepSeek V4 Pro",
       "family": "DeepSeek V4",
       "params": "unknown",
-      "weights_quant": "unknown",
-      "kv_cache": "unknown",
+      "weights_quant": "–",
+      "kv_cache": "–",
       "upstream_model_id": "deepseek-ai/DeepSeek-V4-Pro",
       "release_date_utc": "2026-05-25T00:00:00Z",
       "release_source_url": "https://api-docs.deepseek.com/",
