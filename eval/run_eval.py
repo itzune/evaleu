@@ -475,7 +475,12 @@ def build_items(args: argparse.Namespace) -> Tuple[List[Dict[str, Any]], Dict[st
         if spec.get("plugin"):
             plugin = _load_plugin(spec["plugin"])
             if hasattr(plugin, "build_items"):
-                built = plugin.build_items(limit, args.seed)
+                # Pass spec to plugin so it can read dataset configs
+                try:
+                    built = plugin.build_items(limit, args.seed, spec=spec)
+                except TypeError:
+                    # Backward compat: old plugins only take (limit, seed)
+                    built = plugin.build_items(limit, args.seed)
             else:
                 built = _build_generic_items(spec, limit, args.seed)
         else:

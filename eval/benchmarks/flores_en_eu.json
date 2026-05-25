@@ -1,0 +1,25 @@
+{
+  "id": "FloresTranslation_en_eu",
+  "description": "FLORES-200 translation English → Basque (devtest split)",
+  "dataset": {
+    "source": "huggingface",
+    "path": "openlanguagedata/flores_plus",
+    "config": "eus_Latn",
+    "target_config": "eng_Latn",
+    "split": "devtest",
+    "id_field": "id",
+    "source_field": "text",
+    "target_field": "text",
+    "swap_source_target": true
+  },
+  "prompt": {
+    "type": "translation",
+    "template": "Translate the following text from English to Basque.\n\nEnglish: {source}\nBasque:"
+  },
+  "scoring": {
+    "type": "translation",
+    "metrics": ["chrf", "bleu"]
+  },
+  "plugin": "flores",
+  "default_limit": 200
+}
