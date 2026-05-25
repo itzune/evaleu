@@ -800,11 +800,9 @@
         const transDirIds = TRANS_BENCHES;
         const transColors = { 'EU→EN': '#7170ff', 'EN→EU': '#f97316', 'EU→ES': '#16a34a', 'ES→EU': '#a855f7' };
 
-        const transChartDatasets = transModels.map((r, idx) => {
+        const transChartDatasets = transModels.map(r => {
           const bm = r.by_benchmark || {};
-          // Use a slightly different shade per model to distinguish in grouped bars
-          const baseHue = idx * (360 / Math.max(transModels.length, 1));
-          const color = `hsl(${baseHue}, 60%, 55%)`;
+          const color = rowColor(r);
           return {
             label: compactModelLabel(r.display_name),
             data: transDirIds.map(bid => {
