@@ -281,7 +281,7 @@
 
     <section class="section">
       <div class="section-head">
-        <h2>Table 1. Main comparative results</h2>
+        <h2>Table 1. Classification results</h2>
       </div>
       <div class="table-wrap">
         <table>
@@ -301,6 +301,27 @@
       <div class="caption" id="resultsCaption">Accuracy reported as mean ± std across random seeds.</div>
     </section>
 
+    <section class="section" id="translationSection">
+      <div class="section-head">
+        <h2>Table 2. Translation results (FLORES)</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="transHeadRow">
+              <th>Model</th>
+              <th>EU→EN</th>
+              <th>EN→EU</th>
+              <th>EU→ES</th>
+              <th>ES→EU</th>
+            </tr>
+          </thead>
+          <tbody id="transBody"></tbody>
+        </table>
+      </div>
+      <div class="caption">chrF ± std / BLEU ± std. Only models with translation evaluations are shown.</div>
+    </section>
+
     <section class="section">
       <h2>Figures</h2>
       <div class="chart-grid">
@@ -310,11 +331,15 @@
           <canvas id="barOverall"></canvas>
         </div>
         <div class="plot">
-          <h3>Figure 2. Accuracy profile by eval</h3>
+          <h3>Figure 2. Accuracy profile by classification eval</h3>
           <canvas id="radarBench"></canvas>
         </div>
         <div class="plot">
-          <h3>Figure 3. Overall accuracy by release date</h3>
+          <h3>Figure 3. Translation quality (chrF) by direction</h3>
+          <canvas id="translationChart"></canvas>
+        </div>
+        <div class="plot">
+          <h3>Figure 4. Overall accuracy by release date</h3>
           <canvas id="timelineOverall"></canvas>
         </div>
       </div>
@@ -401,36 +426,48 @@
       const nSeeds = rows.length ? (rows[0].n_seeds || 1) : 1;
       const generatedUtc = data.generated_at_utc || '-';
       const generatedDate = formatUtcDate(generatedUtc);
-      const benchDefs = (data.evaluation_protocol?.benchmarks || []);
-      const benchIds = benchDefs.map(x => x.id);
-      const familyDefs = (data.evaluation_protocol?.benchmark_families || []);
-      const familyIds = familyDefs.map(x => x.id);
+      const allBenchDefs = (data.evaluation_protocol?.benchmarks || []);
+      const allFamilyDefs = (data.evaluation_protocol?.benchmark_families || []);
+
+      // ---- Split into classification vs translation ----
+      const TRANS_FAMILY = 'FLORES';
+      const transBenchIds = new Set(
+        allBenchDefs.filter(b => b.family === TRANS_FAMILY).map(b => b.id)
+      );
+
+      const clsBenchDefs = allBenchDefs.filter(b => b.family !== TRANS_FAMILY);
+      const clsBenchIds = clsBenchDefs.map(b => b.id);
+      const clsFamilyDefs = allFamilyDefs.filter(fd => fd.id !== TRANS_FAMILY);
+      const clsFamilyIds = clsFamilyDefs.map(fd => fd.id);
 
       document.getElementById('metaInline').innerHTML = `
         <span>Generated: <span class="mono">${esc(generatedDate)}</span></span>
         <span>Seeds: <span class="mono">n=${esc(nSeeds)}</span></span>
       `;
 
+      // ================================================================
+      // Table 1 — Classification results
+      // ================================================================
       const head = document.getElementById('resultsHeadRow');
       const body = document.getElementById('resultsBody');
       const caption = document.getElementById('resultsCaption');
 
       const expandedFamilies = new Set();
       const familyBenchMap = Object.fromEntries(
-        familyDefs.map(fd => [fd.id, (fd.benchmarks || []).map(b => b.id)])
+        clsFamilyDefs.map(fd => [fd.id, (fd.benchmarks || []).map(b => b.id)])
       );
 
       const bestOverall = Math.max(...rows.map(r => r.overall_accuracy || 0));
       const bestByFamily = Object.fromEntries(
-        familyIds.map(id => [id, Math.max(...rows.map(r => ((r.by_family || {})[id] || {}).accuracy || 0))])
+        clsFamilyIds.map(id => [id, Math.max(...rows.map(r => ((r.by_family || {})[id] || {}).accuracy || 0))])
       );
       const bestByBench = Object.fromEntries(
-        benchIds.map(id => [id, Math.max(...rows.map(r => ((r.by_benchmark || {})[id] || {}).accuracy || 0))])
+        clsBenchIds.map(id => [id, Math.max(...rows.map(r => ((r.by_benchmark || {})[id] || {}).accuracy || 0))])
       );
       const isBest = (v, best) => Math.abs((v || 0) - (best || 0)) < 1e-12;
 
       const renderResultsTable = () => {
-        const expandedBenchIds = familyDefs.flatMap(fd => (
+        const expandedBenchIds = clsFamilyDefs.flatMap(fd => (
           expandedFamilies.has(fd.id) ? (familyBenchMap[fd.id] || []) : []
         ));
 
@@ -439,7 +476,7 @@
           <th>Model</th>
           <th>Quantization</th>
           <th>Overall</th>
-          ${familyDefs.map(fd => {
+          ${clsFamilyDefs.map(fd => {
             const open = expandedFamilies.has(fd.id);
             const hasDetails = (familyBenchMap[fd.id] || []).length > 0;
             const icon = open ? '▾' : '▸';
@@ -466,7 +503,7 @@
           const byFam = r.by_family || {};
           const byBench = r.by_benchmark || {};
 
-          const familyAndBenchCells = familyDefs.map(fd => {
+          const familyAndBenchCells = clsFamilyDefs.map(fd => {
             const fam = byFam[fd.id] || {};
             const famCell = isBest(fam.accuracy, bestByFamily[fd.id])
               ? `<td><span class="strong">${metricCell(fam.accuracy || 0, fam.accuracy_std || 0)}</span></td>`
@@ -485,6 +522,9 @@
             return famCell + benchCells;
           }).join('');
 
+          // Classification N = total items minus translation items
+          const clsN = (r.n_items || 0) - ([...transBenchIds].length * 80);
+
           return `
             <tr>
               <td>${i + 1}</td>
@@ -495,7 +535,7 @@
               <td>${quantLabels.map(q => `<span class="pill">${esc(q)}</span>`).join('')}</td>
               <td>${isBest(r.overall_accuracy, bestOverall) ? `<span class="strong">${metricCell(r.overall_accuracy, r.overall_accuracy_std)}</span>` : metricCell(r.overall_accuracy, r.overall_accuracy_std)}</td>
               ${familyAndBenchCells}
-              <td>${esc(r.n_items)}</td>
+              <td>${esc(clsN)}</td>
             </tr>
           `;
         }).join('');
@@ -508,6 +548,58 @@
 
       renderResultsTable();
 
+      // ================================================================
+      // Table 2 — Translation results
+      // ================================================================
+      const TRANS_BENCHES = ['FloresTranslation_eu_en', 'FloresTranslation_en_eu', 'FloresTranslation_eu_es', 'FloresTranslation_es_eu'];
+      const transModels = rows.filter(r => {
+        const bm = r.by_benchmark || {};
+        // Has actual translation data (chrF, not just accuracy=0)
+        return TRANS_BENCHES.some(bid => (bm[bid] || {}).chrf > 0 || (bm[bid] || {}).chrf_mean > 0);
+      });
+
+      const transBody = document.getElementById('transBody');
+      const transSection = document.getElementById('translationSection');
+
+      if (transModels.length === 0) {
+        transSection.style.display = 'none';
+      } else {
+        transSection.style.display = '';
+        const transHeadRow = document.getElementById('transHeadRow');
+        const fmtTransMetric = (chrf, chrfStd, bleu, bleuStd) => {
+          const c = (chrf || 0).toFixed(1);
+          const cs = (chrfStd || 0).toFixed(1);
+          const b = (bleu || 0).toFixed(1);
+          const bs = (bleuStd || 0).toFixed(1);
+          return `<span title="chrF ${c} ± ${cs} / BLEU ${b} ± ${bs}">chrF ${c} ± ${cs}</span>`;
+        };
+
+        transBody.innerHTML = transModels.map(r => {
+          const bm = r.by_benchmark || {};
+          const cells = TRANS_BENCHES.map(bid => {
+            const m = bm[bid] || {};
+            // site data uses flat keys (chrf, bleu) for non-aggregated; summary uses _mean/_std
+            const chrf = m.chrf != null ? m.chrf : (m.chrf_mean || 0);
+            const chrfStd = m.chrf_std || 0;
+            const bleu = m.bleu != null ? m.bleu : (m.bleu_mean || 0);
+            const bleuStd = m.bleu_std || 0;
+            return `<td>${fmtTransMetric(chrf, chrfStd, bleu, bleuStd)}</td>`;
+          }).join('');
+          return `
+            <tr>
+              <td>
+                <div class="model-main">${esc(r.display_name)}</div>
+                <div class="model-sub mono">${esc(r.model_id)}</div>
+              </td>
+              ${cells}
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // ================================================================
+      // Protocol table
+      // ================================================================
       const protocolBody = document.getElementById('protocolBody');
       (data.evaluation_protocol?.benchmarks || []).forEach(x => {
         protocolBody.innerHTML += `
@@ -521,6 +613,9 @@
         `;
       });
 
+      // ================================================================
+      // Charts
+      // ================================================================
       const labels = rows.map(r => compactModelLabel(r.display_name));
       const fullLabels = rows.map(r => r.display_name);
       const overall = rows.map(r => Math.round((r.overall_accuracy || 0) * 1000) / 10);
@@ -528,6 +623,7 @@
       if (window.__barChart) window.__barChart.destroy();
       if (window.__radarChart) window.__radarChart.destroy();
       if (window.__timelineChart) window.__timelineChart.destroy();
+      if (window.__transChart) window.__transChart.destroy();
 
       const sizeCategoryColors = {
         '<4B': '#2563eb',   // vivid blue
@@ -642,12 +738,13 @@
         }
       });
 
-      const radarLabels = benchIds.map(id => benchLabel(id));
+      // Figure 2 — radar: classification benchmarks only
+      const radarLabels = clsBenchIds.map(id => benchLabel(id));
       const radarDatasets = rows.map((r, idx) => {
         const b = r.by_benchmark || {};
         return {
           label: r.display_name,
-          data: benchIds.map(id => Math.round(((((b[id] || {}).accuracy) || 0) * 1000)) / 10),
+          data: clsBenchIds.map(id => Math.round(((((b[id] || {}).accuracy) || 0) * 1000)) / 10),
           borderColor: barColors[idx] || sizeCategoryColors.other,
           backgroundColor: 'transparent',
           borderWidth: 2,
@@ -696,6 +793,84 @@
           layout: { padding: 4 }
         }
       });
+
+      // Figure 3 — Translation bar chart (chrF by direction)
+      if (transModels.length > 0) {
+        const transDirLabels = ['EU→EN', 'EN→EU', 'EU→ES', 'ES→EU'];
+        const transDirIds = TRANS_BENCHES;
+        const transColors = { 'EU→EN': '#7170ff', 'EN→EU': '#f97316', 'EU→ES': '#16a34a', 'ES→EU': '#a855f7' };
+
+        const transChartDatasets = transModels.map((r, idx) => {
+          const bm = r.by_benchmark || {};
+          // Use a slightly different shade per model to distinguish in grouped bars
+          const baseHue = idx * (360 / Math.max(transModels.length, 1));
+          const color = `hsl(${baseHue}, 60%, 55%)`;
+          return {
+            label: compactModelLabel(r.display_name),
+            data: transDirIds.map(bid => {
+              const m = bm[bid] || {};
+              return Math.round(((m.chrf || m.chrf_mean || 0)) * 10) / 10;
+            }),
+            backgroundColor: color,
+            borderWidth: 0,
+            borderRadius: 4,
+            barPercentage: 0.72,
+            categoryPercentage: 0.78
+          };
+        });
+
+        const transCanvas = document.getElementById('translationChart');
+        const transCtx = transCanvas.parentElement;
+        transCtx.style.display = '';
+
+        window.__transChart = new Chart(transCanvas.getContext('2d'), {
+          type: 'bar',
+          data: { labels: transDirLabels, datasets: transChartDatasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#d8deea',
+                  boxWidth: 10,
+                  boxHeight: 10,
+                  padding: 10,
+                  font: { size: 11 }
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (item) => {
+                    const ds = item?.dataset;
+                    const idx = item?.dataIndex ?? 0;
+                    const chrf = ds?.data?.[idx] ?? 0;
+                    return `${ds?.label || ''}: chrF ${chrf.toFixed(1)}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: '#d4dbe7', font: { size: 12, weight: 500 } },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+              },
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: 'chrF', color: '#cfd6e3' },
+                ticks: { color: '#d4dbe7', font: { size: 11 } },
+                grid: { color: 'rgba(255,255,255,0.06)' }
+              }
+            }
+          }
+        });
+      } else {
+        // Hide translation chart
+        const transCtx = document.getElementById('translationChart').parentElement;
+        if (transCtx) transCtx.style.display = 'none';
+      }
 
       const timelineRows = rows
         .filter(r => r.release_date_utc)
