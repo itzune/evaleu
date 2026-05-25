@@ -1,0 +1,24 @@
+{
+  "id": "EusTrivia",
+  "description": "EusTrivia — Basque multiple-choice trivia",
+  "dataset": {
+    "source": "huggingface",
+    "path": "HiTZ/EusTrivia",
+    "split": "test",
+    "id_field": "id",
+    "question_field": "question",
+    "candidates_field": "candidates",
+    "answer_field": "answer",
+    "meta_fields": ["category", "difficulty"]
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C/D bakarrik).\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "default_limit": 100
+}

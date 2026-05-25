@@ -1,0 +1,24 @@
+{
+  "id": "BasqueGLUE_intent",
+  "description": "BasqueGLUE Intent — 12-class intent classification",
+  "dataset": {
+    "source": "huggingface",
+    "path": "orai-nlp/basqueGLUE",
+    "config": "intent",
+    "split": "test",
+    "trust_remote_code": true,
+    "id_field": "idx",
+    "label_field": "label",
+    "label_names_from": "dataset_features"
+  },
+  "prompt": {
+    "type": "text_classification",
+    "template": "Sailkatu erabiltzailearen asmoa (intent).\nAukeratu zerrendako etiketa zuzena eta erantzun ZENBAKI BAKARRAREKIN (0-11), besterik ez.\nEz eman azalpenik. Ez erabili etiketa testurik.\nEtiketak:\n{label_block}\n\nTestua: {text}\nErantzuna (0-11):"
+  },
+  "scoring": {
+    "type": "label_match",
+    "extraction": "number_or_label"
+  },
+  "plugin": "intent",
+  "default_limit": 100
+}

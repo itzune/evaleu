@@ -1,0 +1,23 @@
+{
+  "id": "LatxaEval_eusproficiency",
+  "description": "LatxaEval — EusProficiency multiple-choice",
+  "dataset": {
+    "source": "huggingface",
+    "path": "HiTZ/EusProficiency",
+    "split": "test",
+    "id_field": "id",
+    "question_field": "question",
+    "candidates_field": "candidates",
+    "answer_field": "answer"
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C/D... edo 1/2/3/4... bakarrik).\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "default_limit": 100
+}

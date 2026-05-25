@@ -1,0 +1,26 @@
+{
+  "id": "XNLIeu",
+  "description": "XNLI-eu — Basque NLI classification",
+  "dataset": {
+    "source": "huggingface",
+    "path": "HiTZ/xnli-eu",
+    "config": "eu_native",
+    "split": "test",
+    "label_field": "label",
+    "label_names_from": "dataset_features",
+    "label_mapping": {
+      "entailment": "entailment",
+      "neutral": "neutral",
+      "contradiction": "contradiction"
+    }
+  },
+  "prompt": {
+    "type": "text_classification",
+    "template": "Sailkatu hipotesiaren eta premisaren arteko erlazioa. Erantzun hitz bakarrarekin: entailment, neutral, edo contradiction.\nPremisa: {premise}\nHipotesia: {hypothesis}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "label_match",
+    "extraction": "number_or_label"
+  },
+  "default_limit": 100
+}
