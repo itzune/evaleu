@@ -540,79 +540,98 @@ def _postprocess_eustrivia_candidates(items: List[Dict[str, Any]]) -> None:
             it.setdefault("meta", {})["candidates"] = row["candidates"]
 
 
+def _parse_eval_arg(raw: str) -> Tuple[str, int]:
+    """Parse a --benchmark value: 'FAMILY/NAME', 'NAME', 'FAMILY/NAME/LIMIT', or 'NAME/LIMIT'."""
+    parts = raw.rsplit("/", 2)
+    if len(parts) == 3:
+        # FAMILY/NAME/LIMIT or NAME/LIMIT (3 parts: treat first two as id)
+        bench_id = f"{parts[0].strip()}/{parts[1].strip()}"
+        limit = int(parts[2].strip())
+    elif len(parts) == 2:
+        # NAME/LIMIT or FAMILY/NAME
+        a, b = parts[0].strip(), parts[1].strip()
+        if b.isdigit():
+            bench_id = a
+            limit = int(b)
+        else:
+            bench_id = f"{a}/{b}"
+            limit = 0
+    else:
+        bench_id = raw.strip()
+        limit = 0
+    return bench_id, limit
+
+
+def _build_selected(eval_args: list[str] | None) -> Dict[str, int]:
+    """Build selected benchmarks dict from --benchmark args."""
+    if not eval_args:
+        return {b: 0 for b in _DEFAULT_BENCHMARKS}
+
+    selected: Dict[str, int] = {}
+    for raw in eval_args:
+        for segment in raw.split(","):
+            segment = segment.strip()
+            if not segment:
+                continue
+            bench_id, limit = _parse_eval_arg(segment)
+            if bench_id not in _BENCHMARK_DEFS:
+                valid = ", ".join(_BENCHMARK_DEFS.keys())
+                raise SystemExit(f"Unknown benchmark '{bench_id}'. Valid options: {valid}")
+            selected[bench_id] = limit
+    return selected
+
+
+# All known benchmarks with their builders and optional postprocessors.
+_BENCHMARK_DEFS: Dict[str, Dict[str, Any]] = {
+    "EusTrivia": {
+        "builder": build_eustrivia_items,
+        "postprocess": _postprocess_eustrivia_candidates,
+    },
+    "XNLIeu": {
+        "builder": build_xnli_items,
+    },
+    "BasqueGLUE_qnli": {
+        "builder": build_basqueglue_qnli_items,
+    },
+    "BasqueGLUE_bec": {
+        "builder": build_benchmark4_template_items,
+    },
+    "BasqueGLUE_wic": {
+        "builder": build_benchmark5_template_items,
+    },
+    "BasqueGLUE_intent": {
+        "builder": build_benchmark6_template_items,
+    },
+    "LatxaEval_eusexams": {
+        "builder": build_latxa_eusexams_items,
+    },
+    "LatxaEval_eusproficiency": {
+        "builder": build_latxa_eusproficiency_items,
+    },
+    "LatxaEval_eusreading": {
+        "builder": build_latxa_eusreading_items,
+    },
+}
+
+_DEFAULT_BENCHMARKS = ["EusTrivia", "XNLIeu", "BasqueGLUE_qnli"]
+
+
 def build_benchmark_registry(args: argparse.Namespace) -> List[Dict[str, Any]]:
-    specs: List[Dict[str, Any]] = [
-        {
-            "id": "EusTrivia",
-            "limit": args.limit_eustrivia,
-            "builder": build_eustrivia_items,
-            "postprocess": _postprocess_eustrivia_candidates,
-        },
-        {
-            "id": "XNLIeu",
-            "limit": args.limit_xnli,
-            "builder": build_xnli_items,
-        },
-        {
-            "id": "BasqueGLUE_qnli",
-            "limit": args.limit_bglue_qnli,
-            "builder": build_basqueglue_qnli_items,
-        },
-    ]
+    selected = _build_selected(args.benchmark)
 
-    if args.enable_b4_template or args.limit_b4_template > 0:
-        specs.append(
-            {
-                "id": "BasqueGLUE_bec",
-                "limit": args.limit_b4_template,
-                "builder": build_benchmark4_template_items,
-            }
-        )
-
-    if args.enable_b5_template or args.limit_b5_template > 0:
-        specs.append(
-            {
-                "id": "BasqueGLUE_wic",
-                "limit": args.limit_b5_template,
-                "builder": build_benchmark5_template_items,
-            }
-        )
-
-    if args.enable_b6_template or args.limit_b6_template > 0:
-        specs.append(
-            {
-                "id": "BasqueGLUE_intent",
-                "limit": args.limit_b6_template,
-                "builder": build_benchmark6_template_items,
-            }
-        )
-
-    if args.enable_latxa_eusexams or args.limit_latxa_eusexams > 0:
-        specs.append(
-            {
-                "id": "LatxaEval_eusexams",
-                "limit": args.limit_latxa_eusexams,
-                "builder": build_latxa_eusexams_items,
-            }
-        )
-
-    if args.enable_latxa_eusproficiency or args.limit_latxa_eusproficiency > 0:
-        specs.append(
-            {
-                "id": "LatxaEval_eusproficiency",
-                "limit": args.limit_latxa_eusproficiency,
-                "builder": build_latxa_eusproficiency_items,
-            }
-        )
-
-    if args.enable_latxa_eusreading or args.limit_latxa_eusreading > 0:
-        specs.append(
-            {
-                "id": "LatxaEval_eusreading",
-                "limit": args.limit_latxa_eusreading,
-                "builder": build_latxa_eusreading_items,
-            }
-        )
+    specs: List[Dict[str, Any]] = []
+    for bench_id, limit in selected.items():
+        if limit == 0:
+            limit = 100  # default limit when not specified
+        spec = {
+            "id": bench_id,
+            "limit": limit,
+            "builder": _BENCHMARK_DEFS[bench_id]["builder"],
+        }
+        postprocess = _BENCHMARK_DEFS[bench_id].get("postprocess")
+        if postprocess:
+            spec["postprocess"] = postprocess
+        specs.append(spec)
 
     return specs
 
@@ -727,21 +746,11 @@ def main():
     ap.add_argument("--disable-thinking", action="store_true", help="Set chat_template_kwargs.enable_thinking=false")
     ap.add_argument("--timeout", type=int, default=None, help="request timeout seconds (per call)")
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--limit-eustrivia", type=int, default=100)
-    ap.add_argument("--limit-xnli", type=int, default=100)
-    ap.add_argument("--limit-bglue-qnli", type=int, default=100)
-    ap.add_argument("--enable-b4-template", action="store_true", help="Enable Benchmark-4 onboarding template hook")
-    ap.add_argument("--limit-b4-template", type=int, default=0, help="Sample limit for Benchmark-4 template")
-    ap.add_argument("--enable-b5-template", action="store_true", help="Enable Benchmark-5 onboarding template hook")
-    ap.add_argument("--limit-b5-template", type=int, default=0, help="Sample limit for Benchmark-5 template")
-    ap.add_argument("--enable-b6-template", action="store_true", help="Enable Benchmark-6 onboarding template hook")
-    ap.add_argument("--limit-b6-template", type=int, default=0, help="Sample limit for Benchmark-6 template")
-    ap.add_argument("--enable-latxa-eusexams", action="store_true", help="Enable LatxaEval EusExams benchmark")
-    ap.add_argument("--limit-latxa-eusexams", type=int, default=0, help="Sample limit for LatxaEval EusExams")
-    ap.add_argument("--enable-latxa-eusproficiency", action="store_true", help="Enable LatxaEval EusProficiency benchmark")
-    ap.add_argument("--limit-latxa-eusproficiency", type=int, default=0, help="Sample limit for LatxaEval EusProficiency")
-    ap.add_argument("--enable-latxa-eusreading", action="store_true", help="Enable LatxaEval EusReading benchmark")
-    ap.add_argument("--limit-latxa-eusreading", type=int, default=0, help="Sample limit for LatxaEval EusReading")
+    ap.add_argument("--benchmark", action="append", default=None, metavar="FAMILY/NAME[/LIMIT]",
+                    help="Benchmarks to evaluate. Format: FAMILY/NAME or FAMILY/NAME/LIMIT. "
+                         "Comma-separate multiple: --benchmark EusTrivia/200,BasqueGLUE_bec/50. "
+                         "Repeat flag for more: --benchmark A/B --benchmark C/D/30. "
+                         "Defaults: EusTrivia,XNLIeu,BasqueGLUE_qnli (limit=100 each)")
     ap.add_argument("--out", default="eval/results.json")
     args = ap.parse_args()
 

@@ -3,6 +3,7 @@
 
 Examples:
   uv run evaleu.py eval --model latxa-qwen3-vl-4b
+  uv run evaleu.py eval --model latxa-qwen3-vl-4b --benchmark BasqueGLUE_bec/50
   uv run evaleu.py eval --all
   uv run evaleu.py summarize
   uv run evaleu.py build
@@ -86,15 +87,11 @@ def add_common_eval_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--no-build", action="store_true", help="Do not run site build step")
     p.add_argument("--disable-thinking", action="store_true", help="Forward --disable-thinking to runner (chat_template_kwargs.enable_thinking=false)")
 
-    p.add_argument("--limit-eustrivia", type=int, default=80)
-    p.add_argument("--limit-xnli", type=int, default=80)
-    p.add_argument("--limit-bglue-qnli", type=int, default=80)
-    p.add_argument("--limit-bglue-bec", type=int, default=80)
-    p.add_argument("--limit-bglue-wic", type=int, default=80)
-    p.add_argument("--limit-bglue-intent", type=int, default=80)
-    p.add_argument("--limit-latxa-eusexams", type=int, default=80)
-    p.add_argument("--limit-latxa-eusproficiency", type=int, default=80)
-    p.add_argument("--limit-latxa-eusreading", type=int, default=80)
+    p.add_argument("--benchmark", action="append", default=None, metavar="FAMILY/NAME[/LIMIT]",
+                   help="Benchmarks to evaluate. Format: FAMILY/NAME or FAMILY/NAME/LIMIT. "
+                        "Comma-separate multiple: --benchmark EusTrivia/200,BasqueGLUE_bec/50. "
+                        "Repeat flag for more: --benchmark A --benchmark B/30. "
+                        "Defaults: EusTrivia,XNLIeu,BasqueGLUE_qnli (limit=80 each)")
 
 
 def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
@@ -116,33 +113,13 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
             model_id,
             "--seed",
             seed,
-            "--limit-eustrivia",
-            str(args.limit_eustrivia),
-            "--limit-xnli",
-            str(args.limit_xnli),
-            "--limit-bglue-qnli",
-            str(args.limit_bglue_qnli),
-            "--enable-b4-template",
-            "--limit-b4-template",
-            str(args.limit_bglue_bec),
-            "--enable-b5-template",
-            "--limit-b5-template",
-            str(args.limit_bglue_wic),
-            "--enable-b6-template",
-            "--limit-b6-template",
-            str(args.limit_bglue_intent),
-            "--enable-latxa-eusexams",
-            "--limit-latxa-eusexams",
-            str(args.limit_latxa_eusexams),
-            "--enable-latxa-eusproficiency",
-            "--limit-latxa-eusproficiency",
-            str(args.limit_latxa_eusproficiency),
-            "--enable-latxa-eusreading",
-            "--limit-latxa-eusreading",
-            str(args.limit_latxa_eusreading),
             "--out",
             str(out_file),
         ]
+
+        if args.benchmark:
+            for bm_spec in args.benchmark:
+                cmd += ["--benchmark", bm_spec]
 
         if model_id == "qwen3.5-27b":
             cmd += ["--max-tokens", "4096", "--timeout", "300"]
