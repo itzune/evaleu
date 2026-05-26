@@ -13,6 +13,7 @@ eval/results_*.json
 eval/.run_status/
 eval/.cache/
 eval/*_seed*.json
+eval/*~  # timestamped backups from --force / --merge
 eval/run.log
 !eval/summary.json
 

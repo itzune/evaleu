@@ -4,11 +4,31 @@ import json
 import os
 import random
 import re
+import shutil
 import sys
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
+
+
+# Suffix for backup files created before --force/--merge operations.
+BACKUP_SUFFIX = "~"
+
+
+def _backup_file(path: Path) -> Path | None:
+    """Backup a file by copying it to <path>.bak.<iso-timestamp>~.
+
+    Returns the backup path if a backup was created, None otherwise.
+    """
+    if not path.exists():
+        return None
+    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    backup = path.with_suffix(f"{path.suffix}.bak.{ts}{BACKUP_SUFFIX}")
+    shutil.copy2(path, backup)
+    print(f"[backup] {path} → {backup}")
+    return backup
 
 import requests
 from datasets import load_dataset, get_dataset_config_names
@@ -583,6 +603,7 @@ def main():
 
     # Merge into existing results if --merge and file exists
     if args.merge and out_path.exists():
+        _backup_file(out_path)
         existing = json.loads(out_path.read_text(encoding="utf-8"))
         existing_bms = set(item["bench"] for item in existing.get("items", []))
         new_bms = set(item["bench"] for item in out["items"])

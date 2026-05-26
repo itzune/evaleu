@@ -30,6 +30,24 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+# Suffix for backup files created before --force/--merge operations.
+BACKUP_SUFFIX = "~"
+
+
+def _backup_file(path: Path) -> Path | None:
+    """Backup a file by copying it to <path>.bak.<iso-timestamp>~.
+
+    Returns the backup path if a backup was created, None otherwise.
+    """
+    if not path.exists():
+        return None
+    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    backup = path.with_suffix(f"{path.suffix}.bak.{ts}{BACKUP_SUFFIX}")
+    shutil.copy2(path, backup)
+    print(f"[backup] {path} → {backup}")
+    return backup
+
+
 ROOT = Path(__file__).resolve().parent
 MODEL_CARDS_PATH = ROOT / "site" / "model_cards.json"
 
@@ -133,6 +151,7 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
         # When --force and the file already exists, always use --merge to
         # preserve previously evaluated benchmarks (avoids data loss).
         if out_file.exists() and args.force:
+            _backup_file(out_file)
             cmd.append("--merge")
 
         if args.benchmark:
