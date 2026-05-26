@@ -522,6 +522,7 @@ def main():
                          "Repeat flag for more: --benchmark A/B --benchmark C/D/30. "
                          "Defaults: EusTrivia,XNLIeu,BasqueGLUE_qnli (limit=100 each)")
     ap.add_argument("--out", default="eval/results.json")
+    ap.add_argument("--merge", action="store_true", help="Merge into existing --out file instead of overwriting (skips benchmarks already present)")
     args = ap.parse_args()
 
     base_url = _resolve_base_url(args.base_url)
@@ -579,6 +580,46 @@ def main():
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Merge into existing results if --merge and file exists
+    if args.merge and out_path.exists():
+        existing = json.loads(out_path.read_text(encoding="utf-8"))
+        existing_bms = set(item["bench"] for item in existing.get("items", []))
+        new_bms = set(item["bench"] for item in out["items"])
+        overlap = existing_bms & new_bms
+        if overlap:
+            print(f"[merge] Skipping {len(overlap)} already-present benchmark(s): {sorted(overlap)}")
+        # Only keep new benchmarks
+        new_items = [item for item in out["items"] if item["bench"] not in existing_bms]
+        if not new_items:
+            print(f"[merge] All benchmarks already present; nothing new to add.")
+            return
+        # Merge items and re-aggregate
+        all_items = existing["items"] + new_items
+        preds_merged = [
+            Pred(p["bench"], p["id"], p["answer"], p.get("gold"), p.get("metrics", {}))
+            for p in all_items
+        ]
+        summary_merged = aggregate(preds_merged)
+        merged_limits = {**existing.get("limits", {}), **out.get("limits", {})}
+        out = {
+            **existing,
+            **summary_merged,
+            "limits": merged_limits,
+            "items": [
+                {
+                    "bench": p.bench,
+                    "id": p.item_id,
+                    "answer": p.answer,
+                    "gold": p.gold,
+                    "metrics": p.metrics,
+                }
+                for p in preds_merged
+            ],
+        }
+        print(f"[merge] Added {len(new_items)} items from {len(new_bms - overlap)} new benchmark(s).")
+        print(f"[merge] Total: {out['n_items']} items across {len(out['by_benchmark'])} benchmarks.")
+
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print("\n=== SUMMARY ===")

@@ -81,7 +81,7 @@ def add_common_eval_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--out-dir", default="eval", help="Directory for per-seed outputs + summary.json")
     p.add_argument("--summary", default=None, help="Summary output path (default: <out-dir>/summary.json)")
     p.add_argument("--site-data", default="site/data.json", help="Site payload output path")
-    p.add_argument("--force", action="store_true", help="Re-run even if output json already exists")
+    p.add_argument("--force", action="store_true", help="Re-run even if output json already exists; merges new benchmarks instead of overwriting")
     p.add_argument("--python", default=default_python(), help="Python interpreter for underlying scripts")
     p.add_argument("--no-summarize", action="store_true", help="Do not run summarize step")
     p.add_argument("--no-build", action="store_true", help="Do not run site build step")
@@ -122,6 +122,10 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
             "--out",
             str(out_file),
         ]
+
+        # When --force and file exists with --benchmark flags, merge instead of overwrite
+        if out_file.exists() and args.force and args.benchmark:
+            cmd.append("--merge")
 
         if args.benchmark:
             for bm_spec in args.benchmark:
