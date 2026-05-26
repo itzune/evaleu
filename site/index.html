@@ -318,15 +318,135 @@
 
     .protocol-table td:first-child { white-space: nowrap; }
 
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .skill-card {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+      width: 100%;
+    }
+
+    .skill-card:hover {
+      border-color: rgba(124,140,255,0.62);
+      background: rgba(124,140,255,0.09);
+      transform: translateY(-1px);
+    }
+
+    .skill-card.active {
+      border-color: rgba(124,140,255,0.85);
+      background: rgba(124,140,255,0.14);
+      box-shadow: 0 0 0 1px rgba(124,140,255,0.35) inset;
+    }
+
+    .skill-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-icon {
+      width: 18px;
+      height: 18px;
+      color: #95a2ff;
+      flex-shrink: 0;
+    }
+
+    .skill-label {
+      color: #b7bfcb;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .skill-winner {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .skill-scoreline {
+      color: #d7deea;
+      font-size: 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+
+    .skill-scoreline .score {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #f4f6f8;
+      font-weight: 600;
+    }
+
+    .skill-view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .skill-view-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #eef2fb;
+      letter-spacing: -0.1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-view-title .skill-icon {
+      width: 20px;
+      height: 20px;
+      color: #95a2ff;
+    }
+
+    .skill-view-desc {
+      color: #9fa9b8;
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    .skill-view-meta {
+      color: #a8b2c2;
+      font-size: 12px;
+    }
+
     @media (max-width: 1040px) {
       .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .chart-grid { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 700px) {
       .wrap { width: min(1240px, 100% - 22px); }
       h1 { font-size: 34px; }
       .meta-grid { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -358,6 +478,38 @@
         </table>
       </div>
       <div class="caption" id="resultsCaption">Accuracy reported as mean ± std across random seeds.</div>
+    </section>
+
+    <section class="section" id="skillsSection">
+      <div class="section-head">
+        <h2>Skill cards — Best models by skill</h2>
+      </div>
+      <div id="skillsGrid" class="skills-grid"></div>
+      <div class="caption">Winner score and margin over the runner-up for each skill.</div>
+    </section>
+
+    <section class="section" id="skillViewSection">
+      <div class="section-head">
+        <h2>Skill view — Ranking by selected skill</h2>
+      </div>
+      <div class="skill-view-header">
+        <h3 id="skillViewTitle" class="skill-view-title">—</h3>
+        <div id="skillViewMeta" class="skill-view-meta"></div>
+      </div>
+      <div id="skillViewDesc" class="skill-view-desc"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Model</th>
+              <th>Skill score</th>
+              <th>Benchmarks used</th>
+            </tr>
+          </thead>
+          <tbody id="skillViewBody"></tbody>
+        </table>
+      </div>
     </section>
 
     <section class="section">
@@ -492,7 +644,7 @@
       return d.toISOString().slice(0, 10);
     };
 
-    fetch('./data.json').then(r => r.json()).then(data => {
+    fetch('./data.json').then(r => r.json()).then(async data => {
       const rows = data.results || [];
       document.getElementById('title').textContent = data.title || 'Basque LLM Evaluation';
       document.getElementById('subtitle').textContent = 'A public benchmark dashboard for comparing local LLM performance in Basque language tasks.';
@@ -621,6 +773,109 @@
       };
 
       renderResultsTable();
+
+      // ================================================================
+      // Skill cards (after Table 1)
+      // ================================================================
+      const skillsSection = document.getElementById('skillsSection');
+      const skillsGrid = document.getElementById('skillsGrid');
+      const skills = data.skills || [];
+
+      const skillViewSection = document.getElementById('skillViewSection');
+      const skillViewTitle = document.getElementById('skillViewTitle');
+      const skillViewDesc = document.getElementById('skillViewDesc');
+      const skillViewMeta = document.getElementById('skillViewMeta');
+      const skillViewBody = document.getElementById('skillViewBody');
+
+      const skillIcons = {
+        knowledge: 'brain',
+        reading: 'book-open-text',
+        writing: 'pen-line',
+        reasoning: 'puzzle',
+        pragmatics: 'message-circle',
+      };
+
+      const iconSvg = async (iconName) => {
+        const file = skillIcons[iconName];
+        if (!file) return '';
+        const resp = await fetch(`vendor/lucide/${file}.svg`);
+        let svg = await resp.text();
+        svg = svg.replace('stroke="currentColor"', 'stroke="#95a2ff"');
+        svg = svg.replace('<svg', '<svg class="skill-icon"');
+        return svg;
+      };
+
+      const renderSkillView = async (skillId) => {
+        const selected = skills.find(s => s.id === skillId) || skills[0];
+        if (!selected) {
+          skillViewSection.style.display = 'none';
+          return;
+        }
+
+        skillViewSection.style.display = '';
+        const benchLabels = (selected.benchmarks || []).map(bid => benchLabel(bid));
+        const titleIcon = await iconSvg(selected.id);
+        skillViewTitle.innerHTML = `${titleIcon}${esc(selected.label)}`;
+        skillViewDesc.textContent = selected.description || '';
+        skillViewMeta.textContent = `Benchmarks: ${benchLabels.join(', ') || '—'}`;
+
+        const ranking = selected.ranking || [];
+        skillViewBody.innerHTML = ranking.map((row, idx) => {
+          const isWinner = idx === 0;
+          const modelText = isWinner ? `★ ${row.display_name}` : row.display_name;
+          return `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>
+                <div class="model-main ${isWinner ? 'strong' : ''}">${esc(modelText)}</div>
+                <div class="model-sub mono">${esc(row.model_id || '')}</div>
+              </td>
+              <td><span class="mono ${isWinner ? 'strong' : ''}">${esc((row.score ?? 0).toFixed(1))}%</span></td>
+              <td>${esc(`${row.n_benchmarks || 0}/${(selected.benchmarks || []).length || 0}`)}</td>
+            </tr>
+          `;
+        }).join('');
+
+        skillsGrid.querySelectorAll('.skill-card').forEach(el => {
+          el.classList.toggle('active', el.getAttribute('data-skill-id') === selected.id);
+        });
+      };
+
+      if (!skills.length) {
+        skillsSection.style.display = 'none';
+        skillViewSection.style.display = 'none';
+      } else {
+        skillsSection.style.display = '';
+        const cardsHtml = await Promise.all(skills.map(async s => {
+          const w = s.winner || {};
+          const name = (w.display_name || 'N/A').replace(/\s*\(no-thinking\)/gi, '');
+          const score = (typeof w.score === 'number') ? `${w.score.toFixed(1)}%` : '-';
+          const cardIcon = await iconSvg(s.id);
+          return `
+            <button class="skill-card" type="button" data-skill-id="${esc(s.id)}" title="View ${esc(s.label || s.id)} ranking">
+              <div class="skill-card-header">
+                ${cardIcon}
+                <div class="skill-label">${esc(s.label || s.id || 'SKILL')}</div>
+              </div>
+              <div class="skill-winner">★ ${esc(name)}</div>
+              <div class="skill-scoreline">
+                <span class="score">${esc(score)}</span>
+              </div>
+            </button>
+          `;
+        }));
+        skillsGrid.innerHTML = cardsHtml.join('');
+
+        skillsGrid.querySelectorAll('.skill-card').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const sid = btn.getAttribute('data-skill-id');
+            renderSkillView(sid);
+            skillViewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+
+        renderSkillView(skills[0].id);
+      }
 
       // ================================================================
       // Table 2 — Translation results

@@ -143,6 +143,40 @@ BENCH_LABELS = {
 }
 
 
+SKILL_DEFS = [
+    {
+        "id": "knowledge",
+        "label": "KNOWLEDGE",
+        "description": "What the model knows — facts, culture, exams",
+        "benchmarks": ["EusTrivia", "MMLU_eu", "BertaQA_eu", "LatxaEval_eusexams"],
+    },
+    {
+        "id": "reading",
+        "label": "READING",
+        "description": "How well the model understands text",
+        "benchmarks": ["XNLIeu", "LatxaEval_eusreading", "BasqueGLUE_qnli"],
+    },
+    {
+        "id": "writing",
+        "label": "WRITING",
+        "description": "Basque proficiency and usage",
+        "benchmarks": ["LatxaEval_eusproficiency"],
+    },
+    {
+        "id": "reasoning",
+        "label": "REASONING",
+        "description": "Logic, math, and disambiguation",
+        "benchmarks": ["MGSM_eu", "BasqueGLUE_wic", "BasqueGLUE_bec"],
+    },
+    {
+        "id": "pragmatics",
+        "label": "PRAGMATICS",
+        "description": "Intent and real-world language use",
+        "benchmarks": ["BasqueGLUE_intent"],
+    },
+]
+
+
 def mean(xs):
     vals = [float(x) for x in xs if x is not None]
     return (sum(vals) / len(vals)) if vals else 0.0
@@ -268,6 +302,42 @@ def main():
 
     rows.sort(key=lambda x: x["overall_accuracy"], reverse=True)
 
+    skills = []
+    rows_by_model = {r["model_id"]: r for r in rows}
+    for sd in SKILL_DEFS:
+        skill_benchmarks = [b for b in sd["benchmarks"] if b in benchmark_ids]
+        ranking = []
+        for r in rows:
+            by_b = r.get("by_benchmark", {})
+            vals = []
+            for bid in skill_benchmarks:
+                acc = ((by_b.get(bid) or {}).get("accuracy"))
+                if acc is not None and acc > 0:
+                    vals.append(float(acc) * 100.0)
+            if vals:
+                ranking.append({
+                    "model_id": r["model_id"],
+                    "display_name": r["display_name"],
+                    "score": mean(vals),
+                    "n_benchmarks": len(vals),
+                })
+
+        ranking.sort(key=lambda x: x["score"], reverse=True)
+        winner = ranking[0] if ranking else None
+        runner_up = ranking[1] if len(ranking) > 1 else None
+        margin = ((winner["score"] - runner_up["score"]) if (winner and runner_up) else 0.0)
+
+        skills.append({
+            "id": sd["id"],
+            "label": sd["label"],
+            "description": sd["description"],
+            "benchmarks": skill_benchmarks,
+            "winner": winner,
+            "runner_up": runner_up,
+            "margin": margin,
+            "ranking": ranking,
+        })
+
     benchmark_label_list = ", ".join([BENCH_LABELS.get(b["id"], b["id"]) for b in benchmark_defs])
     n_items_per_model = 80 * len(benchmark_defs)
 
@@ -298,6 +368,7 @@ def main():
             ],
         },
         "results": rows,
+        "skills": skills,
     }
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
