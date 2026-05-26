@@ -528,38 +528,7 @@
     </section>
 
     <section class="section" id="translationSection">
-      <div class="section-head">
-        <h2>Table 2. Translation results (FLORES)</h2>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr id="transHeadRow">
-              <th>Model</th>
-              <th>EU→EN</th>
-              <th>EN→EU</th>
-              <th>EU→ES</th>
-              <th>ES→EU</th>
-            </tr>
-          </thead>
-          <tbody id="transBody"></tbody>
-        </table>
-      </div>
-      <div class="caption">chrF ± std / BLEU ± std. Only models with translation evaluations are shown.</div>
-    </section>
-
-    <section class="section" id="translationFiguresSection">
-      <h2>Figures — Translation</h2>
-      <div class="chart-grid">
-        <div class="plot heatmap-plot">
-          <h3>Figure 3. Translation heatmap (chrF / BLEU)</h3>
-          <div class="table-wrap">
-            <table id="transHeatmap" class="heatmap"></table>
-          </div>
-          <div class="caption">Cell color is scaled by score within each metric (chrF and BLEU independently). Higher is better.</div>
-        </div>
-      </div>
-    </section>
+      <h2>Figure 3. Translation heatmap (chrF / BLEU)</h2>
 
     <section class="section">
       <h2>Figures — Timeline</h2>
@@ -895,45 +864,6 @@
         return avgChrf(b) - avgChrf(a);
       });
 
-      const transBody = document.getElementById('transBody');
-      const transSection = document.getElementById('translationSection');
-
-      if (transModels.length === 0) {
-        transSection.style.display = 'none';
-      } else {
-        transSection.style.display = '';
-        const transHeadRow = document.getElementById('transHeadRow');
-        const fmtTransMetric = (chrf, chrfStd, bleu, bleuStd) => {
-          const c = (chrf || 0).toFixed(1);
-          const cs = (chrfStd || 0).toFixed(1);
-          const b = (bleu || 0).toFixed(1);
-          const bs = (bleuStd || 0).toFixed(1);
-          return `<span title="chrF ${c} ± ${cs} / BLEU ${b} ± ${bs}">chrF ${c} ± ${cs}</span>`;
-        };
-
-        transBody.innerHTML = transModels.map(r => {
-          const bm = r.by_benchmark || {};
-          const cells = TRANS_BENCHES.map(bid => {
-            const m = bm[bid] || {};
-            // site data uses flat keys (chrf, bleu) for non-aggregated; summary uses _mean/_std
-            const chrf = m.chrf != null ? m.chrf : (m.chrf_mean || 0);
-            const chrfStd = m.chrf_std || 0;
-            const bleu = m.bleu != null ? m.bleu : (m.bleu_mean || 0);
-            const bleuStd = m.bleu_std || 0;
-            return `<td>${fmtTransMetric(chrf, chrfStd, bleu, bleuStd)}</td>`;
-          }).join('');
-          return `
-            <tr>
-              <td>
-                <div class="model-main">${esc(r.display_name)}</div>
-                <div class="model-sub mono">${esc(r.model_id)}</div>
-              </td>
-              ${cells}
-            </tr>
-          `;
-        }).join('');
-      }
-
       // ================================================================
       // Protocol table
       // ================================================================
@@ -1209,8 +1139,8 @@
 
       addLegendHighlight(window.__radarChart);
 
-      // Figures 3 & 4 — Translation radars (chrF + BLEU)
-      const transFigSection = document.getElementById('translationFiguresSection');
+      // Translation heatmap (chrF + BLEU)
+      const transFigSection = document.getElementById('translationSection');
       if (transModels.length > 0) {
         transFigSection.style.display = '';
         const transDirLabels = ['EU→EN', 'EN→EU', 'EU→ES', 'ES→EU'];
