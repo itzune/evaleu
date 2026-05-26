@@ -1865,6 +1865,26 @@
               "n": 80,
               "accuracy": 0.8625,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 28.68035104303751,
+              "chrf": 58.807389067643
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 17.962497063785257,
+              "chrf": 57.87034823407005
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 18.464989688941216,
+              "chrf": 50.288873733204966
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 11.729207463625608,
+              "chrf": 51.697684843822536
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3-vl-32b-q8_seed42.json"
@@ -1917,6 +1937,26 @@
               "n": 80,
               "accuracy": 0.8375,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 28.129654017067743,
+              "chrf": 59.61159552197735
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 15.022548898511214,
+              "chrf": 56.347461368618326
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 19.51861164031869,
+              "chrf": 50.4883555045228
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 11.009050966110921,
+              "chrf": 52.15731659814677
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3-vl-32b-q8_seed123.json"
@@ -1969,6 +2009,26 @@
               "n": 80,
               "accuracy": 0.875,
               "coverage": 0.9875
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 29.42904620060201,
+              "chrf": 60.9966469126197
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 15.473043130957757,
+              "chrf": 56.17591729125991
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 19.005783677387136,
+              "chrf": 48.67824447774749
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 11.191191210554418,
+              "chrf": 52.127450588452476
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3-vl-32b-q8_seed777.json"
@@ -2036,6 +2096,34 @@
           "accuracy_std": 0.019094065395649326,
           "coverage_mean": 0.9958333333333332,
           "coverage_std": 0.007216878364870297,
+          "n": 3
+        },
+        "FloresTranslation_eu_en": {
+          "bleu_mean": 28.746350420235757,
+          "bleu_std": 0.6522054507595011,
+          "chrf_mean": 59.80521050074668,
+          "chrf_std": 1.1073967436970795,
+          "n": 3
+        },
+        "FloresTranslation_en_eu": {
+          "bleu_mean": 16.152696364418073,
+          "bleu_std": 1.5834361976219165,
+          "chrf_mean": 56.79790896464942,
+          "chrf_std": 0.9327118164608866,
+          "n": 3
+        },
+        "FloresTranslation_eu_es": {
+          "bleu_mean": 18.996461668882347,
+          "bleu_std": 0.5268728299960445,
+          "chrf_mean": 49.81849123849175,
+          "chrf_std": 0.9925070532811651,
+          "n": 3
+        },
+        "FloresTranslation_es_eu": {
+          "bleu_mean": 11.30981654676365,
+          "bleu_std": 0.37444668915777585,
+          "chrf_mean": 51.99415067680726,
+          "chrf_std": 0.2571808453778392,
           "n": 3
         }
       }
