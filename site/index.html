@@ -196,6 +196,11 @@
 
     .strong { font-weight: 600; color: #ffffff; }
 
+    .best-cell {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
     .caption {
       margin-top: 10px;
       color: #9ba4b3;
@@ -710,7 +715,7 @@
           const familyAndBenchCells = clsFamilyDefs.map(fd => {
             const fam = byFam[fd.id] || {};
             const famCell = isBest(fam.accuracy, bestByFamily[fd.id])
-              ? `<td><span class="strong">${metricCell(fam.accuracy || 0, fam.accuracy_std || 0)}</span></td>`
+              ? `<td><span class="best-cell">${metricCell(fam.accuracy || 0, fam.accuracy_std || 0)}</span></td>`
               : `<td>${metricCell(fam.accuracy || 0, fam.accuracy_std || 0)}</td>`;
 
             if (!expandedFamilies.has(fd.id)) return famCell;
@@ -719,7 +724,7 @@
               const bm = byBench[bid] || {};
               const inner = metricCell(bm.accuracy || 0, bm.accuracy_std || 0);
               return isBest(bm.accuracy, bestByBench[bid])
-                ? `<td><span class="strong">${inner}</span></td>`
+                ? `<td><span class="best-cell">${inner}</span></td>`
                 : `<td>${inner}</td>`;
             }).join('');
 
@@ -737,7 +742,7 @@
                 <div class="model-sub mono">${esc(r.model_id)}</div>
               </td>
               <td>${quantLabels.map(q => `<span class="pill">${esc(q)}</span>`).join('')}</td>
-              <td>${isBest(r.overall_accuracy, bestOverall) ? `<span class="strong">${metricCell(r.overall_accuracy, r.overall_accuracy_std)}</span>` : metricCell(r.overall_accuracy, r.overall_accuracy_std)}</td>
+              <td>${isBest(r.overall_accuracy, bestOverall) ? `<span class="best-cell">${metricCell(r.overall_accuracy, r.overall_accuracy_std)}</span>` : metricCell(r.overall_accuracy, r.overall_accuracy_std)}</td>
               ${familyAndBenchCells}
               <td>${esc(clsN)}</td>
             </tr>
