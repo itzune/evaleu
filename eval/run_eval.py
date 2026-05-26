@@ -617,10 +617,16 @@ def main():
             return
         # Merge items and re-aggregate
         all_items = existing["items"] + new_items
-        preds_merged = [
-            Pred(p["bench"], p["id"], p["answer"], p.get("gold"), p.get("metrics", {}))
-            for p in all_items
-        ]
+        def _build_pred(item: dict) -> Pred:
+            metrics = item.get("metrics", {})
+            if not metrics and "ok" in item:
+                # Old-format items stored ok/accuracy at top level (not in metrics dict).
+                metrics = {"accuracy": 1.0 if item["ok"] else 0.0}
+            if "pred_label" in item and "pred_label" not in metrics:
+                metrics = {**metrics, "pred_label": item["pred_label"]}
+            return Pred(item["bench"], item["id"], item["answer"], item.get("gold"), metrics)
+
+        preds_merged = [_build_pred(p) for p in all_items]
         summary_merged = aggregate(preds_merged)
         merged_limits = {**existing.get("limits", {}), **out.get("limits", {})}
         out = {
