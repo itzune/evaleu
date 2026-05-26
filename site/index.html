@@ -446,13 +446,6 @@
       .chart-grid { grid-template-columns: 1fr; }
       .skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-
-    @media (max-width: 700px) {
-      .wrap { width: min(1240px, 100% - 22px); }
-      h1 { font-size: 34px; }
-      .meta-grid { grid-template-columns: 1fr; }
-      .skills-grid { grid-template-columns: 1fr; }
-    }
   </style>
 </head>
 <body>
@@ -569,6 +562,35 @@
           <tbody id="protocolBody"></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="section">
+      <h2>Methodology</h2>
+      <div class="table-wrap">
+        <table class="protocol-table">
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Models evaluated</td><td>11</td></tr>
+            <tr><td>Classification benchmarks</td><td>12 (BasqueGLUE, LatxaEval, EusTrivia, XNLIeu, MMLU, BertaQA, MGSM)</td></tr>
+            <tr><td>Translation benchmarks</td><td>4 (FLORES: EU↔EN, EU↔ES)</td></tr>
+            <tr><td>Items per benchmark</td><td class="mono">80</td></tr>
+            <tr><td>Classification items per model</td><td class="mono">960 (12 × 80)</td></tr>
+            <tr><td>Translation items per model</td><td class="mono">320 (4 × 80)</td></tr>
+            <tr><td>Seeds</td><td class="mono">42, 123, 777</td></tr>
+            <tr><td>Evaluations per model (classification)</td><td>3 seeds × 80 items = 240 per benchmark</td></tr>
+            <tr><td>Classification metric</td><td>Accuracy</td></tr>
+            <tr><td>Translation metric</td><td>chrF / BLEU</td></tr>
+            <tr><td>Averaging</td><td>Equal-weight mean across benchmarks and seeds</td></tr>
+            <tr><td>DeepSeek V4 Pro</td><td>Additional temperature sweep (0.3 / 0.7) per seed, totalling 6 runs</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="caption">Scores are computed as equal-weight averages across benchmarks within a family or skill. Error bars show ±1 standard deviation across seeds. Models are sorted by overall classification accuracy. Translation benchmarks are reported separately due to different metrics (chrF/BLEU).</div>
     </section>
   </div>
 
