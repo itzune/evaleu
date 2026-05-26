@@ -848,6 +848,7 @@
         skillsSection.style.display = '';
         const cardsHtml = await Promise.all(skills.map(async s => {
           const w = s.winner || {};
+          const name = (w.display_name || 'N/A').replace(/\s*\(no-thinking\)/gi, '');
           const score = (typeof w.score === 'number') ? `${w.score.toFixed(1)}%` : '-';
           const cardIcon = await iconSvg(s.id);
           return `
@@ -856,7 +857,7 @@
                 ${cardIcon}
                 <div class="skill-label">${esc(s.label || s.id || 'SKILL')}</div>
               </div>
-              <div class="skill-winner">★ ${esc(w.display_name || 'N/A')}</div>
+              <div class="skill-winner">★ ${esc(name)}</div>
               <div class="skill-scoreline">
                 <span class="score">${esc(score)}</span>
               </div>
