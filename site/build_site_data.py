@@ -116,6 +116,13 @@ ALL_BENCHMARKS = [
         "metric": "Accuracy",
         "labels": "3 options (A/B/C)",
     },
+    {
+        "id": "MGSM_eu",
+        "family": "MathReasoning",
+        "task": "Grade school math word problems in Basque (free-form generation, exact numeric match)",
+        "metric": "Accuracy",
+        "labels": "free-form — numeric answer extracted from CoT output",
+    },
 ]
 
 BENCH_LABELS = {
@@ -132,6 +139,7 @@ BENCH_LABELS = {
     "FloresTranslation_es_eu": "FLORES ES→EU",
     "MMLU_eu": "MMLU EU",
     "BertaQA_eu": "BertaQA EU",
+    "MGSM_eu": "MGSM EU",
 }
 
 

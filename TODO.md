@@ -10,8 +10,8 @@
 
 ## Additional Basque Benchmarks to Add (pending)
 
-- [ ] **Math reasoning in Basque**
-  - Candidate: `mgsm_native_cot_eu`
+- [x] **Math reasoning in Basque**
+  - [x] `mgsm_native_cot_eu` → implemented as `MGSM_eu` (HiTZ/MGSM-eu, 3-shot CoT)
 - [ ] **Reading comprehension in Basque**
   - Candidate: `xstorycloze_eu`
   - Candidate: `belebele_eus_Latn`
