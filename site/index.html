@@ -393,11 +393,6 @@
       font-weight: 600;
     }
 
-    .skill-scoreline .margin {
-      color: #95a2ff;
-      font-weight: 600;
-    }
-
     .skill-view-header {
       display: flex;
       justify-content: space-between;
@@ -787,20 +782,24 @@
       const skillViewBody = document.getElementById('skillViewBody');
 
       const skillIcons = {
-        knowledge: 'brain.svg',
-        reading: 'book-open-text.svg',
-        writing: 'pen-line.svg',
-        reasoning: 'puzzle.svg',
-        pragmatics: 'message-circle.svg',
+        knowledge: 'brain',
+        reading: 'book-open-text',
+        writing: 'pen-line',
+        reasoning: 'puzzle',
+        pragmatics: 'message-circle',
       };
 
-      const iconSvg = (iconName) => {
+      const iconSvg = async (iconName) => {
         const file = skillIcons[iconName];
         if (!file) return '';
-        return `<img class="skill-icon" src="vendor/lucide/${esc(file)}" alt="" aria-hidden="true" />`;
+        const resp = await fetch(`vendor/lucide/${file}.svg`);
+        let svg = await resp.text();
+        svg = svg.replace('stroke="currentColor"', 'stroke="#95a2ff"');
+        svg = svg.replace('<svg', '<svg class="skill-icon"');
+        return svg;
       };
 
-      const renderSkillView = (skillId) => {
+      const renderSkillView = async (skillId) => {
         const selected = skills.find(s => s.id === skillId) || skills[0];
         if (!selected) {
           skillViewSection.style.display = 'none';
@@ -809,7 +808,8 @@
 
         skillViewSection.style.display = '';
         const benchLabels = (selected.benchmarks || []).map(bid => benchLabel(bid));
-        skillViewTitle.innerHTML = `${iconSvg(selected.id)}${esc(selected.label)}`;
+        const titleIcon = await iconSvg(selected.id);
+        skillViewTitle.innerHTML = `${titleIcon}${esc(selected.label)}`;
         skillViewDesc.textContent = selected.description || '';
         skillViewMeta.textContent = `Benchmarks: ${benchLabels.join(', ') || '—'}`;
 
@@ -840,27 +840,24 @@
         skillViewSection.style.display = 'none';
       } else {
         skillsSection.style.display = '';
-        skillsGrid.innerHTML = skills.map(s => {
+        const cardsHtml = await Promise.all(skills.map(async s => {
           const w = s.winner || {};
-          const r = s.runner_up || {};
           const score = (typeof w.score === 'number') ? `${w.score.toFixed(1)}%` : '-';
-          const margin = (typeof s.margin === 'number') ? `+${s.margin.toFixed(1)}%` : '+0.0%';
-          const over = r.display_name ? `over ${r.display_name}` : 'over —';
+          const cardIcon = await iconSvg(s.id);
           return `
             <button class="skill-card" type="button" data-skill-id="${esc(s.id)}" title="View ${esc(s.label || s.id)} ranking">
               <div class="skill-card-header">
-                ${iconSvg(s.id)}
+                ${cardIcon}
                 <div class="skill-label">${esc(s.label || s.id || 'SKILL')}</div>
               </div>
               <div class="skill-winner">★ ${esc(w.display_name || 'N/A')}</div>
               <div class="skill-scoreline">
                 <span class="score">${esc(score)}</span>
-                <span class="margin">${esc(margin)}</span>
-                <span>${esc(over)}</span>
               </div>
             </button>
           `;
-        }).join('');
+        }));
+        skillsGrid.innerHTML = cardsHtml.join('');
 
         skillsGrid.querySelectorAll('.skill-card').forEach(btn => {
           btn.addEventListener('click', () => {
