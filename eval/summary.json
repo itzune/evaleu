@@ -3910,15 +3910,40 @@
       }
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
-      "n_seeds": 3,
+      "n_seeds": 6,
       "seeds": [
         42,
+        42,
         123,
+        123,
+        777,
         777
       ],
-      "overall_mean": 0.6944444444444443,
-      "overall_std": 0.025496610764841388,
+      "overall_mean": 0.7522222222222221,
+      "overall_std": 0.06555202438700554,
       "runs": [
+        {
+          "seed": 42,
+          "overall": 0.8066666666666666,
+          "by_benchmark": {
+            "BertaQA_eu": {
+              "n": 100,
+              "accuracy": 0.75,
+              "coverage": 1.0
+            },
+            "MGSM_eu": {
+              "n": 100,
+              "accuracy": 0.84,
+              "coverage": 1.0
+            },
+            "MMLU_eu": {
+              "n": 100,
+              "accuracy": 0.83,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/deepseek-ai_DeepSeek-V4-Pro_seed42.json"
+        },
         {
           "seed": 42,
           "overall": 0.7124999999999999,
@@ -3990,6 +4015,28 @@
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/deepseekv4pro_seed42.json"
+        },
+        {
+          "seed": 123,
+          "overall": 0.8033333333333333,
+          "by_benchmark": {
+            "BertaQA_eu": {
+              "n": 100,
+              "accuracy": 0.74,
+              "coverage": 1.0
+            },
+            "MGSM_eu": {
+              "n": 100,
+              "accuracy": 0.86,
+              "coverage": 1.0
+            },
+            "MMLU_eu": {
+              "n": 100,
+              "accuracy": 0.81,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/deepseek-ai_DeepSeek-V4-Pro_seed123.json"
         },
         {
           "seed": 123,
@@ -4065,6 +4112,28 @@
         },
         {
           "seed": 777,
+          "overall": 0.82,
+          "by_benchmark": {
+            "BertaQA_eu": {
+              "n": 100,
+              "accuracy": 0.84,
+              "coverage": 1.0
+            },
+            "MGSM_eu": {
+              "n": 100,
+              "accuracy": 0.82,
+              "coverage": 1.0
+            },
+            "MMLU_eu": {
+              "n": 100,
+              "accuracy": 0.8,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/deepseek-ai_DeepSeek-V4-Pro_seed777.json"
+        },
+        {
+          "seed": 777,
           "overall": 0.6652777777777777,
           "by_benchmark": {
             "EusTrivia": {
@@ -4137,6 +4206,27 @@
         }
       ],
       "benchmarks": {
+        "BertaQA_eu": {
+          "accuracy_mean": 0.7766666666666667,
+          "accuracy_std": 0.05507570547286101,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
+        "MGSM_eu": {
+          "accuracy_mean": 0.84,
+          "accuracy_std": 0.020000000000000018,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
+        "MMLU_eu": {
+          "accuracy_mean": 0.8133333333333335,
+          "accuracy_std": 0.01527525231651942,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
         "EusTrivia": {
           "accuracy_mean": 0.7583333333333333,
           "accuracy_std": 0.040181878170803965,
@@ -4231,5 +4321,5 @@
       }
     }
   },
-  "n_runs": 42
+  "n_runs": 45
 }
