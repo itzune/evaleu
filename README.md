@@ -30,7 +30,13 @@ uv run evaleu.py eval --model latxa-qwen3-vl-4b --benchmark EusTrivia/200,Basque
 uv run evaleu.py eval --model latxa-qwen3-vl-4b --benchmark EusTrivia --benchmark LatxaEval_eusexams/30
 ```
 
-Available benchmarks: `EusTrivia`, `XNLIeu`, `BasqueGLUE_qnli`, `BasqueGLUE_bec`, `BasqueGLUE_wic`, `BasqueGLUE_intent`, `LatxaEval_eusexams`, `LatxaEval_eusproficiency`, `LatxaEval_eusreading`.
+Available benchmarks: `EusTrivia`, `XNLIeu`, `BasqueGLUE_qnli`, `BasqueGLUE_bec`, `BasqueGLUE_wic`, `BasqueGLUE_intent`, `LatxaEval_eusexams`, `LatxaEval_eusproficiency`, `LatxaEval_eusreading`, `BertaQA_eu`, `MGSM_eu`, `MMLU_eu`, `Belebele_eu`, `FloresTranslation_eu_en`, `FloresTranslation_en_eu`, `FloresTranslation_eu_es`, `FloresTranslation_es_eu`.
+
+### Add a new benchmark to an existing model
+```bash
+uv run evaleu.py eval --model latxa-qwen3-vl-4b --force --benchmark Belebele_eu
+```
+When `--force` is used, existing per-seed files are **merged** (new benchmarks appended) rather than overwritten — previous benchmark results are preserved.
 
 Back-compat shortcut also works:
 ```bash

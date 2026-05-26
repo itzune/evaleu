@@ -113,7 +113,10 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
     for seed in parse_csv(args.seeds):
         out_file = out_dir / f"{_model_slug(model_id)}_seed{seed}.json"
         if out_file.exists() and not args.force:
-            print(f"[skip] exists: {out_file}")
+            if args.benchmark:
+                print(f"[skip] exists: {out_file}  (use --force to add new benchmarks)")
+            else:
+                print(f"[skip] exists: {out_file}")
             continue
 
         cmd = [
@@ -127,8 +130,9 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
             str(out_file),
         ]
 
-        # When --force and file exists with --benchmark flags, merge instead of overwrite
-        if out_file.exists() and args.force and args.benchmark:
+        # When --force and the file already exists, always use --merge to
+        # preserve previously evaluated benchmarks (avoids data loss).
+        if out_file.exists() and args.force:
             cmd.append("--merge")
 
         if args.benchmark:
