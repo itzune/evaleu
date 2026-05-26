@@ -9,16 +9,13 @@
   <style>
     :root {
       --bg: #08090a;
-      --panel: #101214;
-      --panel-soft: #14171b;
+      --panel: #0c0e12;
+      --panel-soft: #101214;
       --text: #f4f6f8;
-      --muted: #a4acb8;
+      --muted: #9ba4b3;
       --line: rgba(255,255,255,0.07);
       --line-soft: rgba(255,255,255,0.05);
       --accent: #7170ff;
-      --green: #22c55e;
-      --red: #f87171;
-      --yellow: #fbbf24;
     }
     * { box-sizing: border-box; }
     body {
@@ -28,7 +25,7 @@
       font-family: Inter, system-ui, -apple-system, sans-serif;
       line-height: 1.45;
     }
-    .wrap { width: min(1100px, 100% - 40px); margin: 0 auto; padding: 34px 0 76px; }
+    .wrap { width: min(1240px, 100% - 40px); margin: 0 auto; padding: 34px 0 76px; }
 
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
@@ -40,85 +37,125 @@
     .hero {
       border: 1px solid var(--line-soft);
       border-radius: 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-      padding: 24px 26px 20px;
-      margin-bottom: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
+      padding: 32px 36px 28px;
+      margin-bottom: 12px;
     }
-    h1 { margin: 0; font-size: 36px; font-weight: 600; letter-spacing: -0.8px; }
+    h1 { margin: 0; font-size: 36px; font-weight: 700; letter-spacing: -0.8px; }
     .model-id-display {
-      font-family: "JetBrains Mono", monospace; font-size: 13px;
-      color: var(--muted); margin-top: 6px;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px; color: var(--muted); margin-top: 8px;
     }
-    .meta-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .meta-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
     .pill {
       display: inline-block; padding: 3px 10px; border-radius: 999px;
       border: 1px solid var(--line); color: #cfd5df; font-size: 12px;
       background: rgba(255,255,255,0.02);
     }
     .pill-accent {
-      border-color: rgba(113,112,255,0.45); color: #c4c3ff;
-      background: rgba(113,112,255,0.08);
+      border-color: rgba(124,140,255,0.45); color: #b7bfff;
+      background: rgba(124,140,255,0.08);
     }
 
-    .description-card {
+    .section {
+      margin-top: 12px;
       border: 1px solid var(--line-soft);
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(113,112,255,0.06), rgba(34,197,94,0.03));
+      border-radius: 10px;
+      background: rgba(255,255,255,0.015);
       padding: 18px 20px;
-      margin-bottom: 16px;
     }
-    .description-card h2 { margin: 0 0 10px; font-size: 15px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
-    .description-text { font-size: 14px; line-height: 1.7; color: #d8deea; }
+    .section-head { margin-bottom: 16px; }
+    .section h2 {
+      margin: 0; font-size: 18px; font-weight: 700;
+      color: #eef2fb; letter-spacing: -0.1px;
+    }
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-icon {
+      width: 18px; height: 18px; flex-shrink: 0;
+    }
+    .section h3 {
+      margin: 0 0 10px; font-size: 14px; font-weight: 600;
+      color: #cfd7e6; letter-spacing: -0.1px;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .caption {
+      margin-top: 10px; color: var(--muted); font-size: 12px;
+    }
+
+    .strong { font-weight: 600; color: #ffffff; }
+
+    /* Description */
+    .description-block {
+      margin-top: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(124,140,255,0.04);
+      padding: 18px 20px;
+    }
+    .description-block h2 {
+      margin: 0 0 10px; font-size: 13px; font-weight: 600;
+      color: #b7bfff; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .description-text {
+      font-size: 14px; line-height: 1.7; color: #d8deea;
+    }
     .verdict-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
     .chip {
       display: inline-flex; align-items: center; gap: 5px;
       padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
     }
-    .chip-good { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
-    .chip-weak { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); color: #fca5a5; }
+    .chip-good { background: rgba(34,197,94,0.10); border: 1px solid rgba(34,197,94,0.25); color: #86efac; }
+    .chip-weak { background: rgba(248,113,113,0.10); border: 1px solid rgba(248,113,113,0.25); color: #fca5a5; }
 
-    .section {
-      margin-top: 16px; border: 1px solid var(--line-soft);
-      border-radius: 12px; background: var(--panel); padding: 16px 18px;
-    }
-    .section h2 { margin: 0 0 14px; font-size: 17px; font-weight: 600; color: #f2f4f7; }
-
-    /* Score grid */
+    /* Score grid — minimalist */
     .score-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 10px;
     }
     .score-card {
       border: 1px solid var(--line-soft);
       border-radius: 10px;
-      background: var(--panel-soft);
-      padding: 12px 14px;
-      position: relative;
-      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    .score-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      border-radius: 10px 10px 0 0;
+    .score-card-label {
+      font-size: 11px; color: #b7bfcb; text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-    .score-card.rank-top::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
-    .score-card.rank-mid::before { background: linear-gradient(90deg, #fbbf24, #fde68a); }
-    .score-card.rank-low::before { background: linear-gradient(90deg, #f87171, #fca5a5); }
-
-    .score-card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
-    .score-card-value { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
-    .score-card.rank-top .score-card-value { color: #4ade80; }
-    .score-card.rank-mid .score-card-value { color: #fde68a; }
-    .score-card.rank-low .score-card-value { color: #fca5a5; }
-
-    .comparison-row {
-      display: flex; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--muted); flex-wrap: wrap;
+    .score-card-value {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 22px; font-weight: 700;
+      color: var(--accent);
     }
-    .cmp { display: inline-flex; align-items: center; gap: 3px; }
-    .cmp-better { color: #4ade80; }
-    .cmp-worse { color: #f87171; }
+    .score-card-sub {
+      font-size: 11px; color: var(--muted);
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .cmp { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; }
+    .cmp-better { color: #86efac; }
+    .cmp-worse { color: #fca5a5; }
     .cmp-neutral { color: var(--muted); }
+
+    /* Translation score card */
+    .trans-label {
+      font-size: 11px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.05em; margin-top: 10px;
+    }
+    .trans-value {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 18px; font-weight: 700; color: var(--text);
+    }
 
     /* Radar chart */
     .chart-wrap {
@@ -126,27 +163,31 @@
     }
 
     /* Ranking bar */
-    .rank-bar-wrap { margin-top: 14px; }
+    .rank-bar-wrap { margin-top: 4px; }
     .rank-bar-item {
       display: grid;
-      grid-template-columns: 180px 1fr 60px;
+      grid-template-columns: 200px 1fr 70px;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 8px;
     }
-    .rank-bar-label { font-size: 12px; color: #d8deea; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .rank-bar-label.is-focus { color: var(--accent); font-weight: 600; }
+    .rank-bar-label {
+      font-size: 12.5px; color: #d4dcea; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .rank-bar-label.is-focus { color: var(--text); font-weight: 600; }
     .rank-bar-track {
       height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
     }
     .rank-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
     .rank-bar-fill.is-focus { background: var(--accent); }
     .rank-bar-fill.is-sota { background: #f59e0b; }
-    .rank-bar-fill.is-other { background: rgba(255,255,255,0.18); }
-    .rank-bar-pct { font-size: 12px; color: var(--muted); text-align: right; }
-    .rank-bar-pct.is-focus { color: var(--accent); font-weight: 600; }
-
-    .mono { font-family: "JetBrains Mono", monospace; font-size: 12px; }
+    .rank-bar-fill.is-other { background: rgba(255,255,255,0.15); }
+    .rank-bar-pct {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px; color: var(--muted); text-align: right;
+    }
+    .rank-bar-pct.is-focus { color: var(--text); font-weight: 600; }
 
     @media (max-width: 700px) {
       h1 { font-size: 26px; }
@@ -165,36 +206,46 @@
     <div class="meta-pills" id="metaPills"></div>
   </section>
 
-  <div class="description-card" id="descriptionCard" style="display:none">
-    <h2>✦ Model assessment</h2>
+  <div class="description-block" id="descriptionCard" style="display:none">
+    <h2>Model assessment</h2>
     <div class="description-text" id="descriptionText"></div>
     <div class="verdict-chips" id="verdictChips"></div>
   </div>
 
   <section class="section">
-    <h2>Score breakdown by benchmark</h2>
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/chart-bar-big.svg" alt="" aria-hidden="true" /> Score breakdown by benchmark</h2>
+    </div>
     <div class="score-grid" id="scoreGrid"></div>
   </section>
 
   <section class="section">
-    <h2>Radar profile — Classification benchmarks</h2>
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/radar.svg" alt="" aria-hidden="true" /> Radar profile — Classification benchmarks</h2>
+    </div>
     <div class="chart-wrap">
       <canvas id="radarCanvas"></canvas>
     </div>
   </section>
 
   <section class="section" id="translationSection" style="display:none">
-    <h2>Translation scores (FLORES)</h2>
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/globe.svg" alt="" aria-hidden="true" /> Translation scores (FLORES)</h2>
+    </div>
     <div class="score-grid" id="translationGrid"></div>
   </section>
 
   <section class="section">
-    <h2>Overall ranking — all models</h2>
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/trophy.svg" alt="" aria-hidden="true" /> Overall ranking — all models</h2>
+    </div>
     <div class="rank-bar-wrap" id="rankBars"></div>
   </section>
 
   <section class="section" id="sizeRankSection">
-    <h2 id="sizeRankTitle">Ranking within size category</h2>
+    <div class="section-head">
+      <h2 class="section-title" id="sizeRankTitle"><img class="section-icon" src="vendor/lucide/trophy.svg" alt="" aria-hidden="true" /> Ranking within size category</h2>
+    </div>
     <div class="rank-bar-wrap" id="sizeRankBars"></div>
   </section>
 </div>
@@ -357,21 +408,20 @@ if (!targetId) {
       const pctScore = (score * 100).toFixed(1);
       const pctSota = (best * 100).toFixed(1);
       const diff = ((score - best) * 100).toFixed(1);
-      const isTop = score >= 0.75;
-      const isMid = score >= 0.55 && score < 0.75;
-      const rankClass = isTop ? 'rank-top' : isMid ? 'rank-mid' : 'rank-low';
       const cmpSota = score >= best - 0.001
-        ? `<span class="cmp cmp-better">⬆ SOTA</span>`
+        ? `<span class="cmp cmp-better">SOTA</span>`
         : `<span class="cmp cmp-worse">${diff}% vs SOTA (${pctSota})</span>`;
       const sotaThisId = data.results?.find(r => ((r.by_benchmark || {})[id] || {}).accuracy === best);
       const sotaName = sotaThisId ? sotaThisId.display_name : '';
 
       scoreGrid.innerHTML += `
-        <div class="score-card ${rankClass}">
+        <div class="score-card">
           <div class="score-card-label">${esc(BENCH_LABELS[id] || id)}</div>
           <div class="score-card-value">${pctScore}%</div>
-          <div class="comparison-row">${cmpSota}</div>
-          ${sotaName && sotaName !== model.display_name ? `<div style="font-size:10px;color:var(--muted);margin-top:3px">Best: ${esc(sotaName)}</div>` : ''}
+          <div class="score-card-sub">
+            ${cmpSota}
+            ${sotaName && sotaName !== model.display_name ? `· Best: ${esc(sotaName)}` : ''}
+          </div>
         </div>`;
     });
 
@@ -421,33 +471,31 @@ if (!targetId) {
         const bleuGap = (bleuBest.bestVal == null) ? null : (bleuBest.bestVal - bleu);
 
         const chrfStatus = chrfGap == null
-          ? '<span class="cmp cmp-neutral">No comparison available</span>'
+          ? '<span class="cmp cmp-neutral">—</span>'
           : Math.abs(chrfGap) < 1e-9
-            ? '<span class="cmp cmp-better">🏆 Best score</span>'
-            : `<span class="cmp cmp-worse">Gap to best: ${chrfGap.toFixed(1)}</span>`;
+            ? '<span class="cmp cmp-better">Best</span>'
+            : `<span class="cmp cmp-worse">−${chrfGap.toFixed(1)} vs best</span>`;
 
         const bleuStatus = bleuGap == null
-          ? '<span class="cmp cmp-neutral">No comparison available</span>'
+          ? '<span class="cmp cmp-neutral">—</span>'
           : Math.abs(bleuGap) < 1e-9
-            ? '<span class="cmp cmp-better">🏆 Best score</span>'
-            : `<span class="cmp cmp-worse">Gap to best: ${bleuGap.toFixed(1)}</span>`;
+            ? '<span class="cmp cmp-better">Best</span>'
+            : `<span class="cmp cmp-worse">−${bleuGap.toFixed(1)} vs best</span>`;
 
         const chrfBestName = chrfBest.bestRow?.display_name;
         const bleuBestName = bleuBest.bestRow?.display_name;
 
         transGrid.innerHTML += `
-          <div class="score-card rank-mid">
+          <div class="score-card">
             <div class="score-card-label">${esc(BENCH_LABELS[id] || id)}</div>
 
-            <div style="font-size:13px;color:var(--muted);margin-top:2px">Your chrF score</div>
-            <div style="font-size:18px;color:#e2e8f0"><strong>${chrf.toFixed(1)}</strong> <span style="font-size:12px;color:var(--muted)">± ${chrfStd.toFixed(1)}</span></div>
-            <div class="comparison-row">${chrfStatus}</div>
-            ${chrfBestName ? `<div style="font-size:11px;color:var(--muted);margin-top:3px">Best model: <span style="color:#dbeafe">${esc(chrfBestName)}</span> (${(chrfBest.bestVal || 0).toFixed(1)})</div>` : ''}
+            <div class="trans-label">chrF</div>
+            <div class="trans-value">${chrf.toFixed(1)} <span class="mono" style="font-size:12px;font-weight:400;color:var(--muted)">± ${chrfStd.toFixed(1)}</span></div>
+            <div class="score-card-sub">${chrfStatus}${chrfBestName ? ` · Best: ${esc(chrfBestName)} (${(chrfBest.bestVal || 0).toFixed(1)})` : ''}</div>
 
-            <div style="font-size:13px;color:var(--muted);margin-top:10px">Your BLEU score</div>
-            <div style="font-size:18px;color:#e2e8f0"><strong>${bleu.toFixed(1)}</strong> <span style="font-size:12px;color:var(--muted)">± ${bleuStd.toFixed(1)}</span></div>
-            <div class="comparison-row">${bleuStatus}</div>
-            ${bleuBestName ? `<div style="font-size:11px;color:var(--muted);margin-top:3px">Best model: <span style="color:#dbeafe">${esc(bleuBestName)}</span> (${(bleuBest.bestVal || 0).toFixed(1)})</div>` : ''}
+            <div class="trans-label">BLEU</div>
+            <div class="trans-value">${bleu.toFixed(1)} <span class="mono" style="font-size:12px;font-weight:400;color:var(--muted)">± ${bleuStd.toFixed(1)}</span></div>
+            <div class="score-card-sub">${bleuStatus}${bleuBestName ? ` · Best: ${esc(bleuBestName)} (${(bleuBest.bestVal || 0).toFixed(1)})` : ''}</div>
           </div>`;
       });
     }
@@ -542,7 +590,7 @@ if (!targetId) {
     if (myCategory === 'other' || sameCategory.length <= 1) {
       sizeSection.style.display = 'none';
     } else {
-      document.getElementById('sizeRankTitle').textContent = `Ranking within size category: ${myCategory}`;
+      document.getElementById('sizeRankTitle').innerHTML = `<img class="section-icon" src="vendor/lucide/trophy.svg" alt="" aria-hidden="true" /> Ranking within size category: ${myCategory}`;
       const sizeRankBars = document.getElementById('sizeRankBars');
       const sortedCat = [...sameCategory].sort((a, b) => b.overall_accuracy - a.overall_accuracy);
       sortedCat.forEach(r => {
