@@ -94,6 +94,12 @@ def add_common_eval_args(p: argparse.ArgumentParser) -> None:
                         "Defaults: EusTrivia,XNLIeu,BasqueGLUE_qnli (limit=80 each)")
 
 
+def _model_slug(model_id: str) -> str:
+    """Sanitize model ID for use in filenames. Replaces '/' with '_' to prevent
+    subdirectory creation when model IDs contain slashes (e.g. org/model)."""
+    return model_id.replace("/", "_")
+
+
 def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
     out_dir = Path(args.out_dir)
     if not out_dir.is_absolute():
@@ -101,7 +107,7 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for seed in parse_csv(args.seeds):
-        out_file = out_dir / f"{model_id}_seed{seed}.json"
+        out_file = out_dir / f"{_model_slug(model_id)}_seed{seed}.json"
         if out_file.exists() and not args.force:
             print(f"[skip] exists: {out_file}")
             continue
@@ -335,6 +341,9 @@ def cmd_status(args: argparse.Namespace) -> int:
     seeds = parse_csv(args.seeds)
     expected = len(models) * len(seeds)
 
+    # Build slug → real model_id mapping so we can match sanitized filenames.
+    slug_to_model = {_model_slug(m): m for m in models}
+
     run_files = sorted(p for p in out_dir.glob("*_seed*.json") if p.name != "summary.json")
 
     results_by_model: dict[str, set[str]] = {}
@@ -343,7 +352,9 @@ def cmd_status(args: argparse.Namespace) -> int:
         stem = p.stem
         if "_seed" not in stem:
             continue
-        model_id, seed = stem.rsplit("_seed", 1)
+        file_model_id, seed = stem.rsplit("_seed", 1)
+        # Resolve sanitized slug back to real model ID if possible.
+        model_id = slug_to_model.get(file_model_id, file_model_id)
         results_by_model.setdefault(model_id, set()).add(seed)
 
         mtime = datetime.fromtimestamp(p.stat().st_mtime, tz=timezone.utc)
