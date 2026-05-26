@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-26T20:16:58.465219+00:00",
+  "generated_at_utc": "2026-05-26T21:56:25.557442+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "evaluation_protocol": {
     "suite": "Official benchmark subset (multi-seed)",
@@ -2452,8 +2452,8 @@
       "upstream_model_id": "orai-nlp/Gemma-Kimu-2b-it",
       "release_date_utc": "2025-10-06T13:25:43Z",
       "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-2b-it",
-      "overall_accuracy": 0.4671296296296296,
-      "overall_accuracy_std": 0.010424379860368236,
+      "overall_accuracy": 0.44706666666666667,
+      "overall_accuracy_std": 0.0034063665882188014,
       "n_items": 1280,
       "n_seeds": 3,
       "seed_ids": [
@@ -2514,25 +2514,25 @@
           "n": 3,
           "accuracy": 0.4625000000000001,
           "accuracy_std": 0.024999999999999994,
-          "coverage": 0.9958333333333332,
+          "coverage": 1.0,
           "family": "LatxaEvalSuite",
-          "coverage_std": 0.007216878364870297
+          "coverage_std": 0.0
         },
         "LatxaEval_eusproficiency": {
           "n": 3,
           "accuracy": 0.4583333333333333,
           "accuracy_std": 0.04732423621500226,
-          "coverage": 0.9958333333333332,
+          "coverage": 1.0,
           "family": "LatxaEvalSuite",
-          "coverage_std": 0.007216878364870297
+          "coverage_std": 0.0
         },
         "LatxaEval_eusreading": {
           "n": 3,
           "accuracy": 0.5,
           "accuracy_std": 0.054486236794258416,
-          "coverage": 0.9958333333333332,
+          "coverage": 1.0,
           "family": "LatxaEvalSuite",
-          "coverage_std": 0.007216878364870297
+          "coverage_std": 0.0
         },
         "FloresTranslation_eu_en": {
           "n": 3,
@@ -2540,10 +2540,10 @@
           "accuracy_std": 0.0,
           "coverage": 1.0,
           "family": "FLORES",
-          "bleu": 21.114335868598868,
-          "bleu_std": 1.3110301963804571,
-          "chrf": 53.30369743320057,
-          "chrf_std": 1.3689132277655491
+          "bleu": 22.70001970522749,
+          "bleu_std": 0.6676170274728797,
+          "chrf": 53.77587958003053,
+          "chrf_std": 0.8193879317061884
         },
         "FloresTranslation_en_eu": {
           "n": 3,
@@ -2551,10 +2551,10 @@
           "accuracy_std": 0.0,
           "coverage": 1.0,
           "family": "FLORES",
-          "bleu": 11.953849292437354,
-          "bleu_std": 0.5898458892641419,
-          "chrf": 49.409102534367044,
-          "chrf_std": 0.5527230194565272
+          "bleu": 12.473387328864526,
+          "bleu_std": 1.1378184249117982,
+          "chrf": 50.63395271275353,
+          "chrf_std": 0.6675243071662978
         },
         "FloresTranslation_eu_es": {
           "n": 3,
@@ -2562,10 +2562,10 @@
           "accuracy_std": 0.0,
           "coverage": 1.0,
           "family": "FLORES",
-          "bleu": 13.77685528895372,
-          "bleu_std": 0.31735659578248127,
-          "chrf": 44.25084006959145,
-          "chrf_std": 0.7828684206188568
+          "bleu": 13.825036067807075,
+          "bleu_std": 0.7670478279229483,
+          "chrf": 44.33712798008154,
+          "chrf_std": 0.38556676707261517
         },
         "FloresTranslation_es_eu": {
           "n": 3,
@@ -2573,31 +2573,34 @@
           "accuracy_std": 0.0,
           "coverage": 1.0,
           "family": "FLORES",
-          "bleu": 9.10336460345613,
-          "bleu_std": 0.751113215597609,
-          "chrf": 45.86270000870567,
-          "chrf_std": 0.5702394590805643
+          "bleu": 9.342727602274541,
+          "bleu_std": 0.2774687861473782,
+          "chrf": 46.803915613267144,
+          "chrf_std": 0.34078961698970894
         },
         "MMLU_eu": {
-          "n": 80,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
+          "n": 3,
+          "accuracy": 0.4166666666666667,
+          "accuracy_std": 0.05507570547286102,
           "coverage": 1.0,
-          "family": "MMLU"
+          "family": "MMLU",
+          "coverage_std": 0.0
         },
         "BertaQA_eu": {
-          "n": 80,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
+          "n": 3,
+          "accuracy": 0.58,
+          "accuracy_std": 0.01732050807568879,
           "coverage": 1.0,
-          "family": "BertaQA"
+          "family": "BertaQA",
+          "coverage_std": 0.0
         },
         "MGSM_eu": {
-          "n": 80,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
+          "n": 3,
+          "accuracy": 0.20000000000000004,
+          "accuracy_std": 0.04358898943540673,
           "coverage": 1.0,
-          "family": "MathReasoning"
+          "family": "MathReasoning",
+          "coverage_std": 0.0
         }
       },
       "by_family": {
@@ -2639,22 +2642,22 @@
           ]
         },
         "MMLU": {
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
+          "accuracy": 0.4166666666666667,
+          "accuracy_std": 0.05507570547286102,
           "benchmarks": [
             "MMLU_eu"
           ]
         },
         "BertaQA": {
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
+          "accuracy": 0.58,
+          "accuracy_std": 0.01732050807568879,
           "benchmarks": [
             "BertaQA_eu"
           ]
         },
         "MathReasoning": {
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
+          "accuracy": 0.20000000000000004,
+          "accuracy_std": 0.04358898943540673,
           "benchmarks": [
             "MGSM_eu"
           ]
@@ -2751,8 +2754,8 @@
         {
           "model_id": "kimu-2b",
           "display_name": "Kimu 2B",
-          "score": 46.25,
-          "n_benchmarks": 2
+          "score": 48.041666666666664,
+          "n_benchmarks": 4
         }
       ]
     },
@@ -3022,8 +3025,8 @@
         {
           "model_id": "kimu-2b",
           "display_name": "Kimu 2B",
-          "score": 42.08333333333334,
-          "n_benchmarks": 2
+          "score": 34.72222222222223,
+          "n_benchmarks": 3
         }
       ]
     },
