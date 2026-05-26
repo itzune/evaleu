@@ -640,13 +640,16 @@
       // ================================================================
       // Charts
 
-      // Helper: dim other datasets when hovering a legend label
+      // Helper: highlight hovered legend dataset while keeping others visible
       function addLegendHighlight(chart, dimOpacity) {
-        dimOpacity = dimOpacity || 0.25;
+        dimOpacity = dimOpacity || 0.45;
 
-        chart.options.plugins.legend.onHover = function(e, item, legend) {
+        const legendOpts = chart.options.plugins.legend || (chart.options.plugins.legend = {});
+
+        legendOpts.onHover = function(e, item, legend) {
+          const owner = legend && legend.chart ? legend.chart : chart;
           const ci = item ? item.datasetIndex : -1;
-          chart.data.datasets.forEach((ds, i) => {
+          owner.data.datasets.forEach((ds, i) => {
             // Restore original colors first (handles transitions between items)
             if (ds._savedBorderColor !== undefined) {
               ds.borderColor = ds._savedBorderColor;
@@ -661,20 +664,22 @@
             ds._savedPointRadius = ds.pointRadius;
 
             if (ci >= 0 && i !== ci) {
-              ds.borderWidth = 0.5;
+              // Keep other datasets visible (de-emphasize only slightly)
+              ds.borderWidth = Math.max(1.5, Number(ds._savedBorderWidth) || 2);
               ds.borderColor = lightenColor(ds._savedBorderColor, dimOpacity);
-              ds.backgroundColor = lightenColor(ds._savedBgColor, dimOpacity);
-              ds.pointRadius = 1.2;
+              ds.backgroundColor = lightenColor(ds._savedBgColor, 0.15);
+              ds.pointRadius = Math.max(1.8, Number(ds._savedPointRadius) || 2.2);
             } else if (ci >= 0 && i === ci) {
               ds.borderWidth = 3.5;
               ds.pointRadius = 3.5;
             }
           });
-          if (ci >= 0) chart.update('none');
+          if (ci >= 0) owner.update('none');
         };
 
-        chart.options.plugins.legend.onLeave = function(e, item, legend) {
-          chart.data.datasets.forEach((ds) => {
+        legendOpts.onLeave = function(e, item, legend) {
+          const owner = legend && legend.chart ? legend.chart : chart;
+          owner.data.datasets.forEach((ds) => {
             if (ds._savedBorderColor !== undefined) {
               ds.borderColor = ds._savedBorderColor;
               ds.borderWidth = ds._savedBorderWidth;
@@ -686,8 +691,10 @@
               delete ds._savedPointRadius;
             }
           });
-          chart.update('none');
+          owner.update('none');
         };
+
+        chart.update('none');
       }
 
       // Make a color lighter by mixing with white/transparent
