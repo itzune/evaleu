@@ -1,0 +1,17 @@
+{
+  "id": "MGSM_eu",
+  "description": "MGSM EU — Grade school math reasoning in Basque (HiTZ/MGSM-eu)",
+  "dataset": {
+    "source": "custom"
+  },
+  "prompt": {
+    "type": "generative",
+    "template": "See plugin"
+  },
+  "scoring": {
+    "type": "generative_exact_match",
+    "note": "Numeric answer extraction handled by plugin scorer"
+  },
+  "plugin": "mgsm_eu",
+  "default_limit": 100
+}
