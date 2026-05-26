@@ -1027,12 +1027,12 @@
         123,
         777
       ],
-      "overall_mean": 0.625,
-      "overall_std": 0.011368545516489473,
+      "overall_mean": 0.6250000000000001,
+      "overall_std": 0.01136854551648952,
       "runs": [
         {
           "seed": 42,
-          "overall": 0.6347222222222222,
+          "overall": 0.6347222222222223,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -1078,6 +1078,26 @@
               "n": 80,
               "accuracy": 0.675,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 27.614258013906824,
+              "chrf": 58.35962325251654
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 13.418722643943843,
+              "chrf": 52.59103889077592
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 17.123703658693564,
+              "chrf": 48.46222710941483
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 11.950343728455062,
+              "chrf": 50.324247478487635
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/kimu-9b_seed42.json"
@@ -1130,6 +1150,26 @@
               "n": 80,
               "accuracy": 0.6375,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 25.29647310150456,
+              "chrf": 56.8744265516526
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 15.297285688722562,
+              "chrf": 54.80299219936946
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 18.439622451414472,
+              "chrf": 48.807919162416304
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 11.599740935259003,
+              "chrf": 50.65815630139766
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/kimu-9b_seed123.json"
@@ -1182,6 +1222,26 @@
               "n": 80,
               "accuracy": 0.7125,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 26.78427037578761,
+              "chrf": 59.15313814004175
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 13.723482228784414,
+              "chrf": 52.974598712480905
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 17.551217027070116,
+              "chrf": 47.546727169767784
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 8.643111018925225,
+              "chrf": 47.53084649566101
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/kimu-9b_seed777.json"
@@ -1249,6 +1309,34 @@
           "accuracy_std": 0.03750000000000003,
           "coverage_mean": 1.0,
           "coverage_std": 0.0,
+          "n": 3
+        },
+        "FloresTranslation_eu_en": {
+          "bleu_mean": 26.565000497066332,
+          "bleu_std": 1.1743471313141296,
+          "chrf_mean": 58.129062648070295,
+          "chrf_std": 1.1567196159859634,
+          "n": 3
+        },
+        "FloresTranslation_en_eu": {
+          "bleu_mean": 14.14649685381694,
+          "bleu_std": 1.0081943304966703,
+          "chrf_mean": 53.456209934208765,
+          "chrf_std": 1.1820094697252346,
+          "n": 3
+        },
+        "FloresTranslation_eu_es": {
+          "bleu_mean": 17.704847712392716,
+          "bleu_std": 0.6712766626835256,
+          "chrf_mean": 48.27229114719964,
+          "chrf_std": 0.6516962965117604,
+          "n": 3
+        },
+        "FloresTranslation_es_eu": {
+          "bleu_mean": 10.73106522754643,
+          "bleu_std": 1.8166989741350852,
+          "chrf_mean": 49.504416758515426,
+          "chrf_std": 1.7172968474674828,
           "n": 3
         }
       }
