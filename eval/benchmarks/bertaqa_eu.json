@@ -1,0 +1,25 @@
+{
+  "id": "BertaQA_eu",
+  "description": "BertaQA EU — Basque cultural and general knowledge trivia (HiTZ/BertaQA, eu config)",
+  "dataset": {
+    "source": "huggingface",
+    "path": "HiTZ/BertaQA",
+    "config": "eu",
+    "split": "test",
+    "id_field": "id",
+    "question_field": "question",
+    "candidates_field": "candidates",
+    "answer_field": "answer",
+    "meta_fields": ["category", "group", "difficulty"]
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C bakarrik).\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "default_limit": 100
+}
