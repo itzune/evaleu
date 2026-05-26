@@ -476,7 +476,6 @@
               <th>Quantization</th>
               <th>Overall</th>
               <th>Evals (grouped)</th>
-              <th>N</th>
             </tr>
           </thead>
           <tbody id="resultsBody"></tbody>
@@ -694,7 +693,6 @@
             const detailThs = open ? (familyBenchMap[fd.id] || []).map(bid => `<th>${benchHeaderHTML(bid)}</th>`).join('') : '';
             return familyTh + detailThs;
           }).join('')}
-          <th>N</th>
         `;
 
         head.querySelectorAll('button[data-toggle-family]').forEach(btn => {
@@ -731,9 +729,6 @@
             return famCell + benchCells;
           }).join('');
 
-          // Classification N = total items minus translation items
-          const clsN = (r.n_items || 0) - ([...transBenchIds].length * 80);
-
           return `
             <tr>
               <td>${i + 1}</td>
@@ -744,7 +739,6 @@
               <td>${quantLabels.map(q => `<span class="pill">${esc(q)}</span>`).join('')}</td>
               <td>${isBest(r.overall_accuracy, bestOverall) ? `<span class="best-cell">${metricCell(r.overall_accuracy, r.overall_accuracy_std)}</span>` : metricCell(r.overall_accuracy, r.overall_accuracy_std)}</td>
               ${familyAndBenchCells}
-              <td>${esc(clsN)}</td>
             </tr>
           `;
         }).join('');
