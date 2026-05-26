@@ -572,6 +572,14 @@
         const bm = r.by_benchmark || {};
         // Has actual translation data (chrF, not just accuracy=0)
         return TRANS_BENCHES.some(bid => (bm[bid] || {}).chrf > 0 || (bm[bid] || {}).chrf_mean > 0);
+      }).sort((a, b) => {
+        // Sort by average chrF across all 4 directions
+        const avgChrf = (row) => {
+          const bm = row.by_benchmark || {};
+          const vals = TRANS_BENCHES.map(bid => (bm[bid] || {}).chrf || 0);
+          return vals.reduce((s, v) => s + v, 0) / vals.length;
+        };
+        return avgChrf(b) - avgChrf(a);
       });
 
       const transBody = document.getElementById('transBody');
