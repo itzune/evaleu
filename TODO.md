@@ -2,7 +2,7 @@
 
 ## Basque Evaluation Expansion Backlog
 
-- [ ] Add support for **MMLU EU** using `orai-nlp/MMLU_HT_eu_sample` as the first integration target (MVP adapter + benchmark wiring).
+- [x] Add support for **MMLU EU** using `orai-nlp/MMLU_HT_eu_sample` as the first integration target (MVP adapter + benchmark wiring).
 - [ ] Decide and document whether `orai-nlp/MMLU_HT_eu_sample` is temporary (pilot) or long-term benchmark source.
 - [ ] Evaluate optional multilingual alternatives with `eu` coverage (for larger-scale follow-up):
   - `alexandrainst/m_mmlu`
