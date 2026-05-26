@@ -643,25 +643,29 @@
       // Helper: dim other datasets when hovering a legend label
       function addLegendHighlight(chart, dimOpacity) {
         dimOpacity = dimOpacity || 0.25;
-        const origOnHover = chart.options.plugins.legend.onHover || null;
-        const origOnLeave = chart.options.plugins.legend.onLeave || null;
 
         chart.options.plugins.legend.onHover = function(e, item, legend) {
-          if (origOnHover) origOnHover(e, item, legend);
           const ci = item ? item.datasetIndex : -1;
           chart.data.datasets.forEach((ds, i) => {
+            // Restore original colors first (handles transitions between items)
+            if (ds._savedBorderColor !== undefined) {
+              ds.borderColor = ds._savedBorderColor;
+              ds.borderWidth = ds._savedBorderWidth;
+              ds.backgroundColor = ds._savedBgColor;
+              ds.pointRadius = ds._savedPointRadius;
+            }
+            // Save current values as originals
+            ds._savedBorderWidth = ds.borderWidth;
+            ds._savedBorderColor = ds.borderColor;
+            ds._savedBgColor = ds.backgroundColor;
+            ds._savedPointRadius = ds.pointRadius;
+
             if (ci >= 0 && i !== ci) {
-              ds._savedBorderWidth = ds.borderWidth;
-              ds._savedBorderColor = ds.borderColor;
-              ds._savedBgColor = ds.backgroundColor;
-              ds._savedPointRadius = ds.pointRadius;
               ds.borderWidth = 0.5;
-              ds.borderColor = lightenColor(ds.borderColor, dimOpacity);
-              ds.backgroundColor = lightenColor(ds.backgroundColor, dimOpacity);
+              ds.borderColor = lightenColor(ds._savedBorderColor, dimOpacity);
+              ds.backgroundColor = lightenColor(ds._savedBgColor, dimOpacity);
               ds.pointRadius = 1.2;
             } else if (ci >= 0 && i === ci) {
-              ds._savedBorderWidth = ds.borderWidth;
-              ds._savedPointRadius = ds.pointRadius;
               ds.borderWidth = 3.5;
               ds.pointRadius = 3.5;
             }
@@ -670,16 +674,17 @@
         };
 
         chart.options.plugins.legend.onLeave = function(e, item, legend) {
-          if (origOnLeave) origOnLeave(e, item, legend);
           chart.data.datasets.forEach((ds) => {
-            if (ds._savedBorderWidth !== undefined) ds.borderWidth = ds._savedBorderWidth;
-            if (ds._savedBorderColor !== undefined) ds.borderColor = ds._savedBorderColor;
-            if (ds._savedBgColor !== undefined) ds.backgroundColor = ds._savedBgColor;
-            if (ds._savedPointRadius !== undefined) ds.pointRadius = ds._savedPointRadius;
-            delete ds._savedBorderWidth;
-            delete ds._savedBorderColor;
-            delete ds._savedBgColor;
-            delete ds._savedPointRadius;
+            if (ds._savedBorderColor !== undefined) {
+              ds.borderColor = ds._savedBorderColor;
+              ds.borderWidth = ds._savedBorderWidth;
+              ds.backgroundColor = ds._savedBgColor;
+              ds.pointRadius = ds._savedPointRadius;
+              delete ds._savedBorderColor;
+              delete ds._savedBorderWidth;
+              delete ds._savedBgColor;
+              delete ds._savedPointRadius;
+            }
           });
           chart.update('none');
         };
