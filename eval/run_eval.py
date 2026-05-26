@@ -348,6 +348,8 @@ def score_item(bench_spec: dict, item: dict, answer: str) -> dict:
     Returns a dict of metric_name -> value. Classification benchmarks return
     {"pred_label": int|None, "accuracy": 0.0|1.0, "coverage": 0.0|1.0}.
     Translation benchmarks return {"chrf": float, "bleu": float, ...}.
+    Per-item diagnostic fields (e.g. pred_label, pred_number) should use the
+    "pred_" prefix; they are excluded from summary aggregation automatically.
     """
     # Try plugin scorer first
     plugin_name = bench_spec.get("plugin")
@@ -382,6 +384,8 @@ class Pred:
     answer: str
     gold: Any
     metrics: dict  # {"accuracy": 0.0|1.0, "chrf": 54.2, "pred_label": 3, ...}
+    # Per-item diagnostics must use the "pred_" or "debug_" prefix;
+    # those keys are excluded from summary aggregation.
 
 
 def aggregate(preds: List[Pred]) -> Dict[str, Any]:
@@ -399,8 +403,11 @@ def aggregate(preds: List[Pred]) -> Dict[str, Any]:
         metric_keys = set()
         for p in ps:
             metric_keys.update(p.metrics.keys())
-        # Exclude pred_label from aggregation (it's per-item, not meanable)
-        metric_keys.discard("pred_label")
+        # Exclude per-item diagnostic fields from aggregation.
+        # Keys starting with "pred_" or "debug_" are per-item values
+        # (e.g. pred_label, pred_number) — averaging them is meaningless.
+        metric_keys = {k for k in metric_keys
+                       if not (k.startswith("pred_") or k.startswith("debug_"))}
 
         bench_metrics = {"n": len(ps)}
         for key in sorted(metric_keys):
