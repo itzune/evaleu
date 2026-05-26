@@ -138,7 +138,7 @@
   "deepseek-ai/DeepSeek-V4-Pro": {
     "display_name": "DeepSeek V4 Pro",
     "family": "DeepSeek V4",
-    "params": "unknown",
+    "params": "1.6T (MoE≈37B active)",
     "weights_quant": "FP4+FP8",
     "kv_cache": "–",
     "upstream_model_id": "deepseek-ai/DeepSeek-V4-Pro",
