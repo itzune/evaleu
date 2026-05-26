@@ -217,6 +217,65 @@
       overflow: hidden;
     }
 
+    .plot.heatmap-plot {
+      height: auto;
+      overflow: auto;
+    }
+
+    .heatmap {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 4px;
+      table-layout: fixed;
+    }
+
+    .heatmap th,
+    .heatmap td {
+      border: none;
+      padding: 8px 10px;
+      font-size: 12px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .heatmap th:first-child,
+    .heatmap td:first-child {
+      text-align: left;
+      width: 280px;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .heat-cell {
+      border-radius: 6px;
+      font-weight: 600;
+      color: #f8fbff;
+      position: relative;
+    }
+
+    .heat-cell.best {
+      box-shadow: inset 0 0 0 2px rgba(255, 215, 0, 0.95), 0 0 0 1px rgba(255, 215, 0, 0.35);
+    }
+
+    .heat-cell.best::after {
+      content: '★';
+      position: absolute;
+      top: 2px;
+      right: 6px;
+      font-size: 10px;
+      color: #ffd84d;
+      text-shadow: 0 0 6px rgba(0,0,0,0.45);
+    }
+
+    .heat-sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+    }
+
     .plot h3 {
       margin: 0 0 8px;
       font-size: 14px;
@@ -340,13 +399,12 @@
     <section class="section" id="translationFiguresSection">
       <h2>Figures — Translation</h2>
       <div class="chart-grid">
-        <div class="plot">
-          <h3>Figure 3. chrF by translation direction</h3>
-          <canvas id="transChrfRadar"></canvas>
-        </div>
-        <div class="plot">
-          <h3>Figure 4. BLEU by translation direction</h3>
-          <canvas id="transBleuRadar"></canvas>
+        <div class="plot heatmap-plot">
+          <h3>Figure 3. Translation heatmap (chrF / BLEU)</h3>
+          <div class="table-wrap">
+            <table id="transHeatmap" class="heatmap"></table>
+          </div>
+          <div class="caption">Cell color is scaled by score within each metric (chrF and BLEU independently). Higher is better.</div>
         </div>
       </div>
     </section>
@@ -355,7 +413,7 @@
       <h2>Figures — Timeline</h2>
       <div class="chart-grid">
         <div class="plot">
-          <h3>Figure 5. Overall accuracy by release date</h3>
+          <h3>Figure 4. Overall accuracy by release date</h3>
           <canvas id="timelineOverall"></canvas>
         </div>
       </div>
@@ -722,8 +780,6 @@
       if (window.__barChart) window.__barChart.destroy();
       if (window.__radarChart) window.__radarChart.destroy();
       if (window.__timelineChart) window.__timelineChart.destroy();
-      if (window.__transChrfRadar) window.__transChrfRadar.destroy();
-      if (window.__transBleuRadar) window.__transBleuRadar.destroy();
 
       const sizeCategoryColors = {
         '<4B': '#2563eb',   // vivid blue
@@ -905,78 +961,99 @@
         const transDirLabels = ['EU→EN', 'EN→EU', 'EU→ES', 'ES→EU'];
         const transDirIds = TRANS_BENCHES;
 
-        const transRadarDatasets = (metricKey) => transModels.map((r, idx) => {
-          const bm = r.by_benchmark || {};
-          return {
-            label: compactModelLabel(r.display_name),
-            data: transDirIds.map(bid => {
-              const m = bm[bid] || {};
-              return Math.round(((m[metricKey] || 0)) * 10) / 10;
-            }),
-            borderColor: rowColor(r),
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 2.2,
-            pointHoverRadius: 2.8
-          };
-        });
-
-        const radarOptions = {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                color: '#d8deea',
-                boxWidth: 10,
-                boxHeight: 10,
-                padding: 10,
-                font: { size: 11 }
-              }
-            }
-          },
-          scales: {
-            r: {
-              beginAtZero: true,
-              ticks: {
-                color: '#cfd6e3',
-                backdropColor: 'rgba(0,0,0,0)',
-                font: { size: 11 }
-              },
-              pointLabels: {
-                color: '#dce3ef',
-                font: { size: 12, weight: 500 }
-              },
-              grid: { color: 'rgba(255,255,255,0.10)' },
-              angleLines: { color: 'rgba(255,255,255,0.10)' }
-            }
-          },
-          layout: { padding: 4 }
-        };
-
-        // Figure 3 — chrF radar
-        window.__transChrfRadar = new Chart(
-          document.getElementById('transChrfRadar').getContext('2d'),
-          {
-            type: 'radar',
-            data: { labels: transDirLabels, datasets: transRadarDatasets('chrf') },
-            options: radarOptions
+        function scoreToHeatColor(value, min, max) {
+          if (value == null || !isFinite(value) || min == null || max == null || !isFinite(min) || !isFinite(max)) {
+            return 'rgba(148,163,184,0.22)';
           }
-        );
-        addLegendHighlight(window.__transChrfRadar);
+          const span = Math.max(1e-9, max - min);
+          const t = Math.max(0, Math.min(1, (value - min) / span));
+          const light = 22 + (1 - t) * 18; // darker = higher score
+          return `hsl(220 72% ${light}%)`;
+        }
 
-        // Figure 4 — BLEU radar
-        window.__transBleuRadar = new Chart(
-          document.getElementById('transBleuRadar').getContext('2d'),
-          {
-            type: 'radar',
-            data: { labels: transDirLabels, datasets: transRadarDatasets('bleu') },
-            options: radarOptions
-          }
-        );
-        addLegendHighlight(window.__transBleuRadar);
+        function renderTranslationHeatmap(models) {
+          const table = document.getElementById('transHeatmap');
+          if (!table) return;
+
+          const chrfVals = [];
+          const bleuVals = [];
+          models.forEach(m => {
+            const bm = m.by_benchmark || {};
+            transDirIds.forEach(bid => {
+              const c = bm[bid]?.chrf;
+              const b = bm[bid]?.bleu;
+              if (typeof c === 'number' && isFinite(c)) chrfVals.push(c);
+              if (typeof b === 'number' && isFinite(b)) bleuVals.push(b);
+            });
+          });
+
+          const chrfMin = chrfVals.length ? Math.min(...chrfVals) : null;
+          const chrfMax = chrfVals.length ? Math.max(...chrfVals) : null;
+          const bleuMin = bleuVals.length ? Math.min(...bleuVals) : null;
+          const bleuMax = bleuVals.length ? Math.max(...bleuVals) : null;
+
+          const bestChrfByDir = {};
+          const bestBleuByDir = {};
+          transDirIds.forEach(bid => {
+            let bestC = -Infinity;
+            let bestB = -Infinity;
+            models.forEach(m => {
+              const vC = m.by_benchmark?.[bid]?.chrf;
+              const vB = m.by_benchmark?.[bid]?.bleu;
+              if (typeof vC === 'number' && isFinite(vC)) bestC = Math.max(bestC, vC);
+              if (typeof vB === 'number' && isFinite(vB)) bestB = Math.max(bestB, vB);
+            });
+            bestChrfByDir[bid] = bestC;
+            bestBleuByDir[bid] = bestB;
+          });
+
+          const headerDirs = transDirLabels.map(lbl => `<th>${esc(lbl)}</th>`).join('');
+          let html = `
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th colspan="4">chrF</th>
+                <th colspan="4">BLEU</th>
+              </tr>
+              <tr>
+                <th></th>
+                ${headerDirs}
+                ${headerDirs}
+              </tr>
+            </thead>
+            <tbody>
+          `;
+
+          models.forEach(m => {
+            const bm = m.by_benchmark || {};
+            const name = esc(m.display_name || m.model);
+            const chrfCells = transDirIds.map(bid => {
+              const v = bm[bid]?.chrf;
+              const s = bm[bid]?.chrf_std;
+              if (typeof v !== 'number' || !isFinite(v)) return '<td>-</td>';
+              const bg = scoreToHeatColor(v, chrfMin, chrfMax);
+              const isBest = Math.abs(v - bestChrfByDir[bid]) < 1e-9;
+              return `<td class="heat-cell${isBest ? ' best' : ''}" style="background:${bg}">${v.toFixed(1)}<span class="heat-sub">±${((typeof s === 'number' && isFinite(s)) ? s : 0).toFixed(1)}</span></td>`;
+            }).join('');
+
+            const bleuCells = transDirIds.map(bid => {
+              const v = bm[bid]?.bleu;
+              const s = bm[bid]?.bleu_std;
+              if (typeof v !== 'number' || !isFinite(v)) return '<td>-</td>';
+              const bg = scoreToHeatColor(v, bleuMin, bleuMax);
+              const isBest = Math.abs(v - bestBleuByDir[bid]) < 1e-9;
+              return `<td class="heat-cell${isBest ? ' best' : ''}" style="background:${bg}">${v.toFixed(1)}<span class="heat-sub">±${((typeof s === 'number' && isFinite(s)) ? s : 0).toFixed(1)}</span></td>`;
+            }).join('');
+
+            html += `<tr><td class="model-main" title="${name}">${name}</td>${chrfCells}${bleuCells}</tr>`;
+          });
+
+          html += '</tbody>';
+          table.innerHTML = html;
+        }
+
+        // Figure 3 — translation heatmap
+        renderTranslationHeatmap(transModels);
       } else {
         transFigSection.style.display = 'none';
       }
