@@ -1,0 +1,24 @@
+{
+  "id": "MMLU_eu",
+  "description": "MMLU EU — Basque multiple-choice academic knowledge (orai-nlp/MMLU_HT_eu_sample)",
+  "dataset": {
+    "source": "huggingface",
+    "path": "orai-nlp/MMLU_HT_eu_sample",
+    "config": "eu",
+    "split": "test",
+    "question_field": "question",
+    "candidates_field": "choices",
+    "answer_field": "answer",
+    "meta_fields": ["subject"]
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C/D bakarrik).\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "default_limit": 100
+}

@@ -102,6 +102,13 @@ ALL_BENCHMARKS = [
         "metric": "chrF / BLEU",
         "labels": "free-text translation",
     },
+    {
+        "id": "MMLU_eu",
+        "family": "MMLU",
+        "task": "Academic multiple-choice knowledge in Basque (MMLU-style)",
+        "metric": "Accuracy",
+        "labels": "4 options (A/B/C/D)",
+    },
 ]
 
 BENCH_LABELS = {
@@ -116,6 +123,7 @@ BENCH_LABELS = {
     "FloresTranslation_en_eu": "FLORES EN→EU",
     "FloresTranslation_eu_es": "FLORES EU→ES",
     "FloresTranslation_es_eu": "FLORES ES→EU",
+    "MMLU_eu": "MMLU EU",
 }
 
 
