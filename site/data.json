@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-26T10:23:48.817075+00:00",
+  "generated_at_utc": "2026-05-26T11:02:06.647768+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "evaluation_protocol": {
     "suite": "Official benchmark subset (multi-seed)",
@@ -1000,32 +1000,48 @@
           "coverage_std": 0.007216878364870297
         },
         "FloresTranslation_eu_en": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 28.162032708121945,
+          "bleu_std": 1.1567758812936773,
+          "chrf": 59.80374205658959,
+          "chrf_std": 1.0686724252937485
         },
         "FloresTranslation_en_eu": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 13.679418011705124,
+          "bleu_std": 0.3446818803006653,
+          "chrf": 53.987905847586354,
+          "chrf_std": 0.6861583063319264
         },
         "FloresTranslation_eu_es": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 19.17942033735183,
+          "bleu_std": 1.27061872521907,
+          "chrf": 50.248066483574746,
+          "chrf_std": 1.4100862033310733
         },
         "FloresTranslation_es_eu": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 10.065208863745731,
+          "bleu_std": 0.6280431705488441,
+          "chrf": 50.41435274355019,
+          "chrf_std": 0.5576244422812278
         }
       },
       "by_family": {
