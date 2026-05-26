@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Basque LLM Evaluation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="vendor/fonts.css" rel="stylesheet">
+  <script src="vendor/chart.umd.min.js"></script>
   <style>
     :root {
       --bg: #08090a;
@@ -642,7 +642,7 @@
 
       // Helper: dim other datasets when hovering a legend label
       function addLegendHighlight(chart, dimOpacity) {
-        dimOpacity = dimOpacity || 0.12;
+        dimOpacity = dimOpacity || 0.25;
         const origOnHover = chart.options.plugins.legend.onHover || null;
         const origOnLeave = chart.options.plugins.legend.onLeave || null;
 
