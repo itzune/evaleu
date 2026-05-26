@@ -24,9 +24,8 @@
   - Candidate: `eus_exams_eu`
   - Candidate: `eus_proficiency`
   - Candidate: `eus_trivia`
-- [ ] **Basque QA variants**
-  - Candidate: `bertaqa_eu_local`
-  - Candidate: `bertaqa_eu_global`
+- [x] **Basque QA variants**
+  - [x] `bertaqa_eu` (combined local + global, HiTZ/BertaQA)
 - [ ] **Other candidate benchmark from discussion**
   - Candidate: `bl2mp`
 

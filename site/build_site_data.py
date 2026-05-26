@@ -109,6 +109,13 @@ ALL_BENCHMARKS = [
         "metric": "Accuracy",
         "labels": "4 options (A/B/C/D)",
     },
+    {
+        "id": "BertaQA_eu",
+        "family": "BertaQA",
+        "task": "Basque cultural and general knowledge trivia (local + global topics)",
+        "metric": "Accuracy",
+        "labels": "3 options (A/B/C)",
+    },
 ]
 
 BENCH_LABELS = {
@@ -124,6 +131,7 @@ BENCH_LABELS = {
     "FloresTranslation_eu_es": "FLORES EU→ES",
     "FloresTranslation_es_eu": "FLORES ES→EU",
     "MMLU_eu": "MMLU EU",
+    "BertaQA_eu": "BertaQA EU",
 }
 
 
