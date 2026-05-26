@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-26T12:40:16.736615+00:00",
+  "generated_at_utc": "2026-05-26T12:49:42.798651+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "evaluation_protocol": {
     "suite": "Official benchmark subset (multi-seed)",
@@ -1712,32 +1712,48 @@
           "coverage_std": 0.0
         },
         "FloresTranslation_eu_en": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 26.501045442044774,
+          "bleu_std": 0.575061321063045,
+          "chrf": 57.65763891214383,
+          "chrf_std": 0.47965970951303577
         },
         "FloresTranslation_en_eu": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 14.311760638850819,
+          "bleu_std": 1.0896267766689032,
+          "chrf": 55.29273318614756,
+          "chrf_std": 0.6780762673296195
         },
         "FloresTranslation_eu_es": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 16.630018804865802,
+          "bleu_std": 0.696740833613474,
+          "chrf": 47.70190664096014,
+          "chrf_std": 1.6039553242652922
         },
         "FloresTranslation_es_eu": {
-          "n": 80,
+          "n": 3,
           "accuracy": 0.0,
           "accuracy_std": 0.0,
           "coverage": 1.0,
-          "family": "FLORES"
+          "family": "FLORES",
+          "bleu": 9.463970936035347,
+          "bleu_std": 0.530859881618759,
+          "chrf": 49.757885104232024,
+          "chrf_std": 1.1138146366908335
         }
       },
       "by_family": {
