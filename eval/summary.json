@@ -2633,7 +2633,7 @@
         777
       ],
       "overall_mean": 0.43842592592592594,
-      "overall_std": 0.1874554130800285,
+      "overall_std": 0.18745541308002853,
       "runs": [
         {
           "seed": 42,
@@ -2683,6 +2683,26 @@
               "n": 1,
               "accuracy": 0.0,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 25.610373226895952,
+              "chrf": 56.8003538138437
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 12.486290620852785,
+              "chrf": 52.32918610078572
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 17.73068243683955,
+              "chrf": 48.52328752474524
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 9.811490627904615,
+              "chrf": 48.25328570785282
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3-vl-4b_seed42.json"
@@ -2735,13 +2755,33 @@
               "n": 80,
               "accuracy": 0.575,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 24.355257954922315,
+              "chrf": 56.490713292354386
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 12.138212315220692,
+              "chrf": 52.132178831865374
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 17.305063258275332,
+              "chrf": 48.07776365617089
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 8.94645135556004,
+              "chrf": 49.82746873046588
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3-vl-4b_seed123.json"
         },
         {
           "seed": 777,
-          "overall": 0.5375,
+          "overall": 0.5375000000000001,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -2787,6 +2827,26 @@
               "n": 80,
               "accuracy": 0.65,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 25.775593325739635,
+              "chrf": 57.427603943068576
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 11.257033388218442,
+              "chrf": 49.37873898026586
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 16.50925232858198,
+              "chrf": 46.57665290780045
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 8.79078866375163,
+              "chrf": 47.5780993207512
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3-vl-4b_seed777.json"
@@ -2854,6 +2914,34 @@
           "accuracy_std": 0.3556098048891978,
           "coverage_mean": 1.0,
           "coverage_std": 0.0,
+          "n": 3
+        },
+        "FloresTranslation_eu_en": {
+          "bleu_mean": 25.247074835852633,
+          "bleu_std": 0.7767415478134866,
+          "chrf_mean": 56.90622368308889,
+          "chrf_std": 0.4773335780765999,
+          "n": 3
+        },
+        "FloresTranslation_en_eu": {
+          "bleu_mean": 11.960512108097305,
+          "bleu_std": 0.633601892914416,
+          "chrf_mean": 51.280034637638984,
+          "chrf_std": 1.6495141249959921,
+          "n": 3
+        },
+        "FloresTranslation_eu_es": {
+          "bleu_mean": 17.181666007898954,
+          "bleu_std": 0.6199943857728581,
+          "chrf_mean": 47.725901362905525,
+          "chrf_std": 1.0199028816698275,
+          "n": 3
+        },
+        "FloresTranslation_es_eu": {
+          "bleu_mean": 9.182910215738762,
+          "bleu_std": 0.5499024634643903,
+          "chrf_mean": 48.5529512530233,
+          "chrf_std": 1.1542379583785074,
           "n": 3
         }
       }
