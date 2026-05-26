@@ -1286,6 +1286,15 @@
         .sort((a, b) => a.date.localeCompare(b.date));
 
       if (timelineRows.length) {
+        // Auto-calculate y-axis range from data with padding
+        const scores = timelineRows.map(r => r.score);
+        const scoreMin = Math.min(...scores);
+        const scoreMax = Math.max(...scores);
+        const scoreRange = scoreMax - scoreMin || 1;
+        const pad = scoreRange * 0.15; // 15% padding above/below
+        const yMin = Math.max(0, Math.floor(scoreMin - pad));
+        const yMax = Math.min(100, Math.ceil(scoreMax + pad));
+
         const pointLabelPlugin = {
           id: 'timelinePointLabels',
           afterDatasetsDraw(chart) {
@@ -1346,8 +1355,8 @@
               },
               y: {
                 position: 'left',
-                beginAtZero: true,
-                max: 100,
+                min: yMin,
+                max: yMax,
                 title: { display: true, text: 'Overall accuracy (%)', color: '#cfd6e3' },
                 ticks: { color: '#d4dbe7', font: { size: 11 } },
                 grid: { color: 'rgba(255,255,255,0.06)' }
