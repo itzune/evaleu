@@ -562,11 +562,11 @@
         777
       ],
       "overall_mean": 0.4671296296296296,
-      "overall_std": 0.010424379860368262,
+      "overall_std": 0.010424379860368236,
       "runs": [
         {
           "seed": 42,
-          "overall": 0.4666666666666667,
+          "overall": 0.46666666666666656,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -612,13 +612,33 @@
               "n": 80,
               "accuracy": 0.4375,
               "coverage": 0.9875
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 20.194151780134764,
+              "chrf": 52.77635569579955
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 11.567466653688827,
+              "chrf": 49.122236774727355
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 14.087038124552413,
+              "chrf": 44.98861945420742
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 9.96922022934784,
+              "chrf": 45.86213569929929
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/kimu-2b_seed42.json"
         },
         {
           "seed": 123,
-          "overall": 0.4777777777777778,
+          "overall": 0.47777777777777775,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -664,6 +684,26 @@
               "n": 80,
               "accuracy": 0.5375,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 20.53339664129077,
+              "chrf": 52.27688139993436
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 12.63278696067808,
+              "chrf": 50.04628004777484
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 13.45278113457572,
+              "chrf": 44.33432649151699
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 8.626944389114895,
+              "chrf": 46.43322141307401
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/kimu-2b_seed123.json"
@@ -716,6 +756,26 @@
               "n": 80,
               "accuracy": 0.525,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 22.615459184371066,
+              "chrf": 54.85785520386779
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 11.661294262945152,
+              "chrf": 49.05879078059895
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 13.790746607733038,
+              "chrf": 43.429574263049936
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 8.713929191905656,
+              "chrf": 45.29274291374372
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/kimu-2b_seed777.json"
@@ -783,6 +843,34 @@
           "accuracy_std": 0.054486236794258416,
           "coverage_mean": 0.9958333333333332,
           "coverage_std": 0.007216878364870297,
+          "n": 3
+        },
+        "FloresTranslation_eu_en": {
+          "bleu_mean": 21.114335868598868,
+          "bleu_std": 1.3110301963804571,
+          "chrf_mean": 53.30369743320057,
+          "chrf_std": 1.3689132277655491,
+          "n": 3
+        },
+        "FloresTranslation_en_eu": {
+          "bleu_mean": 11.953849292437354,
+          "bleu_std": 0.5898458892641419,
+          "chrf_mean": 49.409102534367044,
+          "chrf_std": 0.5527230194565272,
+          "n": 3
+        },
+        "FloresTranslation_eu_es": {
+          "bleu_mean": 13.77685528895372,
+          "bleu_std": 0.31735659578248127,
+          "chrf_mean": 44.25084006959145,
+          "chrf_std": 0.7828684206188568,
+          "n": 3
+        },
+        "FloresTranslation_es_eu": {
+          "bleu_mean": 9.10336460345613,
+          "bleu_std": 0.751113215597609,
+          "chrf_mean": 45.86270000870567,
+          "chrf_std": 0.5702394590805643,
           "n": 3
         }
       }
