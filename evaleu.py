@@ -106,6 +106,10 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
         out_dir = (ROOT / out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Read per-model overrides from the model card (once, not per-seed).
+    cards = load_model_cards()
+    card = cards.get(model_id, {})
+
     for seed in parse_csv(args.seeds):
         out_file = out_dir / f"{_model_slug(model_id)}_seed{seed}.json"
         if out_file.exists() and not args.force:
@@ -131,10 +135,12 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
             for bm_spec in args.benchmark:
                 cmd += ["--benchmark", bm_spec]
 
-        if model_id == "qwen3.5-27b":
-            cmd += ["--max-tokens", "4096", "--timeout", "300"]
+        if "max_tokens" in card:
+            cmd += ["--max-tokens", str(card["max_tokens"])]
+        if "timeout" in card:
+            cmd += ["--timeout", str(card["timeout"])]
 
-        if args.disable_thinking:
+        if args.disable_thinking or card.get("disable_thinking"):
             cmd.append("--disable-thinking")
 
         run_cmd(cmd)

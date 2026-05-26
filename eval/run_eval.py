@@ -48,16 +48,16 @@ def _resolve_api_key(cli_api_key: str | None) -> str:
     return os.environ.get("OPENAI_API_KEY", "")
 
 
-def _max_tokens_for_model(model: str, cli_max_tokens: int | None) -> int:
+def _max_tokens_for_model(cli_max_tokens: int | None) -> int:
     if cli_max_tokens is not None:
         return cli_max_tokens
-    return 3072 if model == "qwen3.5-27b" else 256
+    return 256
 
 
-def _timeout_for_model(model: str, cli_timeout: int | None) -> int:
+def _timeout_for_model(cli_timeout: int | None) -> int:
     if cli_timeout is not None:
         return cli_timeout
-    return 240 if model == "qwen3.5-27b" else 120
+    return 120
 
 
 def _extract_answer(msg: Dict[str, Any]) -> str:
@@ -105,7 +105,7 @@ def chat_completion(
         "max_tokens": max_tokens,
     }
 
-    if disable_thinking or model.startswith("qwen"):
+    if disable_thinking:
         payload["chat_template_kwargs"] = {"enable_thinking": False}
 
     last_err = None
@@ -527,8 +527,8 @@ def main():
 
     base_url = _resolve_base_url(args.base_url)
     api_key = _resolve_api_key(args.api_key)
-    max_tokens = _max_tokens_for_model(args.model, args.max_tokens)
-    timeout = _timeout_for_model(args.model, args.timeout)
+    max_tokens = _max_tokens_for_model(args.max_tokens)
+    timeout = _timeout_for_model(args.timeout)
 
     items, limits, bench_specs = build_items(args)
 

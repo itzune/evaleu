@@ -180,11 +180,9 @@ def _resolve_api_key(cli_api_key: str | None) -> str:
     return os.environ.get("OPENAI_API_KEY", "")
 
 
-def _max_tokens_for_model(model: str, cli_max_tokens: int | None) -> int:
+def _max_tokens_for_model(cli_max_tokens: int | None) -> int:
     if cli_max_tokens is not None:
         return cli_max_tokens
-    if model == "qwen3.5-27b":
-        return 2048
     return 256
 
 
@@ -204,7 +202,7 @@ def main():
 
     base_url = _resolve_base_url(args.base_url)
     api_key = _resolve_api_key(args.api_key)
-    max_tokens = _max_tokens_for_model(args.model, args.max_tokens)
+    max_tokens = _max_tokens_for_model(args.max_tokens)
 
     items = load_jsonl(args.dataset)
     results: List[ItemResult] = []
