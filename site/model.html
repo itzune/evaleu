@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Model Detail — Basque LLM Evaluation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="vendor/fonts.css" rel="stylesheet">
+  <script src="vendor/chart.umd.min.js"></script>
   <style>
     :root {
       --bg: #08090a;
@@ -181,6 +181,11 @@
     <div class="chart-wrap">
       <canvas id="radarCanvas"></canvas>
     </div>
+  </section>
+
+  <section class="section" id="translationSection" style="display:none">
+    <h2>Translation scores (FLORES)</h2>
+    <div class="score-grid" id="translationGrid"></div>
   </section>
 
   <section class="section">
@@ -369,6 +374,83 @@ if (!targetId) {
           ${sotaName && sotaName !== model.display_name ? `<div style="font-size:10px;color:var(--muted);margin-top:3px">Best: ${esc(sotaName)}</div>` : ''}
         </div>`;
     });
+
+    // --- Translation score grid (FLORES) ---
+    const transBenchIds = [
+      'FloresTranslation_eu_en',
+      'FloresTranslation_en_eu',
+      'FloresTranslation_eu_es',
+      'FloresTranslation_es_eu',
+    ];
+    const transGrid = document.getElementById('translationGrid');
+    const transSection = document.getElementById('translationSection');
+    const byBench = model.by_benchmark || {};
+
+    const hasTranslation = transBenchIds.some(id => {
+      const b = byBench[id] || {};
+      return (b.chrf || b.chrf_mean || 0) > 0 || (b.bleu || b.bleu_mean || 0) > 0;
+    });
+
+    if (hasTranslation) {
+      transSection.style.display = '';
+
+      const findBest = (benchId, metricKey) => {
+        let bestVal = -Infinity;
+        let bestRow = null;
+        rows.forEach(r => {
+          const v = (r.by_benchmark || {})[benchId]?.[metricKey];
+          if (typeof v === 'number' && isFinite(v) && v > bestVal) {
+            bestVal = v;
+            bestRow = r;
+          }
+        });
+        return { bestVal: isFinite(bestVal) ? bestVal : null, bestRow };
+      };
+
+      transBenchIds.forEach(id => {
+        const b = byBench[id] || {};
+        const chrf = b.chrf != null ? b.chrf : (b.chrf_mean || 0);
+        const chrfStd = b.chrf_std || 0;
+        const bleu = b.bleu != null ? b.bleu : (b.bleu_mean || 0);
+        const bleuStd = b.bleu_std || 0;
+
+        const chrfBest = findBest(id, 'chrf');
+        const bleuBest = findBest(id, 'bleu');
+
+        const chrfGap = (chrfBest.bestVal == null) ? null : (chrfBest.bestVal - chrf);
+        const bleuGap = (bleuBest.bestVal == null) ? null : (bleuBest.bestVal - bleu);
+
+        const chrfStatus = chrfGap == null
+          ? '<span class="cmp cmp-neutral">No comparison available</span>'
+          : Math.abs(chrfGap) < 1e-9
+            ? '<span class="cmp cmp-better">🏆 Best score</span>'
+            : `<span class="cmp cmp-worse">Gap to best: ${chrfGap.toFixed(1)}</span>`;
+
+        const bleuStatus = bleuGap == null
+          ? '<span class="cmp cmp-neutral">No comparison available</span>'
+          : Math.abs(bleuGap) < 1e-9
+            ? '<span class="cmp cmp-better">🏆 Best score</span>'
+            : `<span class="cmp cmp-worse">Gap to best: ${bleuGap.toFixed(1)}</span>`;
+
+        const chrfBestName = chrfBest.bestRow?.display_name;
+        const bleuBestName = bleuBest.bestRow?.display_name;
+
+        transGrid.innerHTML += `
+          <div class="score-card rank-mid">
+            <div class="score-card-label">${esc(BENCH_LABELS[id] || id)}</div>
+
+            <div style="font-size:13px;color:var(--muted);margin-top:2px">Your chrF score</div>
+            <div style="font-size:18px;color:#e2e8f0"><strong>${chrf.toFixed(1)}</strong> <span style="font-size:12px;color:var(--muted)">± ${chrfStd.toFixed(1)}</span></div>
+            <div class="comparison-row">${chrfStatus}</div>
+            ${chrfBestName ? `<div style="font-size:11px;color:var(--muted);margin-top:3px">Best model: <span style="color:#dbeafe">${esc(chrfBestName)}</span> (${(chrfBest.bestVal || 0).toFixed(1)})</div>` : ''}
+
+            <div style="font-size:13px;color:var(--muted);margin-top:10px">Your BLEU score</div>
+            <div style="font-size:18px;color:#e2e8f0"><strong>${bleu.toFixed(1)}</strong> <span style="font-size:12px;color:var(--muted)">± ${bleuStd.toFixed(1)}</span></div>
+            <div class="comparison-row">${bleuStatus}</div>
+            ${bleuBestName ? `<div style="font-size:11px;color:var(--muted);margin-top:3px">Best model: <span style="color:#dbeafe">${esc(bleuBestName)}</span> (${(bleuBest.bestVal || 0).toFixed(1)})</div>` : ''}
+          </div>`;
+      });
+    }
 
     // --- Radar ---
     const radarLabels = clsBenchIds.map(id => BENCH_LABELS[id] || id);
