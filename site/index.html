@@ -477,6 +477,25 @@
       <div class="caption" id="resultsCaption">Accuracy reported as mean ± std across random seeds.</div>
     </section>
 
+    <section class="section">
+      <h2>Figures — Classification</h2>
+      <div class="chart-grid">
+        <div class="plot">
+          <h3>Figure 1. Overall accuracy by model</h3>
+          <div id="barGroupLegend" class="group-legend" aria-label="Figure 1 group legend"></div>
+          <canvas id="barOverall"></canvas>
+        </div>
+        <div class="plot">
+          <h3>Figure 2. Accuracy vs model size</h3>
+          <canvas id="scatterSize"></canvas>
+        </div>
+        <div class="plot">
+          <h3>Figure 3. Accuracy profile by classification eval</h3>
+          <canvas id="radarBench"></canvas>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="skillsSection">
       <div class="section-head">
         <h2>Skill cards — Best models by skill</h2>
@@ -506,21 +525,6 @@
           </thead>
           <tbody id="skillViewBody"></tbody>
         </table>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Figures — Classification</h2>
-      <div class="chart-grid">
-        <div class="plot">
-          <h3>Figure 1. Overall accuracy by model</h3>
-          <div id="barGroupLegend" class="group-legend" aria-label="Figure 1 group legend"></div>
-          <canvas id="barOverall"></canvas>
-        </div>
-        <div class="plot">
-          <h3>Figure 2. Accuracy profile by classification eval</h3>
-          <canvas id="radarBench"></canvas>
-        </div>
       </div>
     </section>
 
@@ -1111,7 +1115,85 @@
 
       addLegendHighlight(window.__barChart);
 
-      // Figure 2 — radar: classification benchmarks only
+      // Figure 2 — scatter: accuracy vs model size
+      const extractB = (paramsStr) => {
+        const m = (paramsStr || '').match(/MoE≈?(\d+(?:\.\d+)?)/);
+        if (m) return parseFloat(m[1]);
+        const m2 = (paramsStr || '').match(/(\d+(?:\.\d+)?)\s*[Bb]/);
+        return m2 ? parseFloat(m2[1]) : null;
+      };
+
+      const scatterPoints = rows.map(r => ({
+        x: extractB(r.params || ''),
+        y: ((r.overall_accuracy || 0) * 100),
+        label: r.display_name,
+      })).filter(p => p.x != null);
+
+      scatterPoints.sort((a, b) => a.x - b.x);
+
+      const familyColors = {
+        'Latxa': '#7170ff',
+        'Latxa Qwen3 VL': '#7170ff',
+        'DeepSeek V4': '#f59e0b',
+        'Gemma': '#22c55e',
+        'Qwen': '#38bdf8',
+        'Kimu': '#f87171',
+      };
+
+      const getColor = (label) => {
+        for (const [prefix, color] of Object.entries(familyColors)) {
+          if (label.startsWith(prefix)) return color;
+        }
+        return '#a4acb8';
+      };
+
+      new Chart(document.getElementById('scatterSize').getContext('2d'), {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            data: scatterPoints,
+            backgroundColor: scatterPoints.map(p => getColor(p.label) + 'cc'),
+            borderColor: scatterPoints.map(p => getColor(p.label)),
+            borderWidth: 1.5,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const p = scatterPoints[ctx.dataIndex];
+                  return `${p.label}: ${p.y.toFixed(1)}% (${p.x}B)`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'logarithmic',
+              title: { display: true, text: 'Model size (B params)', color: '#d4dbe7', font: { size: 11 } },
+              ticks: { color: '#d4dbe7', font: { size: 11 }, callback: (v) => v + 'B' },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+              beginAtZero: false,
+              min: 35,
+              max: 85,
+              title: { display: true, text: 'Overall accuracy (%)', color: '#d4dbe7', font: { size: 11 } },
+              ticks: { color: '#d4dbe7', font: { size: 11 } },
+              grid: { color: 'rgba(255,255,255,0.06)' }
+            }
+          }
+        }
+      });
+
+      // Figure 3 — radar: classification benchmarks only
       const radarLabels = clsBenchIds.map(id => benchLabel(id));
       const radarDatasets = rows.map((r, idx) => {
         const b = r.by_benchmark || {};
