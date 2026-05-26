@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-26T17:39:06.216279+00:00",
+  "generated_at_utc": "2026-05-26T18:31:54.709360+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "evaluation_protocol": {
     "suite": "Official benchmark subset (multi-seed)",
@@ -2671,6 +2671,460 @@
         }
       },
       "source_file": "eval/summary.json"
+    }
+  ],
+  "skills": [
+    {
+      "id": "knowledge",
+      "label": "KNOWLEDGE",
+      "description": "What the model knows — facts, culture, exams",
+      "benchmarks": [
+        "EusTrivia",
+        "MMLU_eu",
+        "BertaQA_eu",
+        "LatxaEval_eusexams"
+      ],
+      "winner": {
+        "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+        "display_name": "DeepSeek V4 Pro",
+        "score": 75.89583333333334,
+        "n_benchmarks": 4
+      },
+      "runner_up": {
+        "model_id": "latxa-70b",
+        "display_name": "Latxa 70B",
+        "score": 71.875,
+        "n_benchmarks": 2
+      },
+      "margin": 4.020833333333343,
+      "ranking": [
+        {
+          "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+          "display_name": "DeepSeek V4 Pro",
+          "score": 75.89583333333334,
+          "n_benchmarks": 4
+        },
+        {
+          "model_id": "latxa-70b",
+          "display_name": "Latxa 70B",
+          "score": 71.875,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "qwen3.6-27b",
+          "display_name": "Qwen 3.6 27B (no-thinking)",
+          "score": 69.58333333333334,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 68.54166666666666,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "gemma4-31b",
+          "display_name": "Gemma 4 31B",
+          "score": 67.29166666666667,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-qwen3-vl-32b-q8",
+          "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+          "score": 66.875,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-qwen3-vl-8b",
+          "display_name": "Latxa Qwen3 VL 8B",
+          "score": 61.25000000000001,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "kimu-9b",
+          "display_name": "Kimu 9B",
+          "score": 58.95833333333333,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-8b",
+          "display_name": "Latxa 8B",
+          "score": 53.541666666666664,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "kimu-2b",
+          "display_name": "Kimu 2B",
+          "score": 46.25,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-qwen3-vl-4b",
+          "display_name": "Latxa Qwen3 VL 4B",
+          "score": 37.5,
+          "n_benchmarks": 2
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "label": "READING",
+      "description": "How well the model understands text",
+      "benchmarks": [
+        "XNLIeu",
+        "LatxaEval_eusreading",
+        "BasqueGLUE_qnli"
+      ],
+      "winner": {
+        "model_id": "latxa-qwen3-vl-32b-q8",
+        "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+        "score": 77.08333333333333,
+        "n_benchmarks": 3
+      },
+      "runner_up": {
+        "model_id": "gemma4-31b",
+        "display_name": "Gemma 4 31B",
+        "score": 76.11111111111113,
+        "n_benchmarks": 3
+      },
+      "margin": 0.9722222222222001,
+      "ranking": [
+        {
+          "model_id": "latxa-qwen3-vl-32b-q8",
+          "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+          "score": 77.08333333333333,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "gemma4-31b",
+          "display_name": "Gemma 4 31B",
+          "score": 76.11111111111113,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+          "display_name": "DeepSeek V4 Pro",
+          "score": 75.69444444444444,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "qwen3.6-27b",
+          "display_name": "Qwen 3.6 27B (no-thinking)",
+          "score": 74.16666666666667,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 74.02777777777777,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "latxa-70b",
+          "display_name": "Latxa 70B",
+          "score": 73.61111111111113,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "kimu-9b",
+          "display_name": "Kimu 9B",
+          "score": 69.44444444444444,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "latxa-qwen3-vl-8b",
+          "display_name": "Latxa Qwen3 VL 8B",
+          "score": 67.3611111111111,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "latxa-8b",
+          "display_name": "Latxa 8B",
+          "score": 62.36111111111111,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "latxa-qwen3-vl-4b",
+          "display_name": "Latxa Qwen3 VL 4B",
+          "score": 52.22222222222223,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "kimu-2b",
+          "display_name": "Kimu 2B",
+          "score": 49.166666666666664,
+          "n_benchmarks": 3
+        }
+      ]
+    },
+    {
+      "id": "writing",
+      "label": "WRITING",
+      "description": "Basque proficiency and usage",
+      "benchmarks": [
+        "LatxaEval_eusproficiency"
+      ],
+      "winner": {
+        "model_id": "latxa-qwen3-vl-32b-q8",
+        "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+        "score": 67.08333333333334,
+        "n_benchmarks": 1
+      },
+      "runner_up": {
+        "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+        "display_name": "DeepSeek V4 Pro",
+        "score": 63.33333333333334,
+        "n_benchmarks": 1
+      },
+      "margin": 3.75,
+      "ranking": [
+        {
+          "model_id": "latxa-qwen3-vl-32b-q8",
+          "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+          "score": 67.08333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+          "display_name": "DeepSeek V4 Pro",
+          "score": 63.33333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-70b",
+          "display_name": "Latxa 70B",
+          "score": 60.83333333333333,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "kimu-9b",
+          "display_name": "Kimu 9B",
+          "score": 51.24999999999999,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 49.16666666666667,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-8b",
+          "display_name": "Latxa 8B",
+          "score": 46.25000000000001,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "gemma4-31b",
+          "display_name": "Gemma 4 31B",
+          "score": 46.25,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "kimu-2b",
+          "display_name": "Kimu 2B",
+          "score": 45.83333333333333,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "qwen3.6-27b",
+          "display_name": "Qwen 3.6 27B (no-thinking)",
+          "score": 44.58333333333333,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-qwen3-vl-8b",
+          "display_name": "Latxa Qwen3 VL 8B",
+          "score": 44.166666666666664,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-qwen3-vl-4b",
+          "display_name": "Latxa Qwen3 VL 4B",
+          "score": 25.0,
+          "n_benchmarks": 1
+        }
+      ]
+    },
+    {
+      "id": "reasoning",
+      "label": "REASONING",
+      "description": "Logic, math, and disambiguation",
+      "benchmarks": [
+        "MGSM_eu",
+        "BasqueGLUE_wic",
+        "BasqueGLUE_bec"
+      ],
+      "winner": {
+        "model_id": "gemma4-31b",
+        "display_name": "Gemma 4 31B",
+        "score": 63.95833333333333,
+        "n_benchmarks": 2
+      },
+      "runner_up": {
+        "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+        "display_name": "DeepSeek V4 Pro",
+        "score": 62.72222222222223,
+        "n_benchmarks": 3
+      },
+      "margin": 1.2361111111111,
+      "ranking": [
+        {
+          "model_id": "gemma4-31b",
+          "display_name": "Gemma 4 31B",
+          "score": 63.95833333333333,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+          "display_name": "DeepSeek V4 Pro",
+          "score": 62.72222222222223,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "latxa-70b",
+          "display_name": "Latxa 70B",
+          "score": 62.08333333333334,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 61.25000000000001,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "qwen3.6-27b",
+          "display_name": "Qwen 3.6 27B (no-thinking)",
+          "score": 60.41666666666667,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-8b",
+          "display_name": "Latxa 8B",
+          "score": 52.70833333333333,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-qwen3-vl-32b-q8",
+          "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+          "score": 51.875,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "kimu-9b",
+          "display_name": "Kimu 9B",
+          "score": 49.375,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-qwen3-vl-8b",
+          "display_name": "Latxa Qwen3 VL 8B",
+          "score": 42.291666666666664,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "kimu-2b",
+          "display_name": "Kimu 2B",
+          "score": 42.08333333333334,
+          "n_benchmarks": 2
+        },
+        {
+          "model_id": "latxa-qwen3-vl-4b",
+          "display_name": "Latxa Qwen3 VL 4B",
+          "score": 27.291666666666668,
+          "n_benchmarks": 2
+        }
+      ]
+    },
+    {
+      "id": "pragmatics",
+      "label": "PRAGMATICS",
+      "description": "Intent and real-world language use",
+      "benchmarks": [
+        "BasqueGLUE_intent"
+      ],
+      "winner": {
+        "model_id": "latxa-qwen3-vl-32b-q8",
+        "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+        "score": 95.83333333333334,
+        "n_benchmarks": 1
+      },
+      "runner_up": {
+        "model_id": "qwen3.6-27b",
+        "display_name": "Qwen 3.6 27B (no-thinking)",
+        "score": 93.33333333333333,
+        "n_benchmarks": 1
+      },
+      "margin": 2.500000000000014,
+      "ranking": [
+        {
+          "model_id": "latxa-qwen3-vl-32b-q8",
+          "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
+          "score": 95.83333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "qwen3.6-27b",
+          "display_name": "Qwen 3.6 27B (no-thinking)",
+          "score": 93.33333333333333,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-70b",
+          "display_name": "Latxa 70B",
+          "score": 92.91666666666667,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 92.91666666666666,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "gemma4-31b",
+          "display_name": "Gemma 4 31B",
+          "score": 91.25,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "kimu-9b",
+          "display_name": "Kimu 9B",
+          "score": 86.25,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "deepseek-ai/DeepSeek-V4-Pro",
+          "display_name": "DeepSeek V4 Pro",
+          "score": 85.83333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-qwen3-vl-4b",
+          "display_name": "Latxa Qwen3 VL 4B",
+          "score": 83.33333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-qwen3-vl-8b",
+          "display_name": "Latxa Qwen3 VL 8B",
+          "score": 79.58333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "latxa-8b",
+          "display_name": "Latxa 8B",
+          "score": 69.16666666666667,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "kimu-2b",
+          "display_name": "Kimu 2B",
+          "score": 50.416666666666664,
+          "n_benchmarks": 1
+        }
+      ]
     }
   ]
 }
