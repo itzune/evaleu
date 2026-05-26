@@ -7,8 +7,8 @@
         123,
         777
       ],
-      "overall_mean": 0.6981481481481481,
-      "overall_std": 0.004009376869372387,
+      "overall_mean": 0.6981481481481482,
+      "overall_std": 0.004009376869372451,
       "runs": [
         {
           "seed": 42,
@@ -58,6 +58,26 @@
               "n": 80,
               "accuracy": 0.8,
               "coverage": 0.9875
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 26.51953874307464,
+              "chrf": 56.78599711961567
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 12.419993172952006,
+              "chrf": 48.3611578668233
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 18.460029671315052,
+              "chrf": 50.14343571629709
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 9.196282554890281,
+              "chrf": 45.877142688850824
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/gemma4-31b_seed42.json"
@@ -110,13 +130,33 @@
               "n": 80,
               "accuracy": 0.8125,
               "coverage": 1.0
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 25.417227196124237,
+              "chrf": 56.86971107903422
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 10.880428720344202,
+              "chrf": 48.532728366545996
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 19.581653901639793,
+              "chrf": 48.78187991393999
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 8.801443608608798,
+              "chrf": 42.22254172788679
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/gemma4-31b_seed123.json"
         },
         {
           "seed": 777,
-          "overall": 0.7027777777777777,
+          "overall": 0.7027777777777778,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -162,6 +202,26 @@
               "n": 80,
               "accuracy": 0.8375,
               "coverage": 0.9875
+            },
+            "FloresTranslation_eu_en": {
+              "n": 80,
+              "bleu": 26.84178068661625,
+              "chrf": 59.00544247826895
+            },
+            "FloresTranslation_en_eu": {
+              "n": 80,
+              "bleu": 10.228228077002935,
+              "chrf": 46.05019547541729
+            },
+            "FloresTranslation_eu_es": {
+              "n": 80,
+              "bleu": 18.394835000958064,
+              "chrf": 47.10058380773854
+            },
+            "FloresTranslation_es_eu": {
+              "n": 80,
+              "bleu": 7.638921454257843,
+              "chrf": 41.008602378172064
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/gemma4-31b_seed777.json"
@@ -229,6 +289,34 @@
           "accuracy_std": 0.019094065395649326,
           "coverage_mean": 0.9916666666666667,
           "coverage_std": 0.007216878364870297,
+          "n": 3
+        },
+        "FloresTranslation_eu_en": {
+          "bleu_mean": 26.259515541938374,
+          "bleu_std": 0.7470255756432354,
+          "chrf_mean": 57.553716892306284,
+          "chrf_std": 1.2579278156771838,
+          "n": 3
+        },
+        "FloresTranslation_en_eu": {
+          "bleu_mean": 11.17621665676638,
+          "bleu_std": 1.125422781204836,
+          "chrf_mean": 47.6480272362622,
+          "chrf_std": 1.3864194390830362,
+          "n": 3
+        },
+        "FloresTranslation_eu_es": {
+          "bleu_mean": 18.812172857970967,
+          "bleu_std": 0.6671869255950579,
+          "chrf_mean": 48.675299812658544,
+          "chrf_std": 1.5242232194945993,
+          "n": 3
+        },
+        "FloresTranslation_es_eu": {
+          "bleu_mean": 8.545549205918975,
+          "bleu_std": 0.8096016665229614,
+          "chrf_mean": 43.03609559830323,
+          "chrf_std": 2.5341810539557312,
           "n": 3
         }
       }
