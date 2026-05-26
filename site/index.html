@@ -644,7 +644,7 @@
       return d.toISOString().slice(0, 10);
     };
 
-    fetch('./data.json').then(r => r.json()).then(data => {
+    fetch('./data.json').then(r => r.json()).then(async data => {
       const rows = data.results || [];
       document.getElementById('title').textContent = data.title || 'Basque LLM Evaluation';
       document.getElementById('subtitle').textContent = 'A public benchmark dashboard for comparing local LLM performance in Basque language tasks.';
