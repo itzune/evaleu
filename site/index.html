@@ -328,8 +328,7 @@
       border: 1px solid var(--line-soft);
       border-radius: 10px;
       background: rgba(255,255,255,0.02);
-      padding: 10px;
-      min-height: 126px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -348,6 +347,19 @@
       border-color: rgba(124,140,255,0.85);
       background: rgba(124,140,255,0.14);
       box-shadow: 0 0 0 1px rgba(124,140,255,0.35) inset;
+    }
+
+    .skill-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-icon {
+      width: 18px;
+      height: 18px;
+      color: #95a2ff;
+      flex-shrink: 0;
     }
 
     .skill-label {
@@ -386,14 +398,6 @@
       font-weight: 600;
     }
 
-    .skill-desc {
-      margin-top: auto;
-      color: #9fa9b8;
-      font-size: 11.5px;
-      border-top: 1px solid var(--line-soft);
-      padding-top: 7px;
-    }
-
     .skill-view-header {
       display: flex;
       justify-content: space-between;
@@ -409,6 +413,21 @@
       font-weight: 700;
       color: #eef2fb;
       letter-spacing: -0.1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-view-title .skill-icon {
+      width: 20px;
+      height: 20px;
+      color: #95a2ff;
+    }
+
+    .skill-view-desc {
+      color: #9fa9b8;
+      font-size: 13px;
+      margin: 4px 0 10px;
     }
 
     .skill-view-meta {
@@ -476,6 +495,7 @@
         <h3 id="skillViewTitle" class="skill-view-title">—</h3>
         <div id="skillViewMeta" class="skill-view-meta"></div>
       </div>
+      <div id="skillViewDesc" class="skill-view-desc"></div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -762,8 +782,23 @@
 
       const skillViewSection = document.getElementById('skillViewSection');
       const skillViewTitle = document.getElementById('skillViewTitle');
+      const skillViewDesc = document.getElementById('skillViewDesc');
       const skillViewMeta = document.getElementById('skillViewMeta');
       const skillViewBody = document.getElementById('skillViewBody');
+
+      const skillIcons = {
+        knowledge: 'brain.svg',
+        reading: 'book-open-text.svg',
+        writing: 'pen-line.svg',
+        reasoning: 'puzzle.svg',
+        pragmatics: 'message-circle.svg',
+      };
+
+      const iconSvg = (iconName) => {
+        const file = skillIcons[iconName];
+        if (!file) return '';
+        return `<img class="skill-icon" src="vendor/lucide/${esc(file)}" alt="" aria-hidden="true" />`;
+      };
 
       const renderSkillView = (skillId) => {
         const selected = skills.find(s => s.id === skillId) || skills[0];
@@ -774,7 +809,8 @@
 
         skillViewSection.style.display = '';
         const benchLabels = (selected.benchmarks || []).map(bid => benchLabel(bid));
-        skillViewTitle.textContent = `${selected.label} — ${selected.description || ''}`;
+        skillViewTitle.innerHTML = `${iconSvg(selected.id)}${esc(selected.label)}`;
+        skillViewDesc.textContent = selected.description || '';
         skillViewMeta.textContent = `Benchmarks: ${benchLabels.join(', ') || '—'}`;
 
         const ranking = selected.ranking || [];
@@ -811,15 +847,17 @@
           const margin = (typeof s.margin === 'number') ? `+${s.margin.toFixed(1)}%` : '+0.0%';
           const over = r.display_name ? `over ${r.display_name}` : 'over —';
           return `
-            <button class="skill-card" type="button" data-skill-id="${esc(s.id)}" title="Open ${esc(s.label || s.id)} skill view">
-              <div class="skill-label">${esc(s.label || s.id || 'SKILL')}</div>
+            <button class="skill-card" type="button" data-skill-id="${esc(s.id)}" title="View ${esc(s.label || s.id)} ranking">
+              <div class="skill-card-header">
+                ${iconSvg(s.id)}
+                <div class="skill-label">${esc(s.label || s.id || 'SKILL')}</div>
+              </div>
               <div class="skill-winner">★ ${esc(w.display_name || 'N/A')}</div>
               <div class="skill-scoreline">
                 <span class="score">${esc(score)}</span>
                 <span class="margin">${esc(margin)}</span>
                 <span>${esc(over)}</span>
               </div>
-              <div class="skill-desc">${esc(s.description || '')}</div>
             </button>
           `;
         }).join('');
