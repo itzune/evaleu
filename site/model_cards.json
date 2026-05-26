@@ -8,7 +8,9 @@
     "upstream_model_id": "orai-nlp/Gemma-Kimu-2b-it",
     "release_date_utc": "2025-10-06T13:25:43Z",
     "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-2b-it",
-    "site_visibility": "published"
+    "site_visibility": "published",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "kimu-9b": {
     "display_name": "Kimu 9B",
@@ -19,7 +21,9 @@
     "upstream_model_id": "orai-nlp/Gemma-Kimu-9b-it",
     "release_date_utc": "2025-10-06T13:19:11Z",
     "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-9b-it",
-    "site_visibility": "published"
+    "site_visibility": "published",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "latxa-8b": {
     "display_name": "Latxa 8B",
@@ -29,7 +33,9 @@
     "kv_cache": "f16/f16",
     "upstream_model_id": "HiTZ/Latxa-Llama-3.1-8B-Instruct",
     "release_date_utc": "2025-02-27T16:48:02Z",
-    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Llama-3.1-8B-Instruct"
+    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Llama-3.1-8B-Instruct",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "latxa-qwen3-vl-4b": {
     "display_name": "Latxa Qwen3 VL 4B",
@@ -39,7 +45,9 @@
     "kv_cache": "f16/f16",
     "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-4B-Instruct",
     "release_date_utc": "2025-12-12T11:42:03Z",
-    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-4B-Instruct"
+    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-4B-Instruct",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "latxa-qwen3-vl-8b": {
     "display_name": "Latxa Qwen3 VL 8B",
@@ -49,7 +57,9 @@
     "kv_cache": "f16/f16",
     "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-8B-Instruct",
     "release_date_utc": "2026-02-19T08:51:04Z",
-    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-8B-Instruct"
+    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-8B-Instruct",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "latxa-qwen3-vl-32b": {
     "display_name": "Latxa Qwen3 VL 32B (F16)",
@@ -60,7 +70,9 @@
     "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-32B-Instruct",
     "release_date_utc": "2026-02-19T08:19:00Z",
     "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-32B-Instruct",
-    "site_visibility": "draft"
+    "site_visibility": "draft",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "latxa-70b": {
     "display_name": "Latxa 70B",
@@ -70,7 +82,9 @@
     "kv_cache": "default",
     "upstream_model_id": "HiTZ/Latxa-Llama-3.1-70B-Instruct",
     "release_date_utc": "2025-03-28T18:51:01Z",
-    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Llama-3.1-70B-Instruct"
+    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Llama-3.1-70B-Instruct",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "qwen3.5-27b": {
     "display_name": "Qwen 3.5 27B (no-thinking)",
@@ -80,7 +94,10 @@
     "kv_cache": "bf16/bf16",
     "upstream_model_id": "Qwen/Qwen3.5-27B",
     "release_date_utc": "2026-02-24T09:41:56Z",
-    "release_source_url": "https://huggingface.co/Qwen/Qwen3.5-27B"
+    "release_source_url": "https://huggingface.co/Qwen/Qwen3.5-27B",
+    "max_tokens": 3072,
+    "timeout": 300,
+    "disable_thinking": true
   },
   "qwen3.6-27b": {
     "display_name": "Qwen 3.6 27B (no-thinking)",
@@ -90,7 +107,10 @@
     "kv_cache": "bf16/bf16",
     "upstream_model_id": "Qwen/Qwen3.6-27B",
     "release_date_utc": "2026-04-24T00:00:00Z",
-    "release_source_url": "https://huggingface.co/Qwen/Qwen3.6-27B"
+    "release_source_url": "https://huggingface.co/Qwen/Qwen3.6-27B",
+    "max_tokens": 256,
+    "timeout": 120,
+    "disable_thinking": true
   },
   "gemma4-31b": {
     "display_name": "Gemma 4 31B",
@@ -100,7 +120,9 @@
     "kv_cache": "f16/f16",
     "upstream_model_id": "google/gemma-4-31B-it",
     "release_date_utc": "2026-03-11T18:22:36Z",
-    "release_source_url": "https://huggingface.co/google/gemma-4-31B-it"
+    "release_source_url": "https://huggingface.co/google/gemma-4-31B-it",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "latxa-qwen3-vl-32b-q8": {
     "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
@@ -111,7 +133,10 @@
     "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-32B-Instruct",
     "release_date_utc": "2026-02-19T08:19:00Z",
     "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-32B-Instruct",
-    "site_visibility": "published"
+    "site_visibility": "published",
+    "max_tokens": 256,
+    "timeout": 120,
+    "disable_thinking": true
   },
   "kimu-2b-q8_0": {
     "display_name": "Kimu 2B (Q8_0)",
@@ -122,7 +147,9 @@
     "upstream_model_id": "orai-nlp/Gemma-Kimu-2b-it",
     "release_date_utc": "2025-10-06T13:25:43Z",
     "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-2b-it",
-    "site_visibility": "draft"
+    "site_visibility": "draft",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "kimu-9b-q8_0": {
     "display_name": "Kimu 9B (Q8_0)",
@@ -133,7 +160,9 @@
     "upstream_model_id": "orai-nlp/Gemma-Kimu-9b-it",
     "release_date_utc": "2025-10-06T13:19:11Z",
     "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-9b-it",
-    "site_visibility": "draft"
+    "site_visibility": "draft",
+    "max_tokens": 256,
+    "timeout": 120
   },
   "deepseek-ai/DeepSeek-V4-Pro": {
     "display_name": "DeepSeek V4 Pro",
@@ -144,6 +173,8 @@
     "upstream_model_id": "deepseek-ai/DeepSeek-V4-Pro",
     "release_date_utc": "2026-05-25T00:00:00Z",
     "release_source_url": "https://api-docs.deepseek.com/",
-    "site_visibility": "published"
+    "site_visibility": "published",
+    "max_tokens": 256,
+    "timeout": 120
   }
 }
