@@ -341,11 +341,23 @@ def main():
     benchmark_label_list = ", ".join([BENCH_LABELS.get(b["id"], b["id"]) for b in benchmark_defs])
     n_items_per_model = 80 * len(benchmark_defs)
 
+    # Build skill_categories for the frontend toggle (benchmark → skill mapping)
+    skill_categories = []
+    for sd in SKILL_DEFS:
+        skill_benchmarks = [b for b in sd["benchmarks"] if b in benchmark_ids]
+        if skill_benchmarks:
+            skill_categories.append({
+                "id": sd["id"],
+                "label": sd["label"],
+                "benchmarks": [{"id": bid, "label": BENCH_LABELS.get(bid, bid)} for bid in skill_benchmarks],
+            })
+
     out = {
         "title": "Basque LLM Evaluation",
         "subtitle": f"Comparative evaluation on {benchmark_label_list} (multi-seed robust view)",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "endpoint": "${OPENAI_API_BASE}",
+        "skill_categories": skill_categories,
         "evaluation_protocol": {
             "suite": "Official benchmark subset (multi-seed)",
             "metric": "Accuracy",

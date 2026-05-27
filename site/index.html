@@ -526,6 +526,45 @@
       .skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
+    /* ---------- Table group-mode toggle switch ---------- */
+    .group-mode-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255,255,255,0.02);
+      overflow: hidden;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .group-mode-toggle button {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 11px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .group-mode-toggle button:first-child {
+      border-right: 1px solid var(--line);
+    }
+
+    .group-mode-toggle button.active {
+      background: rgba(124,140,255,0.22);
+      color: #eef1ff;
+    }
+
     /* ---------- Translation heatmap: mobile ---------- */
     @media (max-width: 720px) {
       .heatmap-table { display: none; }
@@ -544,6 +583,10 @@
     <section class="section">
       <div class="section-head">
         <h2>Table 1. Classification results</h2>
+        <div class="group-mode-toggle" id="groupModeToggle">
+          <button type="button" data-mode="family" title="Group by eval family (BasqueGLUE, LatxaEval, …)">Eval family</button>
+          <button type="button" data-mode="skill" class="active" title="Group by skill category (Knowledge, Reading, …)">Skill category</button>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
@@ -744,6 +787,7 @@
       const generatedDate = formatUtcDate(generatedUtc);
       const allBenchDefs = (data.evaluation_protocol?.benchmarks || []);
       const allFamilyDefs = (data.evaluation_protocol?.benchmark_families || []);
+      const skillCategories = data.skill_categories || [];
 
       // ---- Split into classification vs translation ----
       const TRANS_FAMILY = 'FLORES';
@@ -755,6 +799,9 @@
       const clsBenchIds = clsBenchDefs.map(b => b.id);
       const clsFamilyDefs = allFamilyDefs.filter(fd => fd.id !== TRANS_FAMILY);
       const clsFamilyIds = clsFamilyDefs.map(fd => fd.id);
+      const clsSkillDefs = skillCategories.filter(sc =>
+        sc.benchmarks.some(b => clsBenchIds.includes(b.id))
+      );
 
       document.getElementById('metaInline').innerHTML = `
         <span>Generated: <span class="mono">${esc(generatedDate)}</span></span>
@@ -772,19 +819,64 @@
       const familyBenchMap = Object.fromEntries(
         clsFamilyDefs.map(fd => [fd.id, (fd.benchmarks || []).map(b => b.id)])
       );
+      const skillBenchMap = Object.fromEntries(
+        clsSkillDefs.map(sd => [sd.id, (sd.benchmarks || []).map(b => b.id)])
+      );
 
       const bestOverall = Math.max(...rows.map(r => r.overall_accuracy || 0));
       const bestByFamily = Object.fromEntries(
         clsFamilyIds.map(id => [id, Math.max(...rows.map(r => ((r.by_family || {})[id] || {}).accuracy || 0))])
       );
+      const bestBySkill = (() => {
+        const m = {};
+        clsSkillDefs.forEach(sd => {
+          const bids = (sd.benchmarks || []).map(b => b.id);
+          m[sd.id] = Math.max(...rows.map(r => {
+            const byB = r.by_benchmark || {};
+            const vals = bids.map(bid => ((byB[bid] || {}).accuracy || 0));
+            return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+          }));
+        });
+        return m;
+      })();
       const bestByBench = Object.fromEntries(
         clsBenchIds.map(id => [id, Math.max(...rows.map(r => ((r.by_benchmark || {})[id] || {}).accuracy || 0))])
       );
       const isBest = (v, best) => Math.abs((v || 0) - (best || 0)) < 1e-12;
 
+      // ---- Compute skill scores on-the-fly from benchmark accuracy ----
+      const skillScoreForRow = (row, skillId) => {
+        const byB = row.by_benchmark || {};
+        const bids = skillBenchMap[skillId] || [];
+        if (!bids.length) return { accuracy: 0, accuracy_std: 0 };
+        const accs = bids.map(bid => ((byB[bid] || {}).accuracy || 0));
+        const stds = bids.map(bid => ((byB[bid] || {}).accuracy_std || 0));
+        return {
+          accuracy: accs.reduce((a, b) => a + b, 0) / accs.length,
+          accuracy_std: stds.reduce((a, b) => a + b, 0) / stds.length,
+        };
+      };
+
+      // ---- Group mode state ----
+      let groupMode = 'skill'; // default
+      const expandedGroups = new Set(); // tracks expanded group IDs (family or skill ids)
+
       const renderResultsTable = () => {
-        const expandedBenchIds = clsFamilyDefs.flatMap(fd => (
-          expandedFamilies.has(fd.id) ? (familyBenchMap[fd.id] || []) : []
+        const isFamilyMode = groupMode === 'family';
+        const groupDefs = isFamilyMode ? clsFamilyDefs : clsSkillDefs;
+        const groupBenchMap = isFamilyMode ? familyBenchMap : skillBenchMap;
+        const groupLabelFn = isFamilyMode ? (id => familyLabel(id)) : (id => {
+          const sd = clsSkillDefs.find(s => s.id === id) || {};
+          return sd.label || id;
+        });
+        const groupHeaderFn = isFamilyMode ? familyHeaderHTML : ((id) => {
+          const sd = clsSkillDefs.find(s => s.id === id) || {};
+          return esc(sd.label || id);
+        });
+        const bestByGroup = isFamilyMode ? bestByFamily : bestBySkill;
+
+        const expandedBenchIds = groupDefs.flatMap(gd => (
+          expandedGroups.has(gd.id) ? (groupBenchMap[gd.id] || []) : []
         ));
 
         head.innerHTML = `
@@ -792,22 +884,22 @@
           <th>Model</th>
           <th>Quantization</th>
           <th>Overall</th>
-          ${clsFamilyDefs.map(fd => {
-            const open = expandedFamilies.has(fd.id);
-            const hasDetails = (familyBenchMap[fd.id] || []).length > 0;
+          ${groupDefs.map(gd => {
+            const open = expandedGroups.has(gd.id);
+            const hasDetails = (groupBenchMap[gd.id] || []).length > 1;
             const icon = open ? '▾' : '▸';
-            const toggleTitle = `${open ? 'Hide' : 'Show'} ${familyLabel(fd.id)} details`;
-            const familyTh = `<th><span class="family-head">${familyHeaderHTML(fd.id)}${hasDetails ? `<button class="family-toggle ${open ? 'open' : ''}" data-toggle-family="${esc(fd.id)}" type="button" title="${esc(toggleTitle)}" aria-label="${esc(toggleTitle)}">${icon}</button>` : ''}</span></th>`;
-            const detailThs = open ? (familyBenchMap[fd.id] || []).map(bid => `<th>${benchHeaderHTML(bid)}</th>`).join('') : '';
-            return familyTh + detailThs;
+            const toggleTitle = `${open ? 'Hide' : 'Show'} ${groupLabelFn(gd.id)} details`;
+            const groupTh = `<th><span class="family-head">${groupHeaderFn(gd.id)}${hasDetails ? `<button class="family-toggle ${open ? 'open' : ''}" data-toggle-group="${esc(gd.id)}" type="button" title="${esc(toggleTitle)}" aria-label="${esc(toggleTitle)}">${icon}</button>` : ''}</span></th>`;
+            const detailThs = open ? (groupBenchMap[gd.id] || []).map(bid => `<th>${benchHeaderHTML(bid)}</th>`).join('') : '';
+            return groupTh + detailThs;
           }).join('')}
         `;
 
-        head.querySelectorAll('button[data-toggle-family]').forEach(btn => {
+        head.querySelectorAll('button[data-toggle-group]').forEach(btn => {
           btn.addEventListener('click', () => {
-            const fam = btn.getAttribute('data-toggle-family');
-            if (expandedFamilies.has(fam)) expandedFamilies.delete(fam);
-            else expandedFamilies.add(fam);
+            const gid = btn.getAttribute('data-toggle-group');
+            if (expandedGroups.has(gid)) expandedGroups.delete(gid);
+            else expandedGroups.add(gid);
             renderResultsTable();
           });
         });
@@ -818,15 +910,20 @@
           const byFam = r.by_family || {};
           const byBench = r.by_benchmark || {};
 
-          const familyAndBenchCells = clsFamilyDefs.map(fd => {
-            const fam = byFam[fd.id] || {};
-            const famCell = isBest(fam.accuracy, bestByFamily[fd.id])
-              ? `<td><span class="best-cell">${metricCell(fam.accuracy || 0, fam.accuracy_std || 0)}</span></td>`
-              : `<td>${metricCell(fam.accuracy || 0, fam.accuracy_std || 0)}</td>`;
+          const groupCells = groupDefs.map(gd => {
+            let groupScore;
+            if (isFamilyMode) {
+              groupScore = byFam[gd.id] || { accuracy: 0, accuracy_std: 0 };
+            } else {
+              groupScore = skillScoreForRow(r, gd.id);
+            }
+            const groupCell = isBest(groupScore.accuracy, bestByGroup[gd.id])
+              ? `<td><span class="best-cell">${metricCell(groupScore.accuracy || 0, groupScore.accuracy_std || 0)}</span></td>`
+              : `<td>${metricCell(groupScore.accuracy || 0, groupScore.accuracy_std || 0)}</td>`;
 
-            if (!expandedFamilies.has(fd.id)) return famCell;
+            if (!expandedGroups.has(gd.id)) return groupCell;
 
-            const benchCells = (familyBenchMap[fd.id] || []).map(bid => {
+            const benchCells = (groupBenchMap[gd.id] || []).map(bid => {
               const bm = byBench[bid] || {};
               const inner = metricCell(bm.accuracy || 0, bm.accuracy_std || 0);
               return isBest(bm.accuracy, bestByBench[bid])
@@ -834,7 +931,7 @@
                 : `<td>${inner}</td>`;
             }).join('');
 
-            return famCell + benchCells;
+            return groupCell + benchCells;
           }).join('');
 
           return `
@@ -846,16 +943,30 @@
               </td>
               <td>${quantLabels.map(q => `<span class="pill">${esc(q)}</span>`).join('')}</td>
               <td>${isBest(r.overall_accuracy, bestOverall) ? `<span class="best-cell">${metricCell(r.overall_accuracy, r.overall_accuracy_std)}</span>` : metricCell(r.overall_accuracy, r.overall_accuracy_std)}</td>
-              ${familyAndBenchCells}
+              ${groupCells}
             </tr>
           `;
         }).join('');
 
         const totalDetailCols = expandedBenchIds.length;
+        const modeLabel = isFamilyMode ? 'eval family' : 'skill category';
         caption.textContent = totalDetailCols
-          ? `Grouped evals shown by family; ${totalDetailCols} benchmark detail columns expanded (mean ± std on hover).`
-          : `Grouped evals shown by family; benchmark detail columns are collapsed by default (mean ± std on hover).`;
+          ? `Grouped by ${modeLabel}; ${totalDetailCols} benchmark detail columns expanded (mean ± std on hover).`
+          : `Grouped by ${modeLabel}; benchmark detail columns are collapsed by default (mean ± std on hover).`;
       };
+
+      // ---- Toggle buttons ----
+      document.querySelectorAll('#groupModeToggle button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-mode');
+          if (mode !== groupMode) {
+            groupMode = mode;
+            expandedGroups.clear();
+            document.querySelectorAll('#groupModeToggle button').forEach(b => b.classList.toggle('active', b.getAttribute('data-mode') === mode));
+            renderResultsTable();
+          }
+        });
+      });
 
       renderResultsTable();
 

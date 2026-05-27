@@ -1,8 +1,88 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-27T04:11:05.171586+00:00",
+  "generated_at_utc": "2026-05-27T16:14:34.773160+00:00",
   "endpoint": "${OPENAI_API_BASE}",
+  "skill_categories": [
+    {
+      "id": "knowledge",
+      "label": "KNOWLEDGE",
+      "benchmarks": [
+        {
+          "id": "EusTrivia",
+          "label": "EusTrivia"
+        },
+        {
+          "id": "MMLU_eu",
+          "label": "MMLU EU"
+        },
+        {
+          "id": "BertaQA_eu",
+          "label": "BertaQA EU"
+        },
+        {
+          "id": "LatxaEval_eusexams",
+          "label": "LatxaEval-EusExams"
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "label": "READING",
+      "benchmarks": [
+        {
+          "id": "XNLIeu",
+          "label": "XNLIeu"
+        },
+        {
+          "id": "LatxaEval_eusreading",
+          "label": "LatxaEval-EusReading"
+        },
+        {
+          "id": "BasqueGLUE_qnli",
+          "label": "BasqueGLUE-QNLI"
+        }
+      ]
+    },
+    {
+      "id": "writing",
+      "label": "WRITING",
+      "benchmarks": [
+        {
+          "id": "LatxaEval_eusproficiency",
+          "label": "LatxaEval-EusProficiency"
+        }
+      ]
+    },
+    {
+      "id": "reasoning",
+      "label": "REASONING",
+      "benchmarks": [
+        {
+          "id": "MGSM_eu",
+          "label": "MGSM EU"
+        },
+        {
+          "id": "BasqueGLUE_wic",
+          "label": "BasqueGLUE-WiC"
+        },
+        {
+          "id": "BasqueGLUE_bec",
+          "label": "BasqueGLUE-BEC"
+        }
+      ]
+    },
+    {
+      "id": "pragmatics",
+      "label": "PRAGMATICS",
+      "benchmarks": [
+        {
+          "id": "BasqueGLUE_intent",
+          "label": "BasqueGLUE-Intent"
+        }
+      ]
+    }
+  ],
   "evaluation_protocol": {
     "suite": "Official benchmark subset (multi-seed)",
     "metric": "Accuracy",
