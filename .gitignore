@@ -14,7 +14,8 @@ eval/.run_status/
 eval/.cache/
 eval/*_seed*.json
 eval/*~   # timestamped backups from --force / --merge
-eval/*.bak.*~  # timestamped backups from --merge
+eval/*.bak.*
+eval/*.bak.*~
 eval/run.log
 !eval/summary.json
 
