@@ -1295,6 +1295,29 @@
         const yMin = Math.max(0, Math.floor(scoreMin - pad));
         const yMax = Math.min(100, Math.ceil(scoreMax + pad));
 
+        // Top-score reference line (horizontal dashed line)
+        const topScore = Math.max(...scores);
+        const topScorePlugin = {
+          id: 'timelineTopScore',
+          afterDraw(chart) {
+            const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+            const yPos = y.getPixelForValue(topScore);
+            ctx.save();
+            ctx.setLineDash([6, 4]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(left, yPos);
+            ctx.lineTo(right, yPos);
+            ctx.stroke();
+            // Label
+            ctx.font = '10px Inter, system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.45)';
+            ctx.fillText(`Top: ${topScore.toFixed(1)}%`, right - 80, yPos - 6);
+            ctx.restore();
+          }
+        };
+
         const pointLabelPlugin = {
           id: 'timelinePointLabels',
           afterDatasetsDraw(chart) {
@@ -1363,7 +1386,7 @@
               }
             }
           },
-          plugins: [pointLabelPlugin]
+          plugins: [topScorePlugin, pointLabelPlugin]
         });
       }
     }).catch(err => {
