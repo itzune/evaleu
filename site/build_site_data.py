@@ -349,6 +349,7 @@ def main():
             skill_categories.append({
                 "id": sd["id"],
                 "label": sd["label"],
+                "description": sd.get("description", ""),
                 "benchmarks": [{"id": bid, "label": BENCH_LABELS.get(bid, bid)} for bid in skill_benchmarks],
             })
 

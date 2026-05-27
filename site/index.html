@@ -873,6 +873,10 @@
           const sd = clsSkillDefs.find(s => s.id === id) || {};
           return esc(sd.label || id);
         });
+        const groupTitleFn = isFamilyMode ? (() => '') : ((id) => {
+          const sd = clsSkillDefs.find(s => s.id === id) || {};
+          return esc(sd.description || '');
+        });
         const bestByGroup = isFamilyMode ? bestByFamily : bestBySkill;
 
         const expandedBenchIds = groupDefs.flatMap(gd => (
@@ -889,7 +893,8 @@
             const hasDetails = (groupBenchMap[gd.id] || []).length > 1;
             const icon = open ? '▾' : '▸';
             const toggleTitle = `${open ? 'Hide' : 'Show'} ${groupLabelFn(gd.id)} details`;
-            const groupTh = `<th><span class="family-head">${groupHeaderFn(gd.id)}${hasDetails ? `<button class="family-toggle ${open ? 'open' : ''}" data-toggle-group="${esc(gd.id)}" type="button" title="${esc(toggleTitle)}" aria-label="${esc(toggleTitle)}">${icon}</button>` : ''}</span></th>`;
+            const groupTooltip = groupTitleFn(gd.id);
+            const groupTh = `<th${groupTooltip ? ` title="${groupTooltip}"` : ''}><span class="family-head">${groupHeaderFn(gd.id)}${hasDetails ? `<button class="family-toggle ${open ? 'open' : ''}" data-toggle-group="${esc(gd.id)}" type="button" title="${esc(toggleTitle)}" aria-label="${esc(toggleTitle)}">${icon}</button>` : ''}</span></th>`;
             const detailThs = open ? (groupBenchMap[gd.id] || []).map(bid => `<th>${benchHeaderHTML(bid)}</th>`).join('') : '';
             return groupTh + detailThs;
           }).join('')}

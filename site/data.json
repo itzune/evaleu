@@ -1,12 +1,13 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-27T16:14:34.773160+00:00",
+  "generated_at_utc": "2026-05-27T16:16:36.431121+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "skill_categories": [
     {
       "id": "knowledge",
       "label": "KNOWLEDGE",
+      "description": "What the model knows — facts, culture, exams",
       "benchmarks": [
         {
           "id": "EusTrivia",
@@ -29,6 +30,7 @@
     {
       "id": "reading",
       "label": "READING",
+      "description": "How well the model understands text",
       "benchmarks": [
         {
           "id": "XNLIeu",
@@ -47,6 +49,7 @@
     {
       "id": "writing",
       "label": "WRITING",
+      "description": "Basque proficiency and usage",
       "benchmarks": [
         {
           "id": "LatxaEval_eusproficiency",
@@ -57,6 +60,7 @@
     {
       "id": "reasoning",
       "label": "REASONING",
+      "description": "Logic, math, and disambiguation",
       "benchmarks": [
         {
           "id": "MGSM_eu",
@@ -75,6 +79,7 @@
     {
       "id": "pragmatics",
       "label": "PRAGMATICS",
+      "description": "Intent and real-world language use",
       "benchmarks": [
         {
           "id": "BasqueGLUE_intent",
