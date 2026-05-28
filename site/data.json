@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-28T08:05:19.346464+00:00",
+  "generated_at_utc": "2026-05-28T10:53:23.679046+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "skill_categories": [
     {
@@ -979,6 +979,220 @@
       "source_file": "eval/summary.json"
     },
     {
+      "model_id": "qwen3.5-27b",
+      "display_name": "Qwen 3.5 27B (no-thinking)",
+      "family": "Qwen 3.5",
+      "params": "27B",
+      "weights_quant": "Q8_0",
+      "kv_cache": "bf16/bf16",
+      "upstream_model_id": "Qwen/Qwen3.5-27B",
+      "release_date_utc": "2026-02-24T09:41:56Z",
+      "release_source_url": "https://huggingface.co/Qwen/Qwen3.5-27B",
+      "overall_accuracy": 0.710625,
+      "overall_accuracy_std": 0.003632415786283877,
+      "n_items": 1280,
+      "n_seeds": 3,
+      "seed_ids": [
+        42,
+        123,
+        777
+      ],
+      "by_benchmark": {
+        "EusTrivia": {
+          "n": 3,
+          "accuracy": 0.6583333333333333,
+          "accuracy_std": 0.047324236215002306,
+          "coverage": 1.0,
+          "family": "Core"
+        },
+        "XNLIeu": {
+          "n": 3,
+          "accuracy": 0.8375,
+          "accuracy_std": 0.012500000000000011,
+          "coverage": 1.0,
+          "family": "Core"
+        },
+        "BasqueGLUE_qnli": {
+          "n": 3,
+          "accuracy": 0.5541666666666667,
+          "accuracy_std": 0.040181878170803965,
+          "coverage": 1.0,
+          "family": "BasqueGLUE"
+        },
+        "BasqueGLUE_bec": {
+          "n": 3,
+          "accuracy": 0.6166666666666667,
+          "accuracy_std": 0.019094065395649316,
+          "coverage": 1.0,
+          "family": "BasqueGLUE"
+        },
+        "BasqueGLUE_wic": {
+          "n": 3,
+          "accuracy": 0.6083333333333334,
+          "accuracy_std": 0.0629152869605896,
+          "coverage": 1.0,
+          "family": "BasqueGLUE"
+        },
+        "BasqueGLUE_intent": {
+          "n": 3,
+          "accuracy": 0.9291666666666666,
+          "accuracy_std": 0.019094065395649312,
+          "coverage": 1.0,
+          "family": "BasqueGLUE"
+        },
+        "LatxaEval_eusexams": {
+          "n": 3,
+          "accuracy": 0.7125,
+          "accuracy_std": 0.03307189138830737,
+          "coverage": 1.0,
+          "family": "LatxaEvalSuite"
+        },
+        "LatxaEval_eusproficiency": {
+          "n": 3,
+          "accuracy": 0.4916666666666667,
+          "accuracy_std": 0.03818813079129867,
+          "coverage": 1.0,
+          "family": "LatxaEvalSuite"
+        },
+        "LatxaEval_eusreading": {
+          "n": 3,
+          "accuracy": 0.8291666666666666,
+          "accuracy_std": 0.02602082499332663,
+          "coverage": 1.0,
+          "family": "LatxaEvalSuite"
+        },
+        "FloresTranslation_eu_en": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 28.162032708121945,
+          "bleu_std": 1.1567758812936773,
+          "chrf": 59.80374205658959,
+          "chrf_std": 1.0686724252937485
+        },
+        "FloresTranslation_en_eu": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 13.679418011705124,
+          "bleu_std": 0.3446818803006653,
+          "chrf": 53.987905847586354,
+          "chrf_std": 0.6861583063319264
+        },
+        "FloresTranslation_eu_es": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 19.17942033735183,
+          "bleu_std": 1.27061872521907,
+          "chrf": 50.248066483574746,
+          "chrf_std": 1.4100862033310733
+        },
+        "FloresTranslation_es_eu": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 10.065208863745731,
+          "bleu_std": 0.6280431705488441,
+          "chrf": 50.41435274355019,
+          "chrf_std": 0.5576244422812278
+        },
+        "MMLU_eu": {
+          "n": 3,
+          "accuracy": 0.7566666666666667,
+          "accuracy_std": 0.020816659994661344,
+          "coverage": 1.0,
+          "family": "MMLU",
+          "coverage_std": 0.0
+        },
+        "BertaQA_eu": {
+          "n": 3,
+          "accuracy": 0.68,
+          "accuracy_std": 0.08660254037844388,
+          "coverage": 1.0,
+          "family": "BertaQA",
+          "coverage_std": 0.0
+        },
+        "MGSM_eu": {
+          "n": 3,
+          "accuracy": 0.8533333333333334,
+          "accuracy_std": 0.020816659994661344,
+          "coverage": 1.0,
+          "family": "MathReasoning",
+          "coverage_std": 0.0
+        }
+      },
+      "by_family": {
+        "Core": {
+          "accuracy": 0.7479166666666667,
+          "accuracy_std": 0.02991211810750116,
+          "benchmarks": [
+            "EusTrivia",
+            "XNLIeu"
+          ]
+        },
+        "BasqueGLUE": {
+          "accuracy": 0.6770833333333334,
+          "accuracy_std": 0.035321323980673044,
+          "benchmarks": [
+            "BasqueGLUE_qnli",
+            "BasqueGLUE_bec",
+            "BasqueGLUE_wic",
+            "BasqueGLUE_intent"
+          ]
+        },
+        "LatxaEvalSuite": {
+          "accuracy": 0.6777777777777777,
+          "accuracy_std": 0.032426949057644226,
+          "benchmarks": [
+            "LatxaEval_eusexams",
+            "LatxaEval_eusproficiency",
+            "LatxaEval_eusreading"
+          ]
+        },
+        "FLORES": {
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "benchmarks": [
+            "FloresTranslation_eu_en",
+            "FloresTranslation_en_eu",
+            "FloresTranslation_eu_es",
+            "FloresTranslation_es_eu"
+          ]
+        },
+        "MMLU": {
+          "accuracy": 0.7566666666666667,
+          "accuracy_std": 0.020816659994661344,
+          "benchmarks": [
+            "MMLU_eu"
+          ]
+        },
+        "BertaQA": {
+          "accuracy": 0.68,
+          "accuracy_std": 0.08660254037844388,
+          "benchmarks": [
+            "BertaQA_eu"
+          ]
+        },
+        "MathReasoning": {
+          "accuracy": 0.8533333333333334,
+          "accuracy_std": 0.020816659994661344,
+          "benchmarks": [
+            "MGSM_eu"
+          ]
+        }
+      },
+      "source_file": "eval/summary.json"
+    },
+    {
       "model_id": "qwen3.6-27b",
       "display_name": "Qwen 3.6 27B (no-thinking)",
       "family": "Qwen 3.6",
@@ -1844,220 +2058,6 @@
       "source_file": "eval/summary.json"
     },
     {
-      "model_id": "qwen3.5-27b",
-      "display_name": "Qwen 3.5 27B (no-thinking)",
-      "family": "Qwen 3.5",
-      "params": "27B",
-      "weights_quant": "Q8_0",
-      "kv_cache": "bf16/bf16",
-      "upstream_model_id": "Qwen/Qwen3.5-27B",
-      "release_date_utc": "2026-02-24T09:41:56Z",
-      "release_source_url": "https://huggingface.co/Qwen/Qwen3.5-27B",
-      "overall_accuracy": 0.5805732109227871,
-      "overall_accuracy_std": 0.0008381472245376355,
-      "n_items": 1280,
-      "n_seeds": 3,
-      "seed_ids": [
-        42,
-        123,
-        777
-      ],
-      "by_benchmark": {
-        "EusTrivia": {
-          "n": 3,
-          "accuracy": 0.6583333333333333,
-          "accuracy_std": 0.047324236215002306,
-          "coverage": 1.0,
-          "family": "Core"
-        },
-        "XNLIeu": {
-          "n": 3,
-          "accuracy": 0.8375,
-          "accuracy_std": 0.012500000000000011,
-          "coverage": 1.0,
-          "family": "Core"
-        },
-        "BasqueGLUE_qnli": {
-          "n": 3,
-          "accuracy": 0.5541666666666667,
-          "accuracy_std": 0.040181878170803965,
-          "coverage": 1.0,
-          "family": "BasqueGLUE"
-        },
-        "BasqueGLUE_bec": {
-          "n": 3,
-          "accuracy": 0.6166666666666667,
-          "accuracy_std": 0.019094065395649316,
-          "coverage": 1.0,
-          "family": "BasqueGLUE"
-        },
-        "BasqueGLUE_wic": {
-          "n": 3,
-          "accuracy": 0.6083333333333334,
-          "accuracy_std": 0.0629152869605896,
-          "coverage": 1.0,
-          "family": "BasqueGLUE"
-        },
-        "BasqueGLUE_intent": {
-          "n": 3,
-          "accuracy": 0.9291666666666666,
-          "accuracy_std": 0.019094065395649312,
-          "coverage": 1.0,
-          "family": "BasqueGLUE"
-        },
-        "LatxaEval_eusexams": {
-          "n": 3,
-          "accuracy": 0.7125,
-          "accuracy_std": 0.03307189138830737,
-          "coverage": 1.0,
-          "family": "LatxaEvalSuite"
-        },
-        "LatxaEval_eusproficiency": {
-          "n": 3,
-          "accuracy": 0.4916666666666667,
-          "accuracy_std": 0.03818813079129867,
-          "coverage": 1.0,
-          "family": "LatxaEvalSuite"
-        },
-        "LatxaEval_eusreading": {
-          "n": 3,
-          "accuracy": 0.8291666666666666,
-          "accuracy_std": 0.02602082499332663,
-          "coverage": 1.0,
-          "family": "LatxaEvalSuite"
-        },
-        "FloresTranslation_eu_en": {
-          "n": 3,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
-          "coverage": 1.0,
-          "family": "FLORES",
-          "bleu": 28.162032708121945,
-          "bleu_std": 1.1567758812936773,
-          "chrf": 59.80374205658959,
-          "chrf_std": 1.0686724252937485
-        },
-        "FloresTranslation_en_eu": {
-          "n": 3,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
-          "coverage": 1.0,
-          "family": "FLORES",
-          "bleu": 13.679418011705124,
-          "bleu_std": 0.3446818803006653,
-          "chrf": 53.987905847586354,
-          "chrf_std": 0.6861583063319264
-        },
-        "FloresTranslation_eu_es": {
-          "n": 3,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
-          "coverage": 1.0,
-          "family": "FLORES",
-          "bleu": 19.17942033735183,
-          "bleu_std": 1.27061872521907,
-          "chrf": 50.248066483574746,
-          "chrf_std": 1.4100862033310733
-        },
-        "FloresTranslation_es_eu": {
-          "n": 3,
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
-          "coverage": 1.0,
-          "family": "FLORES",
-          "bleu": 10.065208863745731,
-          "bleu_std": 0.6280431705488441,
-          "chrf": 50.41435274355019,
-          "chrf_std": 0.5576244422812278
-        },
-        "MMLU_eu": {
-          "n": 3,
-          "accuracy": 0.276045197740113,
-          "accuracy_std": 0.022575058076363872,
-          "coverage": 0.5341242937853108,
-          "family": "MMLU",
-          "coverage_std": 0.007143486381498743
-        },
-        "BertaQA_eu": {
-          "n": 3,
-          "accuracy": 0.45,
-          "accuracy_std": 0.06244997998398398,
-          "coverage": 0.6566666666666667,
-          "family": "BertaQA",
-          "coverage_std": 0.01527525231651948
-        },
-        "MGSM_eu": {
-          "n": 3,
-          "accuracy": 0.0033333333333333335,
-          "accuracy_std": 0.005773502691896258,
-          "coverage": 0.02333333333333333,
-          "family": "MathReasoning",
-          "coverage_std": 0.015275252316519466
-        }
-      },
-      "by_family": {
-        "Core": {
-          "accuracy": 0.7479166666666667,
-          "accuracy_std": 0.02991211810750116,
-          "benchmarks": [
-            "EusTrivia",
-            "XNLIeu"
-          ]
-        },
-        "BasqueGLUE": {
-          "accuracy": 0.6770833333333334,
-          "accuracy_std": 0.035321323980673044,
-          "benchmarks": [
-            "BasqueGLUE_qnli",
-            "BasqueGLUE_bec",
-            "BasqueGLUE_wic",
-            "BasqueGLUE_intent"
-          ]
-        },
-        "LatxaEvalSuite": {
-          "accuracy": 0.6777777777777777,
-          "accuracy_std": 0.032426949057644226,
-          "benchmarks": [
-            "LatxaEval_eusexams",
-            "LatxaEval_eusproficiency",
-            "LatxaEval_eusreading"
-          ]
-        },
-        "FLORES": {
-          "accuracy": 0.0,
-          "accuracy_std": 0.0,
-          "benchmarks": [
-            "FloresTranslation_eu_en",
-            "FloresTranslation_en_eu",
-            "FloresTranslation_eu_es",
-            "FloresTranslation_es_eu"
-          ]
-        },
-        "MMLU": {
-          "accuracy": 0.276045197740113,
-          "accuracy_std": 0.022575058076363872,
-          "benchmarks": [
-            "MMLU_eu"
-          ]
-        },
-        "BertaQA": {
-          "accuracy": 0.45,
-          "accuracy_std": 0.06244997998398398,
-          "benchmarks": [
-            "BertaQA_eu"
-          ]
-        },
-        "MathReasoning": {
-          "accuracy": 0.0033333333333333335,
-          "accuracy_std": 0.005773502691896258,
-          "benchmarks": [
-            "MGSM_eu"
-          ]
-        }
-      },
-      "source_file": "eval/summary.json"
-    },
-    {
       "model_id": "latxa-8b",
       "display_name": "Latxa 8B",
       "family": "Llama 3.1",
@@ -2753,6 +2753,12 @@
           "n_benchmarks": 4
         },
         {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 70.1875,
+          "n_benchmarks": 4
+        },
+        {
           "model_id": "gemma4-31b",
           "display_name": "Gemma 4 31B",
           "score": 69.5625,
@@ -2786,12 +2792,6 @@
           "model_id": "latxa-8b",
           "display_name": "Latxa 8B",
           "score": 58.18749999999999,
-          "n_benchmarks": 4
-        },
-        {
-          "model_id": "qwen3.5-27b",
-          "display_name": "Qwen 3.5 27B (no-thinking)",
-          "score": 52.42196327683615,
           "n_benchmarks": 4
         },
         {
@@ -2998,17 +2998,23 @@
         "n_benchmarks": 3
       },
       "runner_up": {
-        "model_id": "latxa-70b",
-        "display_name": "Latxa 70B",
-        "score": 67.83333333333333,
+        "model_id": "qwen3.5-27b",
+        "display_name": "Qwen 3.5 27B (no-thinking)",
+        "score": 69.27777777777779,
         "n_benchmarks": 3
       },
-      "margin": 2.1111111111111143,
+      "margin": 0.6666666666666572,
       "ranking": [
         {
           "model_id": "qwen3.6-27b",
           "display_name": "Qwen 3.6 27B (no-thinking)",
           "score": 69.94444444444444,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "qwen3.5-27b",
+          "display_name": "Qwen 3.5 27B (no-thinking)",
+          "score": 69.27777777777779,
           "n_benchmarks": 3
         },
         {
@@ -3051,12 +3057,6 @@
           "model_id": "kimu-9b",
           "display_name": "Kimu 9B",
           "score": 41.47222222222222,
-          "n_benchmarks": 3
-        },
-        {
-          "model_id": "qwen3.5-27b",
-          "display_name": "Qwen 3.5 27B (no-thinking)",
-          "score": 40.94444444444445,
           "n_benchmarks": 3
         },
         {

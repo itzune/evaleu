@@ -3452,12 +3452,12 @@
         123,
         777
       ],
-      "overall_mean": 0.5805732109227871,
-      "overall_std": 0.0008381472245376355,
+      "overall_mean": 0.710625,
+      "overall_std": 0.003632415786283877,
       "runs": [
         {
           "seed": 42,
-          "overall": 0.5814583333333333,
+          "overall": 0.7131249999999999,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -3517,25 +3517,25 @@
             },
             "MMLU_eu": {
               "n": 100,
-              "accuracy": 0.29,
-              "coverage": 0.53
+              "accuracy": 0.78,
+              "coverage": 1.0
             },
             "BertaQA_eu": {
               "n": 100,
-              "accuracy": 0.4,
-              "coverage": 0.64
+              "accuracy": 0.63,
+              "coverage": 1.0
             },
             "MGSM_eu": {
               "n": 100,
-              "accuracy": 0.0,
-              "coverage": 0.02
+              "accuracy": 0.86,
+              "coverage": 1.0
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/qwen3.5-27b_seed42.json"
         },
         {
           "seed": 123,
-          "overall": 0.5804696327683615,
+          "overall": 0.7064583333333333,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -3594,26 +3594,26 @@
               "chrf": 51.023451561788576
             },
             "MMLU_eu": {
-              "n": 59,
-              "accuracy": 0.288135593220339,
-              "coverage": 0.5423728813559322
+              "n": 100,
+              "accuracy": 0.74,
+              "coverage": 1.0
             },
             "BertaQA_eu": {
               "n": 100,
-              "accuracy": 0.43,
-              "coverage": 0.66
+              "accuracy": 0.63,
+              "coverage": 1.0
             },
             "MGSM_eu": {
               "n": 100,
-              "accuracy": 0.01,
-              "coverage": 0.04
+              "accuracy": 0.87,
+              "coverage": 1.0
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/qwen3.5-27b_seed123.json"
         },
         {
           "seed": 777,
-          "overall": 0.5797916666666666,
+          "overall": 0.7122916666666667,
           "by_benchmark": {
             "EusTrivia": {
               "n": 80,
@@ -3673,18 +3673,18 @@
             },
             "MMLU_eu": {
               "n": 100,
-              "accuracy": 0.25,
-              "coverage": 0.53
+              "accuracy": 0.75,
+              "coverage": 1.0
             },
             "BertaQA_eu": {
               "n": 100,
-              "accuracy": 0.52,
-              "coverage": 0.67
+              "accuracy": 0.78,
+              "coverage": 1.0
             },
             "MGSM_eu": {
               "n": 100,
-              "accuracy": 0.0,
-              "coverage": 0.01
+              "accuracy": 0.83,
+              "coverage": 1.0
             }
           },
           "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/qwen3.5-27b_seed777.json"
@@ -3765,24 +3765,24 @@
           "n": 3
         },
         "MMLU_eu": {
-          "accuracy_mean": 0.276045197740113,
-          "accuracy_std": 0.022575058076363872,
-          "coverage_mean": 0.5341242937853108,
-          "coverage_std": 0.007143486381498743,
+          "accuracy_mean": 0.7566666666666667,
+          "accuracy_std": 0.020816659994661344,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
           "n": 3
         },
         "BertaQA_eu": {
-          "accuracy_mean": 0.45,
-          "accuracy_std": 0.06244997998398398,
-          "coverage_mean": 0.6566666666666667,
-          "coverage_std": 0.01527525231651948,
+          "accuracy_mean": 0.68,
+          "accuracy_std": 0.08660254037844388,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
           "n": 3
         },
         "MGSM_eu": {
-          "accuracy_mean": 0.0033333333333333335,
-          "accuracy_std": 0.005773502691896258,
-          "coverage_mean": 0.02333333333333333,
-          "coverage_std": 0.015275252316519466,
+          "accuracy_mean": 0.8533333333333334,
+          "accuracy_std": 0.020816659994661344,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
           "n": 3
         }
       }
