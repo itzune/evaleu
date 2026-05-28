@@ -1,0 +1,1660 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basque LLM Evaluation</title>
+  <link href="vendor/fonts.css" rel="stylesheet">
+  <script src="vendor/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #08090a;
+      --panel: #101214;
+      --panel-soft: #14171b;
+      --text: #f4f6f8;
+      --muted: #a4acb8;
+      --line: rgba(255,255,255,0.07);
+      --line-soft: rgba(255,255,255,0.05);
+      --accent: #7170ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 700px at 10% -20%, #1a1e2a 0%, #08090a 50%), var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-feature-settings: "cv01", "ss03";
+      line-height: 1.45;
+    }
+
+    .wrap {
+      width: min(1240px, 100% - 40px);
+      margin: 0 auto;
+      padding: 34px 0 76px;
+    }
+
+    .hero {
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      padding: 22px 22px 16px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 600;
+      letter-spacing: -0.95px;
+      line-height: 1.02;
+      color: #f7f8f8;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: #c8ced8;
+      font-size: 14px;
+    }
+
+    .meta-inline {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .meta-card {
+      border: 1px solid var(--line-soft);
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 80px;
+    }
+
+    .meta-k { font-size: 12px; color: var(--muted); }
+    .meta-v { margin-top: 3px; font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+
+    .section {
+      margin-top: 16px;
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 14px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.22px;
+      color: #f2f4f7;
+    }
+
+    .section > h2 { margin: 0 0 10px; }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      flex-wrap: wrap;
+    }
+
+    .family-head {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .family-toggle {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: #d8deea;
+      border-radius: 6px;
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-size: 11px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .family-toggle.open {
+      background: rgba(124,140,255,0.18);
+      border-color: rgba(124,140,255,0.58);
+      color: #eef1ff;
+    }
+
+    .table-wrap {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      overflow: auto;
+      background: #0f1114;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead th {
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(255,255,255,0.02);
+      color: #aeb6c2;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.045em;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line-soft);
+      color: #e6eaf0;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.012); }
+
+    .model-main { font-weight: 500; }
+    .model-sub { color: #8f98a7; font-size: 12px; margin-top: 2px; }
+
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .pill {
+      display: inline-block;
+      margin: 3px 6px 0 0;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: #cfd5df;
+      font-size: 11px;
+      white-space: nowrap;
+      background: rgba(255,255,255,0.01);
+    }
+
+    .strong { font-weight: 600; color: #ffffff; }
+
+    .best-cell {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .caption {
+      margin-top: 10px;
+      color: #9ba4b3;
+      font-size: 12px;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .plot {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: var(--panel-soft);
+      padding: 10px;
+      height: 390px;
+      overflow: hidden;
+    }
+
+    .plot.heatmap-plot {
+      height: auto;
+      overflow: auto;
+    }
+
+    .heatmap {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 4px;
+      table-layout: fixed;
+    }
+
+    .heatmap th,
+    .heatmap td {
+      border: none;
+      padding: 8px 10px;
+      font-size: 12px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .heatmap th:first-child,
+    .heatmap td:first-child {
+      text-align: left;
+      width: 280px;
+      max-width: 280px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .heat-cell {
+      border-radius: 6px;
+      font-weight: 600;
+      color: #f8fbff;
+      position: relative;
+    }
+
+    .heat-cell.best {
+      box-shadow: inset 0 0 0 2px rgba(255, 215, 0, 0.95), 0 0 0 1px rgba(255, 215, 0, 0.35);
+    }
+
+    .heat-cell.best::after {
+      content: '★';
+      position: absolute;
+      top: 2px;
+      right: 6px;
+      font-size: 10px;
+      color: #ffd84d;
+      text-shadow: 0 0 6px rgba(0,0,0,0.45);
+    }
+
+    .heat-sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ---------- Translation heatmap: mobile card layout ---------- */
+    .heatmap-mobile { display: none; }
+
+    .heatmap-mobile .hm-model-card {
+      background: #0f1114;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    .heatmap-mobile .hm-model-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.35;
+    }
+
+    .heatmap-mobile .hm-metric-block {
+      margin-bottom: 8px;
+    }
+
+    .heatmap-mobile .hm-metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .heatmap-mobile .hm-dirs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .heatmap-mobile .hm-dir {
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      color: #f8fbff;
+      text-align: center;
+      position: relative;
+    }
+
+    .heatmap-mobile .hm-dir.best {
+      box-shadow: inset 0 0 0 2px rgba(255,215,0,0.95), 0 0 0 1px rgba(255,215,0,0.35);
+    }
+
+    .heatmap-mobile .hm-dir.best::after {
+      content: '★';
+      position: absolute;
+      top: 2px;
+      right: 6px;
+      font-size: 10px;
+      color: #ffd84d;
+      text-shadow: 0 0 6px rgba(0,0,0,0.45);
+    }
+
+    .heatmap-mobile .hm-dir .hm-dir-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 1px;
+    }
+
+    .heatmap-mobile .hm-dir .hm-dir-std {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .plot h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #e9edf3;
+      letter-spacing: -0.1px;
+    }
+
+    .group-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      margin: 0 0 8px;
+      align-items: center;
+    }
+
+    .group-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #d8deea;
+      white-space: nowrap;
+    }
+
+    .group-legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      border: 1px solid rgba(255,255,255,0.22);
+      display: inline-block;
+    }
+
+    .plot canvas {
+      width: 100% !important;
+      height: 330px !important;
+      max-height: 330px;
+      display: block;
+    }
+
+    .radar-plot {
+      height: 600px;
+    }
+
+    .radar-plot canvas {
+      height: 540px !important;
+      max-height: 540px;
+    }
+
+    .protocol-table td:first-child { white-space: nowrap; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .skill-card {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      color: inherit;
+      outline: none;
+      width: 100%;
+    }
+
+    .skill-card:hover {
+      border-color: rgba(124,140,255,0.62);
+      background: rgba(124,140,255,0.09);
+      transform: translateY(-1px);
+    }
+
+    .skill-card.active {
+      border-color: rgba(124,140,255,0.85);
+      background: rgba(124,140,255,0.14);
+      box-shadow: 0 0 0 1px rgba(124,140,255,0.35) inset;
+    }
+
+    .skill-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-icon {
+      width: 18px;
+      height: 18px;
+      color: #95a2ff;
+      flex-shrink: 0;
+    }
+
+    .skill-label {
+      color: #b7bfcb;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .skill-winner {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .skill-scoreline {
+      color: #d7deea;
+      font-size: 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+
+    .skill-scoreline .score {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #f4f6f8;
+      font-weight: 600;
+    }
+
+    .skill-view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .skill-view-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #eef2fb;
+      letter-spacing: -0.1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skill-view-title .skill-icon {
+      width: 20px;
+      height: 20px;
+      color: #95a2ff;
+    }
+
+    .skill-view-desc {
+      color: #9fa9b8;
+      font-size: 13px;
+      margin: 4px 0 10px;
+    }
+
+    .skill-view-meta {
+      color: #a8b2c2;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1040px) {
+      .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chart-grid { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    /* ---------- Table group-mode toggle switch ---------- */
+    .group-mode-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255,255,255,0.02);
+      overflow: hidden;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .group-mode-toggle button {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 11px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .group-mode-toggle button:first-child {
+      border-right: 1px solid var(--line);
+    }
+
+    .group-mode-toggle button.active {
+      background: rgba(124,140,255,0.22);
+      color: #eef1ff;
+    }
+
+    /* ---------- Translation heatmap: mobile ---------- */
+    @media (max-width: 720px) {
+      .heatmap-table { display: none; }
+      .heatmap-mobile { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1 id="title">Basque LLM Evaluation</h1>
+      <div class="subtitle" id="subtitle">A public benchmark dashboard for comparing local LLM performance in Basque language tasks.</div>
+      <div class="meta-inline" id="metaInline"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Table 1. Classification results</h2>
+        <div class="group-mode-toggle" id="groupModeToggle">
+          <button type="button" data-mode="family" title="Group by eval family (BasqueGLUE, LatxaEval, …)">Eval family</button>
+          <button type="button" data-mode="skill" class="active" title="Group by skill category (Knowledge, Reading, …)">Skill category</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="resultsHeadRow">
+              <th>#</th>
+              <th>Model</th>
+              <th>Quantization</th>
+              <th>Overall</th>
+              <th>Evals (grouped)</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+      <div class="caption" id="resultsCaption">Accuracy reported as mean ± std across random seeds.</div>
+    </section>
+
+    <section class="section">
+      <h2>Figures — Classification</h2>
+      <div class="chart-grid">
+        <div class="plot">
+          <h3>Figure 1. Overall accuracy by model</h3>
+          <div id="barGroupLegend" class="group-legend" aria-label="Figure 1 group legend"></div>
+          <canvas id="barOverall"></canvas>
+        </div>
+        <div class="plot radar-plot">
+          <h3>Figure 2. Accuracy profile by classification eval</h3>
+          <canvas id="radarBench"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="skillsSection">
+      <div class="section-head">
+        <h2>Skill cards — Best models by skill</h2>
+      </div>
+      <div id="skillsGrid" class="skills-grid"></div>
+      <div class="caption">Winner score and margin over the runner-up for each skill.</div>
+    </section>
+
+    <section class="section" id="skillViewSection">
+      <div class="section-head">
+        <h2>Skill view — Ranking by selected skill</h2>
+      </div>
+      <div class="skill-view-header">
+        <h3 id="skillViewTitle" class="skill-view-title">—</h3>
+        <div id="skillViewMeta" class="skill-view-meta"></div>
+      </div>
+      <div id="skillViewDesc" class="skill-view-desc"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Model</th>
+              <th>Skill score</th>
+              <th>Benchmarks used</th>
+            </tr>
+          </thead>
+          <tbody id="skillViewBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="translationSection">
+      <h2>Figure 3. Translation heatmap (chrF / BLEU)</h2>
+      <div class="chart-grid">
+        <div class="plot heatmap-plot">
+          <div class="table-wrap heatmap-table">
+            <table id="transHeatmap" class="heatmap"></table>
+          </div>
+          <div id="transHeatmapMobile" class="heatmap-mobile"></div>
+          <div class="caption">Cell color is scaled by score within each metric (chrF and BLEU independently). Higher is better.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Figures — Timeline</h2>
+      <div class="chart-grid">
+        <div class="plot">
+          <h3>Figure 4. Overall accuracy by release date</h3>
+          <canvas id="timelineOverall"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Evaluation protocol</h2>
+      <div class="table-wrap">
+        <table class="protocol-table">
+          <thead>
+            <tr>
+              <th>Family</th>
+              <th>Benchmark</th>
+              <th>What is measured</th>
+              <th>Metric</th>
+              <th>Label space</th>
+            </tr>
+          </thead>
+          <tbody id="protocolBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Methodology</h2>
+      <div class="table-wrap">
+        <table class="protocol-table">
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Models evaluated</td><td>11</td></tr>
+            <tr><td>Classification benchmarks</td><td>12 (BasqueGLUE, LatxaEval, EusTrivia, XNLIeu, MMLU, BertaQA, MGSM)</td></tr>
+            <tr><td>Translation benchmarks</td><td>4 (FLORES: EU↔EN, EU↔ES)</td></tr>
+            <tr><td>Items per benchmark</td><td class="mono">80</td></tr>
+            <tr><td>Classification items per model</td><td class="mono">960 (12 × 80)</td></tr>
+            <tr><td>Translation items per model</td><td class="mono">320 (4 × 80)</td></tr>
+            <tr><td>Seeds</td><td class="mono">42, 123, 777</td></tr>
+            <tr><td>Evaluations per model (classification)</td><td>3 seeds × 80 items = 240 per benchmark</td></tr>
+            <tr><td>Classification metric</td><td>Accuracy</td></tr>
+            <tr><td>Translation metric</td><td>chrF / BLEU</td></tr>
+            <tr><td>Averaging</td><td>Equal-weight mean across benchmarks and seeds</td></tr>
+            <tr><td>DeepSeek V4 Pro</td><td>Additional temperature sweep (0.3 / 0.7) per seed, totalling 6 runs</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="caption">Scores are computed as equal-weight averages across benchmarks within a family or skill. Error bars show ±1 standard deviation across seeds. Models are sorted by overall classification accuracy. Translation benchmarks are reported separately due to different metrics (chrF/BLEU).</div>
+    </section>
+  </div>
+
+  <script>
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const pct = (x) => ((x || 0) * 100).toFixed(1) + '%';
+    const pctPM = (mean, std) => `${((mean || 0) * 100).toFixed(1)}% ± ${((std || 0) * 100).toFixed(1)}%`;
+    const metricCell = (mean, std) => {
+      const shortV = pct(mean);
+      const fullV = pctPM(mean, std);
+      return `<span title="${esc(fullV)}">${esc(shortV)}</span>`;
+    };
+    const benchLabel = (id) => ({
+      'BasqueGLUE_qnli': 'BasqueGLUE-QNLI',
+      'BasqueGLUE_bec': 'BasqueGLUE-BEC',
+      'BasqueGLUE_wic': 'BasqueGLUE-WiC',
+      'BasqueGLUE_intent': 'BasqueGLUE-Intent',
+      'LatxaEval_eusexams': 'LatxaEval-EusExams',
+      'LatxaEval_eusproficiency': 'LatxaEval-EusProficiency',
+      'LatxaEval_eusreading': 'LatxaEval-EusReading'
+    }[id] || id);
+
+    const familyLabel = (id) => ({
+      'Core': 'Core',
+      'BasqueGLUE': 'BasqueGLUE',
+      'LatxaEvalSuite': 'LatxaEvalSuite'
+    }[id] || id);
+
+    const benchHeaderHTML = (id) => {
+      const label = benchLabel(id);
+      const idx = label.indexOf('-');
+      if (idx > 0) {
+        return `${esc(label.slice(0, idx))}<br>${esc(label.slice(idx + 1))}`;
+      }
+      return esc(label);
+    };
+
+    const familyHeaderHTML = (id) => {
+      const label = familyLabel(id);
+      const idx = label.indexOf('-');
+      if (idx > 0) {
+        return `${esc(label.slice(0, idx))}<br>${esc(label.slice(idx + 1))}`;
+      }
+      return esc(label);
+    };
+
+    const compactModelLabel = (name) => {
+      const v = String(name || '');
+      if (v.includes('Qwen 3.5 27B')) return 'Qwen 3.5 27B';
+      return v;
+    };
+    const formatUtcDate = (iso) => {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso || '-');
+      return d.toISOString().slice(0, 10);
+    };
+
+    fetch('./data.json').then(r => r.json()).then(async data => {
+      const rows = data.results || [];
+      document.getElementById('title').textContent = data.title || 'Basque LLM Evaluation';
+      document.getElementById('subtitle').textContent = 'A public benchmark dashboard for comparing local LLM performance in Basque language tasks.';
+
+      const nSeeds = rows.length ? (rows[0].n_seeds || 1) : 1;
+      const generatedUtc = data.generated_at_utc || '-';
+      const generatedDate = formatUtcDate(generatedUtc);
+      const allBenchDefs = (data.evaluation_protocol?.benchmarks || []);
+      const allFamilyDefs = (data.evaluation_protocol?.benchmark_families || []);
+      const skillCategories = data.skill_categories || [];
+
+      // ---- Split into classification vs translation ----
+      const TRANS_FAMILY = 'FLORES';
+      const transBenchIds = new Set(
+        allBenchDefs.filter(b => b.family === TRANS_FAMILY).map(b => b.id)
+      );
+
+      const clsBenchDefs = allBenchDefs.filter(b => b.family !== TRANS_FAMILY);
+      const clsBenchIds = clsBenchDefs.map(b => b.id);
+      const clsFamilyDefs = allFamilyDefs.filter(fd => fd.id !== TRANS_FAMILY);
+      const clsFamilyIds = clsFamilyDefs.map(fd => fd.id);
+      const clsSkillDefs = skillCategories.filter(sc =>
+        sc.benchmarks.some(b => clsBenchIds.includes(b.id))
+      );
+
+      document.getElementById('metaInline').innerHTML = `
+        <span>Generated: <span class="mono">${esc(generatedDate)}</span></span>
+        <span>Seeds: <span class="mono">n=${esc(nSeeds)}</span></span>
+      `;
+
+      // ================================================================
+      // Table 1 — Classification results
+      // ================================================================
+      const head = document.getElementById('resultsHeadRow');
+      const body = document.getElementById('resultsBody');
+      const caption = document.getElementById('resultsCaption');
+
+      const expandedFamilies = new Set();
+      const familyBenchMap = Object.fromEntries(
+        clsFamilyDefs.map(fd => [fd.id, (fd.benchmarks || []).map(b => b.id)])
+      );
+      const skillBenchMap = Object.fromEntries(
+        clsSkillDefs.map(sd => [sd.id, (sd.benchmarks || []).map(b => b.id)])
+      );
+
+      const bestOverall = Math.max(...rows.map(r => r.overall_accuracy || 0));
+      const bestByFamily = Object.fromEntries(
+        clsFamilyIds.map(id => [id, Math.max(...rows.map(r => ((r.by_family || {})[id] || {}).accuracy || 0))])
+      );
+      const bestBySkill = (() => {
+        const m = {};
+        clsSkillDefs.forEach(sd => {
+          const bids = (sd.benchmarks || []).map(b => b.id);
+          m[sd.id] = Math.max(...rows.map(r => {
+            const byB = r.by_benchmark || {};
+            const vals = bids.map(bid => ((byB[bid] || {}).accuracy || 0));
+            return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+          }));
+        });
+        return m;
+      })();
+      const bestByBench = Object.fromEntries(
+        clsBenchIds.map(id => [id, Math.max(...rows.map(r => ((r.by_benchmark || {})[id] || {}).accuracy || 0))])
+      );
+      const isBest = (v, best) => Math.abs((v || 0) - (best || 0)) < 1e-12;
+
+      // ---- Compute skill scores on-the-fly from benchmark accuracy ----
+      const skillScoreForRow = (row, skillId) => {
+        const byB = row.by_benchmark || {};
+        const bids = skillBenchMap[skillId] || [];
+        if (!bids.length) return { accuracy: 0, accuracy_std: 0 };
+        const accs = bids.map(bid => ((byB[bid] || {}).accuracy || 0));
+        const stds = bids.map(bid => ((byB[bid] || {}).accuracy_std || 0));
+        return {
+          accuracy: accs.reduce((a, b) => a + b, 0) / accs.length,
+          accuracy_std: stds.reduce((a, b) => a + b, 0) / stds.length,
+        };
+      };
+
+      // ---- Group mode state ----
+      let groupMode = 'skill'; // default
+      const expandedGroups = new Set(); // tracks expanded group IDs (family or skill ids)
+
+      const renderResultsTable = () => {
+        const isFamilyMode = groupMode === 'family';
+        const groupDefs = isFamilyMode ? clsFamilyDefs : clsSkillDefs;
+        const groupBenchMap = isFamilyMode ? familyBenchMap : skillBenchMap;
+        const groupLabelFn = isFamilyMode ? (id => familyLabel(id)) : (id => {
+          const sd = clsSkillDefs.find(s => s.id === id) || {};
+          return sd.label || id;
+        });
+        const groupHeaderFn = isFamilyMode ? familyHeaderHTML : ((id) => {
+          const sd = clsSkillDefs.find(s => s.id === id) || {};
+          return esc(sd.label || id);
+        });
+        const groupTitleFn = isFamilyMode ? (() => '') : ((id) => {
+          const sd = clsSkillDefs.find(s => s.id === id) || {};
+          return esc(sd.description || '');
+        });
+        const bestByGroup = isFamilyMode ? bestByFamily : bestBySkill;
+
+        const expandedBenchIds = groupDefs.flatMap(gd => (
+          expandedGroups.has(gd.id) ? (groupBenchMap[gd.id] || []) : []
+        ));
+
+        head.innerHTML = `
+          <th>#</th>
+          <th>Model</th>
+          <th>Quantization</th>
+          <th>Overall</th>
+          ${groupDefs.map(gd => {
+            const open = expandedGroups.has(gd.id);
+            const hasDetails = (groupBenchMap[gd.id] || []).length > 1;
+            const icon = open ? '▾' : '▸';
+            const toggleTitle = `${open ? 'Hide' : 'Show'} ${groupLabelFn(gd.id)} details`;
+            const groupTooltip = groupTitleFn(gd.id);
+            const groupTh = `<th${groupTooltip ? ` title="${groupTooltip}"` : ''}><span class="family-head">${groupHeaderFn(gd.id)}${hasDetails ? `<button class="family-toggle ${open ? 'open' : ''}" data-toggle-group="${esc(gd.id)}" type="button" title="${esc(toggleTitle)}" aria-label="${esc(toggleTitle)}">${icon}</button>` : ''}</span></th>`;
+            const detailThs = open ? (groupBenchMap[gd.id] || []).map(bid => `<th>${benchHeaderHTML(bid)}</th>`).join('') : '';
+            return groupTh + detailThs;
+          }).join('')}
+        `;
+
+        head.querySelectorAll('button[data-toggle-group]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const gid = btn.getAttribute('data-toggle-group');
+            if (expandedGroups.has(gid)) expandedGroups.delete(gid);
+            else expandedGroups.add(gid);
+            renderResultsTable();
+          });
+        });
+
+        body.innerHTML = rows.map((r, i) => {
+          const quantLabels = [];
+          if (r.weights_quant) quantLabels.push(String(r.weights_quant).toUpperCase());
+          const byFam = r.by_family || {};
+          const byBench = r.by_benchmark || {};
+
+          const groupCells = groupDefs.map(gd => {
+            let groupScore;
+            if (isFamilyMode) {
+              groupScore = byFam[gd.id] || { accuracy: 0, accuracy_std: 0 };
+            } else {
+              groupScore = skillScoreForRow(r, gd.id);
+            }
+            const groupCell = isBest(groupScore.accuracy, bestByGroup[gd.id])
+              ? `<td><span class="best-cell">${metricCell(groupScore.accuracy || 0, groupScore.accuracy_std || 0)}</span></td>`
+              : `<td>${metricCell(groupScore.accuracy || 0, groupScore.accuracy_std || 0)}</td>`;
+
+            if (!expandedGroups.has(gd.id)) return groupCell;
+
+            const benchCells = (groupBenchMap[gd.id] || []).map(bid => {
+              const bm = byBench[bid] || {};
+              const inner = metricCell(bm.accuracy || 0, bm.accuracy_std || 0);
+              return isBest(bm.accuracy, bestByBench[bid])
+                ? `<td><span class="best-cell">${inner}</span></td>`
+                : `<td>${inner}</td>`;
+            }).join('');
+
+            return groupCell + benchCells;
+          }).join('');
+
+          return `
+            <tr>
+              <td>${i + 1}</td>
+              <td>
+                <div class="model-main"><a href="./model.html?model=${encodeURIComponent(r.model_id)}" style="color:inherit;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='inherit'">${esc(r.display_name)}</a></div>
+                <div class="model-sub mono">${esc(r.model_id)}</div>
+              </td>
+              <td>${quantLabels.map(q => `<span class="pill">${esc(q)}</span>`).join('')}</td>
+              <td>${isBest(r.overall_accuracy, bestOverall) ? `<span class="best-cell">${metricCell(r.overall_accuracy, r.overall_accuracy_std)}</span>` : metricCell(r.overall_accuracy, r.overall_accuracy_std)}</td>
+              ${groupCells}
+            </tr>
+          `;
+        }).join('');
+
+        const totalDetailCols = expandedBenchIds.length;
+        const modeLabel = isFamilyMode ? 'eval family' : 'skill category';
+        caption.textContent = totalDetailCols
+          ? `Grouped by ${modeLabel}; ${totalDetailCols} benchmark detail columns expanded (mean ± std on hover).`
+          : `Grouped by ${modeLabel}; benchmark detail columns are collapsed by default (mean ± std on hover).`;
+      };
+
+      // ---- Toggle buttons ----
+      document.querySelectorAll('#groupModeToggle button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-mode');
+          if (mode !== groupMode) {
+            groupMode = mode;
+            expandedGroups.clear();
+            document.querySelectorAll('#groupModeToggle button').forEach(b => b.classList.toggle('active', b.getAttribute('data-mode') === mode));
+            renderResultsTable();
+          }
+        });
+      });
+
+      renderResultsTable();
+
+      // ================================================================
+      // Skill cards (after Table 1)
+      // ================================================================
+      const skillsSection = document.getElementById('skillsSection');
+      const skillsGrid = document.getElementById('skillsGrid');
+      const skills = data.skills || [];
+
+      const skillViewSection = document.getElementById('skillViewSection');
+      const skillViewTitle = document.getElementById('skillViewTitle');
+      const skillViewDesc = document.getElementById('skillViewDesc');
+      const skillViewMeta = document.getElementById('skillViewMeta');
+      const skillViewBody = document.getElementById('skillViewBody');
+
+      const skillIcons = {
+        knowledge: 'brain',
+        reading: 'book-open-text',
+        writing: 'pen-line',
+        reasoning: 'puzzle',
+        pragmatics: 'message-circle',
+      };
+
+      const iconSvg = async (iconName) => {
+        const file = skillIcons[iconName];
+        if (!file) return '';
+        const resp = await fetch(`vendor/lucide/${file}.svg`);
+        let svg = await resp.text();
+        svg = svg.replace('stroke="currentColor"', 'stroke="#95a2ff"');
+        svg = svg.replace('<svg', '<svg class="skill-icon"');
+        return svg;
+      };
+
+      const renderSkillView = async (skillId) => {
+        const selected = skills.find(s => s.id === skillId) || skills[0];
+        if (!selected) {
+          skillViewSection.style.display = 'none';
+          return;
+        }
+
+        skillViewSection.style.display = '';
+        const benchLabels = (selected.benchmarks || []).map(bid => benchLabel(bid));
+        const titleIcon = await iconSvg(selected.id);
+        skillViewTitle.innerHTML = `${titleIcon}${esc(selected.label)}`;
+        skillViewDesc.textContent = selected.description || '';
+        skillViewMeta.textContent = `Benchmarks: ${benchLabels.join(', ') || '—'}`;
+
+        const ranking = selected.ranking || [];
+        skillViewBody.innerHTML = ranking.map((row, idx) => {
+          const isWinner = idx === 0;
+          const modelText = isWinner ? `★ ${row.display_name}` : row.display_name;
+          return `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>
+                <div class="model-main ${isWinner ? 'strong' : ''}">${esc(modelText)}</div>
+                <div class="model-sub mono">${esc(row.model_id || '')}</div>
+              </td>
+              <td><span class="mono ${isWinner ? 'strong' : ''}">${esc((row.score ?? 0).toFixed(1))}%</span></td>
+              <td>${esc(`${row.n_benchmarks || 0}/${(selected.benchmarks || []).length || 0}`)}</td>
+            </tr>
+          `;
+        }).join('');
+
+        skillsGrid.querySelectorAll('.skill-card').forEach(el => {
+          el.classList.toggle('active', el.getAttribute('data-skill-id') === selected.id);
+        });
+      };
+
+      if (!skills.length) {
+        skillsSection.style.display = 'none';
+        skillViewSection.style.display = 'none';
+      } else {
+        skillsSection.style.display = '';
+        const cardsHtml = await Promise.all(skills.map(async s => {
+          const w = s.winner || {};
+          const name = (w.display_name || 'N/A').replace(/\s*\(no-thinking\)/gi, '');
+          const score = (typeof w.score === 'number') ? `${w.score.toFixed(1)}%` : '-';
+          const cardIcon = await iconSvg(s.id);
+          return `
+            <button class="skill-card" type="button" data-skill-id="${esc(s.id)}" title="View ${esc(s.label || s.id)} ranking">
+              <div class="skill-card-header">
+                ${cardIcon}
+                <div class="skill-label">${esc(s.label || s.id || 'SKILL')}</div>
+              </div>
+              <div class="skill-winner">★ ${esc(name)}</div>
+              <div class="skill-scoreline">
+                <span class="score">${esc(score)}</span>
+              </div>
+            </button>
+          `;
+        }));
+        skillsGrid.innerHTML = cardsHtml.join('');
+
+        skillsGrid.querySelectorAll('.skill-card').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const sid = btn.getAttribute('data-skill-id');
+            renderSkillView(sid);
+            skillViewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+
+        renderSkillView(skills[0].id);
+      }
+
+      // ================================================================
+      // Translation models (for heatmap)
+      // ================================================================
+      const TRANS_BENCHES = ['FloresTranslation_eu_en', 'FloresTranslation_en_eu', 'FloresTranslation_eu_es', 'FloresTranslation_es_eu'];
+      const transModels = rows.filter(r => {
+        const bm = r.by_benchmark || {};
+        // Has actual translation data (chrF, not just accuracy=0)
+        return TRANS_BENCHES.some(bid => (bm[bid] || {}).chrf > 0 || (bm[bid] || {}).chrf_mean > 0);
+      }).sort((a, b) => {
+        // Sort by average chrF across all 4 directions
+        const avgChrf = (row) => {
+          const bm = row.by_benchmark || {};
+          const vals = TRANS_BENCHES.map(bid => (bm[bid] || {}).chrf || 0);
+          return vals.reduce((s, v) => s + v, 0) / vals.length;
+        };
+        return avgChrf(b) - avgChrf(a);
+      });
+
+      // ================================================================
+      // Protocol table
+      // ================================================================
+      const protocolBody = document.getElementById('protocolBody');
+      (data.evaluation_protocol?.benchmarks || []).forEach(x => {
+        protocolBody.innerHTML += `
+          <tr>
+            <td class="mono">${esc(x.family || '-')}</td>
+            <td class="mono">${esc(benchLabel(x.id))}</td>
+            <td>${esc(x.task)}</td>
+            <td>${esc(x.metric)}</td>
+            <td>${esc(x.labels)}</td>
+          </tr>
+        `;
+      });
+
+      // ================================================================
+      // Charts
+
+      // Helper: highlight hovered legend dataset while keeping others visible
+      function addLegendHighlight(chart, dimOpacity) {
+        dimOpacity = dimOpacity || 0.45;
+
+        const legendOpts = chart.options.plugins.legend || (chart.options.plugins.legend = {});
+
+        legendOpts.onHover = function(e, item, legend) {
+          const owner = legend && legend.chart ? legend.chart : chart;
+          const ci = item ? item.datasetIndex : -1;
+          owner.data.datasets.forEach((ds, i) => {
+            // Restore original colors first (handles transitions between items)
+            if (ds._savedBorderColor !== undefined) {
+              ds.borderColor = ds._savedBorderColor;
+              ds.borderWidth = ds._savedBorderWidth;
+              ds.backgroundColor = ds._savedBgColor;
+              ds.pointRadius = ds._savedPointRadius;
+            }
+            // Save current values as originals
+            ds._savedBorderWidth = ds.borderWidth;
+            ds._savedBorderColor = ds.borderColor;
+            ds._savedBgColor = ds.backgroundColor;
+            ds._savedPointRadius = ds.pointRadius;
+
+            if (ci >= 0 && i !== ci) {
+              // Keep other datasets visible (de-emphasize only slightly)
+              ds.borderWidth = Math.max(1.5, Number(ds._savedBorderWidth) || 2);
+              ds.borderColor = lightenColor(ds._savedBorderColor, dimOpacity);
+              ds.backgroundColor = lightenColor(ds._savedBgColor, 0.15);
+              ds.pointRadius = Math.max(1.8, Number(ds._savedPointRadius) || 2.2);
+            } else if (ci >= 0 && i === ci) {
+              ds.borderWidth = 3.5;
+              ds.pointRadius = 3.5;
+            }
+          });
+          if (ci >= 0) owner.update('none');
+        };
+
+        legendOpts.onLeave = function(e, item, legend) {
+          const owner = legend && legend.chart ? legend.chart : chart;
+          owner.data.datasets.forEach((ds) => {
+            if (ds._savedBorderColor !== undefined) {
+              ds.borderColor = ds._savedBorderColor;
+              ds.borderWidth = ds._savedBorderWidth;
+              ds.backgroundColor = ds._savedBgColor;
+              ds.pointRadius = ds._savedPointRadius;
+              delete ds._savedBorderColor;
+              delete ds._savedBorderWidth;
+              delete ds._savedBgColor;
+              delete ds._savedPointRadius;
+            }
+          });
+          owner.update('none');
+        };
+
+        chart.update('none');
+      }
+
+      // Make a color lighter by mixing with white/transparent
+      function lightenColor(color, opacity) {
+        if (!color || color === 'transparent') return 'transparent';
+        if (typeof color === 'string' && color.startsWith('rgba')) {
+          const m = color.match(/[\d.]+/g);
+          if (m && m.length >= 3) {
+            return `rgba(${m[0]},${m[1]},${m[2]},${opacity})`;
+          }
+        }
+        if (typeof color === 'string' && color.startsWith('#')) {
+          const r = parseInt(color.slice(1,3), 16);
+          const g = parseInt(color.slice(3,5), 16);
+          const b = parseInt(color.slice(5,7), 16);
+          return `rgba(${r},${g},${b},${opacity})`;
+        }
+        return color;
+      }
+      // ================================================================
+      const labels = rows.map(r => compactModelLabel(r.display_name));
+      const fullLabels = rows.map(r => r.display_name);
+      const overall = rows.map(r => Math.round((r.overall_accuracy || 0) * 1000) / 10);
+
+      if (window.__barChart) window.__barChart.destroy();
+      if (window.__radarChart) window.__radarChart.destroy();
+      if (window.__timelineChart) window.__timelineChart.destroy();
+
+      const sizeCategoryColors = {
+        '<4B': '#2563eb',   // vivid blue
+        '7-9B': '#f97316',  // vivid orange
+        '27-32B': '#16a34a',// vivid green
+        '70B': '#a855f7',   // vivid purple
+        'other': '#94a3b8'
+      };
+
+      const inferModelSizeB = (row) => {
+        const txt = `${row?.display_name || ''} ${row?.model_id || ''}`;
+        const m = txt.match(/(\d+(?:\.\d+)?)\s*[bB]\b/);
+        return m ? Number(m[1]) : null;
+      };
+
+      const modelSizeCategory = (row) => {
+        const s = inferModelSizeB(row);
+        if (s == null) return 'other';
+        if (s <= 4) return '<4B';
+        if (s >= 7 && s <= 9) return '7-9B';
+        if (s >= 27 && s <= 32) return '27-32B';
+        if (s >= 70) return '70B';
+        return 'other';
+      };
+
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const shadeHex = (hex, delta) => {
+        const h = (hex || '').replace('#', '');
+        if (!/^[0-9a-fA-F]{6}$/.test(h)) return hex;
+        const toCh = (i) => parseInt(h.slice(i, i + 2), 16);
+        const apply = (c) => {
+          const out = delta >= 0
+            ? c + (255 - c) * delta
+            : c * (1 + delta);
+          return clamp(Math.round(out), 0, 255).toString(16).padStart(2, '0');
+        };
+        return `#${apply(toCh(0))}${apply(toCh(2))}${apply(toCh(4))}`;
+      };
+
+      const rowKey = (r) => `${r?.model_id || ''}::${r?.display_name || ''}`;
+      const groupedRows = rows.reduce((acc, r) => {
+        const g = modelSizeCategory(r);
+        (acc[g] ||= []).push(r);
+        return acc;
+      }, {});
+
+      const modelColorMap = new Map();
+      Object.entries(groupedRows).forEach(([group, groupRows]) => {
+        const base = sizeCategoryColors[group] || sizeCategoryColors.other;
+        const n = groupRows.length;
+        groupRows.forEach((r, idx) => {
+          // Keep groups distinct (base hue), then vary shade per model in the same group.
+          const delta = n <= 1 ? 0 : ((idx / (n - 1)) - 0.5) * 0.46; // ~[-0.23, +0.23]
+          modelColorMap.set(rowKey(r), shadeHex(base, delta));
+        });
+      });
+
+      const rowColor = (r) => modelColorMap.get(rowKey(r)) || (sizeCategoryColors[modelSizeCategory(r)] || sizeCategoryColors.other);
+      const barColors = rows.map(r => rowColor(r));
+
+      const groupLegendOrder = ['<4B', '7-9B', '27-32B', '70B'];
+      const barGroupLegend = document.getElementById('barGroupLegend');
+      if (barGroupLegend) {
+        barGroupLegend.innerHTML = groupLegendOrder.map(label => `
+          <span class="group-legend-item">
+            <span class="group-legend-swatch" style="background:${sizeCategoryColors[label]}"></span>
+            ${esc(label)}
+          </span>
+        `).join('');
+      }
+
+      window.__barChart = new Chart(document.getElementById('barOverall').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data: overall,
+            backgroundColor: barColors,
+            borderWidth: 0,
+            borderRadius: 6,
+            barPercentage: 0.72,
+            categoryPercentage: 0.78
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => {
+                  const idx = items?.[0]?.dataIndex ?? 0;
+                  return fullLabels[idx] || labels[idx] || '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#d4dbe7', maxRotation: 22, minRotation: 22, font: { size: 11 } },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { color: '#d4dbe7', font: { size: 11 } },
+              grid: { color: 'rgba(255,255,255,0.06)' }
+            }
+          }
+        }
+      });
+
+      addLegendHighlight(window.__barChart);
+
+      // Figure 2 — radar: classification benchmarks only
+      const radarLabels = clsBenchIds.map(id => benchLabel(id));
+      const radarDatasets = rows.map((r, idx) => {
+        const b = r.by_benchmark || {};
+        return {
+          label: r.display_name,
+          data: clsBenchIds.map(id => Math.round(((((b[id] || {}).accuracy) || 0) * 1000)) / 10),
+          borderColor: barColors[idx] || sizeCategoryColors.other,
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 2.2,
+          pointHoverRadius: 2.8
+        };
+      });
+
+      window.__radarChart = new Chart(document.getElementById('radarBench').getContext('2d'), {
+        type: 'radar',
+        data: { labels: radarLabels, datasets: radarDatasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#d8deea',
+                boxWidth: 10,
+                boxHeight: 10,
+                padding: 10,
+                font: { size: 11 }
+              }
+            }
+          },
+          scales: {
+            r: {
+              min: 0,
+              max: 100,
+              ticks: {
+                stepSize: 20,
+                color: '#cfd6e3',
+                backdropColor: 'rgba(0,0,0,0)',
+                font: { size: 11 }
+              },
+              pointLabels: {
+                color: '#dce3ef',
+                font: { size: 12, weight: 500 }
+              },
+              grid: { color: 'rgba(255,255,255,0.10)' },
+              angleLines: { color: 'rgba(255,255,255,0.10)' }
+            }
+          },
+          layout: { padding: 4 }
+        }
+      });
+
+      addLegendHighlight(window.__radarChart);
+
+      // Figures 3 & 4 — Translation radars (chrF + BLEU)
+      const transFigSection = document.getElementById('translationSection');
+      if (transModels.length > 0) {
+        transFigSection.style.display = '';
+        const transDirLabels = ['EU→EN', 'EN→EU', 'EU→ES', 'ES→EU'];
+        const transDirIds = TRANS_BENCHES;
+
+        function scoreToHeatColor(value, min, max) {
+          if (value == null || !isFinite(value) || min == null || max == null || !isFinite(min) || !isFinite(max)) {
+            return 'rgba(148,163,184,0.22)';
+          }
+          const span = Math.max(1e-9, max - min);
+          const t = Math.max(0, Math.min(1, (value - min) / span));
+          const light = 22 + (1 - t) * 18; // darker = higher score
+          return `hsl(220 72% ${light}%)`;
+        }
+
+        function renderTranslationHeatmap(models) {
+          const table = document.getElementById('transHeatmap');
+          if (!table) return;
+
+          const chrfVals = [];
+          const bleuVals = [];
+          models.forEach(m => {
+            const bm = m.by_benchmark || {};
+            transDirIds.forEach(bid => {
+              const c = bm[bid]?.chrf;
+              const b = bm[bid]?.bleu;
+              if (typeof c === 'number' && isFinite(c)) chrfVals.push(c);
+              if (typeof b === 'number' && isFinite(b)) bleuVals.push(b);
+            });
+          });
+
+          const chrfMin = chrfVals.length ? Math.min(...chrfVals) : null;
+          const chrfMax = chrfVals.length ? Math.max(...chrfVals) : null;
+          const bleuMin = bleuVals.length ? Math.min(...bleuVals) : null;
+          const bleuMax = bleuVals.length ? Math.max(...bleuVals) : null;
+
+          const bestChrfByDir = {};
+          const bestBleuByDir = {};
+          transDirIds.forEach(bid => {
+            let bestC = -Infinity;
+            let bestB = -Infinity;
+            models.forEach(m => {
+              const vC = m.by_benchmark?.[bid]?.chrf;
+              const vB = m.by_benchmark?.[bid]?.bleu;
+              if (typeof vC === 'number' && isFinite(vC)) bestC = Math.max(bestC, vC);
+              if (typeof vB === 'number' && isFinite(vB)) bestB = Math.max(bestB, vB);
+            });
+            bestChrfByDir[bid] = bestC;
+            bestBleuByDir[bid] = bestB;
+          });
+
+          const headerDirs = transDirLabels.map(lbl => `<th>${esc(lbl)}</th>`).join('');
+          let html = `
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th colspan="4">chrF</th>
+                <th colspan="4">BLEU</th>
+              </tr>
+              <tr>
+                <th></th>
+                ${headerDirs}
+                ${headerDirs}
+              </tr>
+            </thead>
+            <tbody>
+          `;
+
+          models.forEach(m => {
+            const bm = m.by_benchmark || {};
+            const name = esc(m.display_name || m.model);
+            const chrfCells = transDirIds.map(bid => {
+              const v = bm[bid]?.chrf;
+              const s = bm[bid]?.chrf_std;
+              if (typeof v !== 'number' || !isFinite(v)) return '<td>-</td>';
+              const bg = scoreToHeatColor(v, chrfMin, chrfMax);
+              const isBest = Math.abs(v - bestChrfByDir[bid]) < 1e-9;
+              return `<td class="heat-cell${isBest ? ' best' : ''}" style="background:${bg}">${v.toFixed(1)}<span class="heat-sub">±${((typeof s === 'number' && isFinite(s)) ? s : 0).toFixed(1)}</span></td>`;
+            }).join('');
+
+            const bleuCells = transDirIds.map(bid => {
+              const v = bm[bid]?.bleu;
+              const s = bm[bid]?.bleu_std;
+              if (typeof v !== 'number' || !isFinite(v)) return '<td>-</td>';
+              const bg = scoreToHeatColor(v, bleuMin, bleuMax);
+              const isBest = Math.abs(v - bestBleuByDir[bid]) < 1e-9;
+              return `<td class="heat-cell${isBest ? ' best' : ''}" style="background:${bg}">${v.toFixed(1)}<span class="heat-sub">±${((typeof s === 'number' && isFinite(s)) ? s : 0).toFixed(1)}</span></td>`;
+            }).join('');
+
+            html += `<tr><td class="model-main" title="${name}">${name}</td>${chrfCells}${bleuCells}</tr>`;
+          });
+
+          html += '</tbody>';
+          table.innerHTML = html;
+
+          // ---- Mobile card layout ----
+          const mobileEl = document.getElementById('transHeatmapMobile');
+          if (!mobileEl) return;
+          let mobileHtml = '';
+          models.forEach(m => {
+            const bm = m.by_benchmark || {};
+            const name = esc(m.display_name || m.model);
+
+            const chrfDirs = transDirIds.map((bid, i) => {
+              const v = bm[bid]?.chrf;
+              const s = bm[bid]?.chrf_std;
+              if (typeof v !== 'number' || !isFinite(v)) return '<div class="hm-dir">-</div>';
+              const bg = scoreToHeatColor(v, chrfMin, chrfMax);
+              const isBest = Math.abs(v - bestChrfByDir[bid]) < 1e-9;
+              const std = ((typeof s === 'number' && isFinite(s)) ? s : 0).toFixed(1);
+              return `<div class="hm-dir${isBest ? ' best' : ''}" style="background:${bg}">
+                <span class="hm-dir-label">${esc(transDirLabels[i])}</span>
+                ${v.toFixed(1)}
+                <span class="hm-dir-std">±${std}</span>
+              </div>`;
+            }).join('');
+
+            const bleuDirs = transDirIds.map((bid, i) => {
+              const v = bm[bid]?.bleu;
+              const s = bm[bid]?.bleu_std;
+              if (typeof v !== 'number' || !isFinite(v)) return '<div class="hm-dir">-</div>';
+              const bg = scoreToHeatColor(v, bleuMin, bleuMax);
+              const isBest = Math.abs(v - bestBleuByDir[bid]) < 1e-9;
+              const std = ((typeof s === 'number' && isFinite(s)) ? s : 0).toFixed(1);
+              return `<div class="hm-dir${isBest ? ' best' : ''}" style="background:${bg}">
+                <span class="hm-dir-label">${esc(transDirLabels[i])}</span>
+                ${v.toFixed(1)}
+                <span class="hm-dir-std">±${std}</span>
+              </div>`;
+            }).join('');
+
+            mobileHtml += `
+              <div class="hm-model-card">
+                <div class="hm-model-name">${name}</div>
+                <div class="hm-metric-block">
+                  <div class="hm-metric-label">chrF</div>
+                  <div class="hm-dirs">${chrfDirs}</div>
+                </div>
+                <div class="hm-metric-block">
+                  <div class="hm-metric-label">BLEU</div>
+                  <div class="hm-dirs">${bleuDirs}</div>
+                </div>
+              </div>`;
+          });
+          mobileEl.innerHTML = mobileHtml;
+        }
+
+        // Figure 3 — translation heatmap
+        renderTranslationHeatmap(transModels);
+      } else {
+        transFigSection.style.display = 'none';
+      }
+
+      const timelineRows = rows
+        .filter(r => r.release_date_utc)
+        .map(r => ({
+          name: compactModelLabel(r.display_name),
+          fullName: r.display_name,
+          date: formatUtcDate(r.release_date_utc),
+          score: Math.round((r.overall_accuracy || 0) * 1000) / 10,
+          std: Math.round((r.overall_accuracy_std || 0) * 1000) / 10,
+          color: rowColor(r)
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      if (timelineRows.length) {
+        // Auto-calculate y-axis range from data with padding
+        const scores = timelineRows.map(r => r.score);
+        const scoreMin = Math.min(...scores);
+        const scoreMax = Math.max(...scores);
+        const scoreRange = scoreMax - scoreMin || 1;
+        const pad = scoreRange * 0.15; // 15% padding above/below
+        const yMin = Math.max(0, Math.floor(scoreMin - pad));
+        const yMax = Math.min(100, Math.ceil(scoreMax + pad));
+
+        // Top-score reference line (horizontal dashed line)
+        const topScore = Math.max(...scores);
+        const topScorePlugin = {
+          id: 'timelineTopScore',
+          afterDraw(chart) {
+            const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+            const yPos = y.getPixelForValue(topScore);
+            ctx.save();
+            ctx.setLineDash([6, 4]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(left, yPos);
+            ctx.lineTo(right, yPos);
+            ctx.stroke();
+            // Label
+            ctx.font = '10px Inter, system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.45)';
+            ctx.fillText(`Top: ${topScore.toFixed(1)}%`, right - 80, yPos - 6);
+            ctx.restore();
+          }
+        };
+
+        const pointLabelPlugin = {
+          id: 'timelinePointLabels',
+          afterDatasetsDraw(chart) {
+            const { ctx } = chart;
+            const meta = chart.getDatasetMeta(0);
+            ctx.save();
+            ctx.font = '11px Inter, system-ui, sans-serif';
+            ctx.fillStyle = '#d8deea';
+            meta.data.forEach((pt, i) => {
+              const x = pt.x + 6;
+              const y = pt.y - 8;
+              ctx.fillText(timelineRows[i].name, x, y);
+            });
+            ctx.restore();
+          }
+        };
+
+        window.__timelineChart = new Chart(document.getElementById('timelineOverall').getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: timelineRows.map(x => x.date),
+            datasets: [{
+              label: 'Overall accuracy',
+              data: timelineRows.map(x => x.score),
+              showLine: false,
+              borderWidth: 0,
+              pointBackgroundColor: timelineRows.map(x => x.color),
+              pointBorderColor: timelineRows.map(x => x.color),
+              pointRadius: 4,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: (items) => {
+                    const idx = items?.[0]?.dataIndex ?? 0;
+                    return timelineRows[idx]?.fullName || '';
+                  },
+                  label: (item) => {
+                    const idx = item?.dataIndex ?? 0;
+                    const r = timelineRows[idx];
+                    return `${r.date} · ${r.score.toFixed(1)}% ± ${r.std.toFixed(1)}%`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Release date (UTC)', color: '#cfd6e3' },
+                ticks: { color: '#d4dbe7', maxRotation: 0, minRotation: 0, font: { size: 11 } },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+              },
+              y: {
+                position: 'left',
+                min: yMin,
+                max: yMax,
+                title: { display: true, text: 'Overall accuracy (%)', color: '#cfd6e3' },
+                ticks: { color: '#d4dbe7', font: { size: 11 } },
+                grid: { color: 'rgba(255,255,255,0.06)' }
+              }
+            }
+          },
+          plugins: [topScorePlugin, pointLabelPlugin]
+        });
+      }
+    }).catch(err => {
+      document.getElementById('subtitle').textContent = 'Failed to load data.json';
+      document.getElementById('metaInline').innerHTML = `<span class="mono">${esc(String(err))}</span>`;
+    });
+  </script>
+</body>
+</html>

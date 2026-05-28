@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Detail — Basque LLM Evaluation</title>
+  <link href="vendor/fonts.css" rel="stylesheet">
+  <script src="vendor/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #08090a;
+      --panel: #0c0e12;
+      --panel-soft: #101214;
+      --text: #f4f6f8;
+      --muted: #9ba4b3;
+      --line: rgba(255,255,255,0.07);
+      --line-soft: rgba(255,255,255,0.05);
+      --accent: #7170ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 700px at 10% -20%, #1a1e2a 0%, #08090a 50%), var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      line-height: 1.45;
+    }
+    .wrap { width: min(1240px, 100% - 40px); margin: 0 auto; padding: 34px 0 76px; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--muted); font-size: 13px; text-decoration: none;
+      margin-bottom: 20px; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    .hero {
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
+      padding: 32px 36px 28px;
+      margin-bottom: 12px;
+    }
+    h1 { margin: 0; font-size: 36px; font-weight: 700; letter-spacing: -0.8px; }
+    .model-id-display {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px; color: var(--muted); margin-top: 8px;
+    }
+    .meta-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .pill {
+      display: inline-block; padding: 3px 10px; border-radius: 999px;
+      border: 1px solid var(--line); color: #cfd5df; font-size: 12px;
+      background: rgba(255,255,255,0.02);
+    }
+    .pill-accent {
+      border-color: rgba(124,140,255,0.45); color: #b7bfff;
+      background: rgba(124,140,255,0.08);
+    }
+
+    .section {
+      margin-top: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.015);
+      padding: 18px 20px;
+    }
+    .section-head { margin-bottom: 16px; }
+    .section h2 {
+      margin: 0; font-size: 18px; font-weight: 700;
+      color: #eef2fb; letter-spacing: -0.1px;
+    }
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-icon {
+      width: 18px; height: 18px; flex-shrink: 0;
+    }
+    .section h3 {
+      margin: 0 0 10px; font-size: 14px; font-weight: 600;
+      color: #cfd7e6; letter-spacing: -0.1px;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .caption {
+      margin-top: 10px; color: var(--muted); font-size: 12px;
+    }
+
+    .strong { font-weight: 600; color: #ffffff; }
+
+    /* Description */
+    .description-block {
+      margin-top: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(124,140,255,0.04);
+      padding: 18px 20px;
+    }
+    .description-block h2 {
+      margin: 0 0 10px; font-size: 13px; font-weight: 600;
+      color: #b7bfff; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .description-text {
+      font-size: 14px; line-height: 1.7; color: #d8deea;
+    }
+    .verdict-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    }
+    .chip-good { background: rgba(34,197,94,0.10); border: 1px solid rgba(34,197,94,0.25); color: #86efac; }
+    .chip-weak { background: rgba(248,113,113,0.10); border: 1px solid rgba(248,113,113,0.25); color: #fca5a5; }
+
+    /* Score grid — minimalist */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .score-card {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .score-card-label {
+      font-size: 11px; color: #b7bfcb; text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .score-card-value {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 22px; font-weight: 700;
+      color: var(--accent);
+    }
+    .score-card-sub {
+      font-size: 11px; color: var(--muted);
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .cmp { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; }
+    .cmp-better { color: #86efac; }
+    .cmp-worse { color: #fca5a5; }
+    .cmp-neutral { color: var(--muted); }
+
+    /* Translation score card */
+    .trans-label {
+      font-size: 11px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.05em; margin-top: 10px;
+    }
+    .trans-value {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 18px; font-weight: 700; color: var(--text);
+    }
+
+    /* Radar chart */
+    .chart-wrap {
+      height: 400px; position: relative;
+    }
+
+    /* Ranking bar */
+    .rank-bar-wrap { margin-top: 4px; }
+    .rank-bar-item {
+      display: grid;
+      grid-template-columns: 200px 1fr 70px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .rank-bar-label {
+      font-size: 12.5px; color: #d4dcea; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .rank-bar-label.is-focus { color: var(--text); font-weight: 600; }
+    .rank-bar-track {
+      height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden;
+    }
+    .rank-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .rank-bar-fill.is-focus { background: var(--accent); }
+    .rank-bar-fill.is-sota { background: #f59e0b; }
+    .rank-bar-fill.is-other { background: rgba(255,255,255,0.15); }
+    .rank-bar-pct {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px; color: var(--muted); text-align: right;
+    }
+    .rank-bar-pct.is-focus { color: var(--text); font-weight: 600; }
+
+    @media (max-width: 700px) {
+      h1 { font-size: 26px; }
+      .score-grid { grid-template-columns: repeat(2, 1fr); }
+      .rank-bar-item { grid-template-columns: 120px 1fr 50px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="./index.html">← Back to leaderboard</a>
+
+  <section class="hero">
+    <h1 id="modelName">Loading…</h1>
+    <div class="model-id-display mono" id="modelIdDisplay"></div>
+    <div class="meta-pills" id="metaPills"></div>
+  </section>
+
+  <div class="description-block" id="descriptionCard" style="display:none">
+    <h2>Model assessment</h2>
+    <div class="description-text" id="descriptionText"></div>
+    <div class="verdict-chips" id="verdictChips"></div>
+  </div>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/chart-bar-big.svg" alt="" aria-hidden="true" /> Score breakdown by benchmark</h2>
+    </div>
+    <div class="score-grid" id="scoreGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/radar.svg" alt="" aria-hidden="true" /> Radar profile — Classification benchmarks</h2>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="radarCanvas"></canvas>
+    </div>
+  </section>
+
+  <section class="section" id="translationSection" style="display:none">
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/globe.svg" alt="" aria-hidden="true" /> Translation scores (FLORES)</h2>
+    </div>
+    <div class="score-grid" id="translationGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title"><img class="section-icon" src="vendor/lucide/trophy.svg" alt="" aria-hidden="true" /> Overall ranking — all models</h2>
+    </div>
+    <div class="rank-bar-wrap" id="rankBars"></div>
+  </section>
+
+  <section class="section" id="sizeRankSection">
+    <div class="section-head">
+      <h2 class="section-title" id="sizeRankTitle"><img class="section-icon" src="vendor/lucide/trophy.svg" alt="" aria-hidden="true" /> Ranking within size category</h2>
+    </div>
+    <div class="rank-bar-wrap" id="sizeRankBars"></div>
+  </section>
+</div>
+
+<script>
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct = (x) => ((x || 0) * 100).toFixed(1) + '%';
+
+const BENCH_LABELS = {
+  'EusTrivia': 'EusTrivia',
+  'XNLIeu': 'XNLIeu',
+  'BasqueGLUE_qnli': 'QNLI',
+  'BasqueGLUE_bec': 'BEC',
+  'BasqueGLUE_wic': 'WiC',
+  'BasqueGLUE_intent': 'Intent',
+  'LatxaEval_eusexams': 'EusExams',
+  'LatxaEval_eusproficiency': 'EusProf.',
+  'LatxaEval_eusreading': 'EusReading',
+  'FloresTranslation_eu_en': 'FLORES EU→EN',
+  'FloresTranslation_en_eu': 'FLORES EN→EU',
+  'FloresTranslation_eu_es': 'FLORES EU→ES',
+  'FloresTranslation_es_eu': 'FLORES ES→EU',
+};
+
+const BENCH_DESCS = {
+  'EusTrivia': 'Basque cultural & factual trivia',
+  'XNLIeu': 'Natural language inference (Basque)',
+  'BasqueGLUE_qnli': 'Question-NLI pair classification',
+  'BasqueGLUE_bec': 'Sentiment classification',
+  'BasqueGLUE_wic': 'Word-in-context disambiguation',
+  'BasqueGLUE_intent': 'Intent classification',
+  'LatxaEval_eusexams': 'Professional exams (Basque)',
+  'LatxaEval_eusproficiency': 'Basque language proficiency',
+  'LatxaEval_eusreading': 'Reading comprehension',
+};
+
+const inferSizeB = (row) => {
+  const txt = `${row?.display_name || ''} ${row?.model_id || ''}`;
+  const m = txt.match(/(\d+(?:\.\d+)?)\s*[bB]\b/);
+  return m ? Number(m[1]) : null;
+};
+
+const sizeCategory = (row) => {
+  const s = inferSizeB(row);
+  if (s == null) return 'other';
+  if (s <= 4) return '<4B';
+  if (s >= 7 && s <= 9) return '7-9B';
+  if (s >= 27 && s <= 32) return '27-32B';
+  if (s >= 70) return '70B';
+  return 'other';
+};
+
+const params = new URLSearchParams(location.search);
+const targetId = params.get('model');
+
+if (!targetId) {
+  document.getElementById('modelName').textContent = 'No model specified';
+} else {
+  fetch('./data.json').then(r => r.json()).then(data => {
+    const rows = data.results || [];
+    const model = rows.find(r => r.model_id === targetId);
+
+    if (!model) {
+      document.getElementById('modelName').textContent = 'Model not found: ' + targetId;
+      return;
+    }
+
+    // --- Meta ---
+    document.title = `${model.display_name} — Basque LLM Eval`;
+    document.getElementById('modelName').textContent = model.display_name;
+    document.getElementById('modelIdDisplay').textContent = model.model_id;
+
+    const pills = [
+      model.family,
+      model.params,
+      model.weights_quant ? `Quant: ${model.weights_quant}` : null,
+      model.kv_cache ? `KV: ${model.kv_cache}` : null,
+    ].filter(Boolean);
+    document.getElementById('metaPills').innerHTML = pills.map((p, i) =>
+      `<span class="pill${i === 0 ? ' pill-accent' : ''}">${esc(p)}</span>`
+    ).join('') + (model.release_source_url
+      ? `<a href="${esc(model.release_source_url)}" target="_blank" rel="noopener" class="pill" style="text-decoration:none;color:#a5b4fc">↗ HuggingFace</a>`
+      : '');
+
+    // --- Compute SOTA and size SOTA ---
+    const bestOverall = Math.max(...rows.map(r => r.overall_accuracy || 0));
+    const sotaModel = rows.find(r => r.overall_accuracy === bestOverall);
+    const myCategory = sizeCategory(model);
+    const sameCategory = rows.filter(r => sizeCategory(r) === myCategory);
+    const bestInCategory = Math.max(...sameCategory.map(r => r.overall_accuracy || 0));
+    const sotaCatModel = sameCategory.find(r => r.overall_accuracy === bestInCategory);
+
+    const allBenchDefs = data.evaluation_protocol?.benchmarks || [];
+    const TRANS_FAMILY = 'FLORES';
+    const clsBenchDefs = allBenchDefs.filter(b => b.family !== TRANS_FAMILY);
+    const clsBenchIds = clsBenchDefs.map(b => b.id);
+
+    const bestByBench = {};
+    clsBenchIds.forEach(id => {
+      bestByBench[id] = Math.max(...rows.map(r => ((r.by_benchmark || {})[id] || {}).accuracy || 0));
+    });
+
+    // --- Description generator ---
+    const overallPct = ((model.overall_accuracy || 0) * 100).toFixed(1);
+    const rank = rows.findIndex(r => r.model_id === model.model_id) + 1;
+    const diffSota = ((model.overall_accuracy - bestOverall) * 100).toFixed(1);
+    const diffCat = ((model.overall_accuracy - bestInCategory) * 100).toFixed(1);
+    const isSota = model.model_id === sotaModel?.model_id;
+    const isCatSota = model.model_id === sotaCatModel?.model_id;
+
+    // Find strongest and weakest cls benchmarks
+    const benchScores = clsBenchIds.map(id => ({
+      id,
+      score: ((model.by_benchmark || {})[id] || {}).accuracy || 0,
+      best: bestByBench[id] || 0,
+    })).sort((a, b) => b.score - a.score);
+
+    const top3 = benchScores.slice(0, 3);
+    const bot3 = benchScores.slice(-3).reverse();
+    const goodChips = top3.filter(b => b.score >= 0.7);
+    const weakChips = bot3.filter(b => b.score < 0.6);
+
+    let desc = `<strong>${esc(model.display_name)}</strong> ranks <strong>#${rank}</strong> out of ${rows.length} evaluated models with an overall accuracy of <strong>${overallPct}%</strong>.`;
+
+    if (isSota) {
+      desc += ` It is the <strong>current SOTA</strong> on this leaderboard.`;
+    } else {
+      desc += ` It is <strong>${Math.abs(diffSota)}%</strong> behind the overall SOTA (${esc(sotaModel?.display_name)}, ${((bestOverall)*100).toFixed(1)}%).`;
+    }
+
+    if (myCategory !== 'other' && sameCategory.length > 1) {
+      if (isCatSota) {
+        desc += ` Within the <strong>${myCategory}</strong> size tier it is the best model.`;
+      } else {
+        desc += ` Among <strong>${myCategory}</strong> models it is <strong>${Math.abs(diffCat)}%</strong> behind the category leader (${esc(sotaCatModel?.display_name)}).`;
+      }
+    }
+
+    desc += `<br><br>Its strongest areas are <strong>${top3.map(b => BENCH_LABELS[b.id] || b.id).join(', ')}</strong>.`;
+    if (weakChips.length) {
+      desc += ` It underperforms on <strong>${weakChips.map(b => BENCH_LABELS[b.id] || b.id).join(', ')}</strong>, suggesting limited capability in those tasks.`;
+    }
+
+    const card = document.getElementById('descriptionCard');
+    card.style.display = '';
+    document.getElementById('descriptionText').innerHTML = desc;
+
+    const chipsEl = document.getElementById('verdictChips');
+    goodChips.forEach(b => {
+      chipsEl.innerHTML += `<span class="chip chip-good">✓ Strong: ${esc(BENCH_LABELS[b.id] || b.id)} ${((b.score)*100).toFixed(0)}%</span>`;
+    });
+    weakChips.forEach(b => {
+      chipsEl.innerHTML += `<span class="chip chip-weak">✗ Weak: ${esc(BENCH_LABELS[b.id] || b.id)} ${((b.score)*100).toFixed(0)}%</span>`;
+    });
+
+    // --- Score grid ---
+    const scoreGrid = document.getElementById('scoreGrid');
+    const sortedBench = [...benchScores];
+    sortedBench.forEach(({ id, score, best }) => {
+      const pctScore = (score * 100).toFixed(1);
+      const pctSota = (best * 100).toFixed(1);
+      const diff = ((score - best) * 100).toFixed(1);
+      const cmpSota = score >= best - 0.001
+        ? `<span class="cmp cmp-better">SOTA</span>`
+        : `<span class="cmp cmp-worse">${diff}% vs SOTA (${pctSota})</span>`;
+      const sotaThisId = data.results?.find(r => ((r.by_benchmark || {})[id] || {}).accuracy === best);
+      const sotaName = sotaThisId ? sotaThisId.display_name : '';
+
+      scoreGrid.innerHTML += `
+        <div class="score-card">
+          <div class="score-card-label">${esc(BENCH_LABELS[id] || id)}</div>
+          <div class="score-card-value">${pctScore}%</div>
+          <div class="score-card-sub">
+            ${cmpSota}
+            ${sotaName && sotaName !== model.display_name ? `· Best: ${esc(sotaName)}` : ''}
+          </div>
+        </div>`;
+    });
+
+    // --- Translation score grid (FLORES) ---
+    const transBenchIds = [
+      'FloresTranslation_eu_en',
+      'FloresTranslation_en_eu',
+      'FloresTranslation_eu_es',
+      'FloresTranslation_es_eu',
+    ];
+    const transGrid = document.getElementById('translationGrid');
+    const transSection = document.getElementById('translationSection');
+    const byBench = model.by_benchmark || {};
+
+    const hasTranslation = transBenchIds.some(id => {
+      const b = byBench[id] || {};
+      return (b.chrf || b.chrf_mean || 0) > 0 || (b.bleu || b.bleu_mean || 0) > 0;
+    });
+
+    if (hasTranslation) {
+      transSection.style.display = '';
+
+      const findBest = (benchId, metricKey) => {
+        let bestVal = -Infinity;
+        let bestRow = null;
+        rows.forEach(r => {
+          const v = (r.by_benchmark || {})[benchId]?.[metricKey];
+          if (typeof v === 'number' && isFinite(v) && v > bestVal) {
+            bestVal = v;
+            bestRow = r;
+          }
+        });
+        return { bestVal: isFinite(bestVal) ? bestVal : null, bestRow };
+      };
+
+      transBenchIds.forEach(id => {
+        const b = byBench[id] || {};
+        const chrf = b.chrf != null ? b.chrf : (b.chrf_mean || 0);
+        const chrfStd = b.chrf_std || 0;
+        const bleu = b.bleu != null ? b.bleu : (b.bleu_mean || 0);
+        const bleuStd = b.bleu_std || 0;
+
+        const chrfBest = findBest(id, 'chrf');
+        const bleuBest = findBest(id, 'bleu');
+
+        const chrfGap = (chrfBest.bestVal == null) ? null : (chrfBest.bestVal - chrf);
+        const bleuGap = (bleuBest.bestVal == null) ? null : (bleuBest.bestVal - bleu);
+
+        const chrfStatus = chrfGap == null
+          ? '<span class="cmp cmp-neutral">—</span>'
+          : Math.abs(chrfGap) < 1e-9
+            ? '<span class="cmp cmp-better">Best</span>'
+            : `<span class="cmp cmp-worse">−${chrfGap.toFixed(1)} vs best</span>`;
+
+        const bleuStatus = bleuGap == null
+          ? '<span class="cmp cmp-neutral">—</span>'
+          : Math.abs(bleuGap) < 1e-9
+            ? '<span class="cmp cmp-better">Best</span>'
+            : `<span class="cmp cmp-worse">−${bleuGap.toFixed(1)} vs best</span>`;
+
+        const chrfBestName = chrfBest.bestRow?.display_name;
+        const bleuBestName = bleuBest.bestRow?.display_name;
+
+        transGrid.innerHTML += `
+          <div class="score-card">
+            <div class="score-card-label">${esc(BENCH_LABELS[id] || id)}</div>
+
+            <div class="trans-label">chrF</div>
+            <div class="trans-value">${chrf.toFixed(1)} <span class="mono" style="font-size:12px;font-weight:400;color:var(--muted)">± ${chrfStd.toFixed(1)}</span></div>
+            <div class="score-card-sub">${chrfStatus}${chrfBestName ? ` · Best: ${esc(chrfBestName)} (${(chrfBest.bestVal || 0).toFixed(1)})` : ''}</div>
+
+            <div class="trans-label">BLEU</div>
+            <div class="trans-value">${bleu.toFixed(1)} <span class="mono" style="font-size:12px;font-weight:400;color:var(--muted)">± ${bleuStd.toFixed(1)}</span></div>
+            <div class="score-card-sub">${bleuStatus}${bleuBestName ? ` · Best: ${esc(bleuBestName)} (${(bleuBest.bestVal || 0).toFixed(1)})` : ''}</div>
+          </div>`;
+      });
+    }
+
+    // --- Radar ---
+    const radarLabels = clsBenchIds.map(id => BENCH_LABELS[id] || id);
+    const modelData = clsBenchIds.map(id => Math.round(((((model.by_benchmark || {})[id] || {}).accuracy) || 0) * 1000) / 10);
+    const sotaData = clsBenchIds.map(id => Math.round((bestByBench[id] || 0) * 1000) / 10);
+
+    const catSotaData = clsBenchIds.map(id =>
+      Math.round((Math.max(...sameCategory.map(r => ((r.by_benchmark || {})[id] || {}).accuracy || 0))) * 1000) / 10
+    );
+
+    const radarDatasets = [
+      {
+        label: model.display_name,
+        data: modelData,
+        borderColor: '#7170ff',
+        backgroundColor: 'rgba(113,112,255,0.12)',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 4,
+      },
+      {
+        label: 'Benchmark frontier (best per eval)',
+        data: sotaData,
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.06)',
+        borderWidth: 1.5,
+        pointRadius: 2,
+        borderDash: [4, 3],
+      },
+    ];
+
+    if (myCategory !== 'other' && sameCategory.length > 1 && !isSota) {
+      radarDatasets.push({
+        label: `${myCategory} SOTA (${sotaCatModel?.display_name || ''})`,
+        data: catSotaData,
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34,197,94,0.05)',
+        borderWidth: 1.5,
+        pointRadius: 2,
+        borderDash: [2, 3],
+      });
+    }
+
+    new Chart(document.getElementById('radarCanvas').getContext('2d'), {
+      type: 'radar',
+      data: { labels: radarLabels, datasets: radarDatasets },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#d8deea', boxWidth: 10, boxHeight: 10, padding: 12, font: { size: 11 } }
+          }
+        },
+        scales: {
+          r: {
+            min: 0, max: 100,
+            ticks: { stepSize: 20, color: '#cfd6e3', backdropColor: 'rgba(0,0,0,0)', font: { size: 10 } },
+            pointLabels: { color: '#dce3ef', font: { size: 11, weight: 500 } },
+            grid: { color: 'rgba(255,255,255,0.10)' },
+            angleLines: { color: 'rgba(255,255,255,0.10)' }
+          }
+        },
+        layout: { padding: 6 }
+      }
+    });
+
+    // --- Overall rank bars ---
+    const rankBars = document.getElementById('rankBars');
+    const sortedRows = [...rows].sort((a, b) => b.overall_accuracy - a.overall_accuracy);
+    sortedRows.forEach(r => {
+      const isFocus = r.model_id === model.model_id;
+      const isSotaRow = r.model_id === sotaModel?.model_id;
+      const fillClass = isFocus ? 'is-focus' : isSotaRow ? 'is-sota' : 'is-other';
+      const labelClass = isFocus ? 'is-focus' : '';
+      const pctVal = ((r.overall_accuracy || 0) * 100).toFixed(1);
+      rankBars.innerHTML += `
+        <div class="rank-bar-item">
+          <div class="rank-bar-label ${labelClass}" title="${esc(r.display_name)}">${esc(r.display_name)}</div>
+          <div class="rank-bar-track">
+            <div class="rank-bar-fill ${fillClass}" style="width:${pctVal}%"></div>
+          </div>
+          <div class="rank-bar-pct ${labelClass}">${pctVal}%</div>
+        </div>`;
+    });
+
+    // --- Size category rank bars ---
+    const sizeSection = document.getElementById('sizeRankSection');
+    if (myCategory === 'other' || sameCategory.length <= 1) {
+      sizeSection.style.display = 'none';
+    } else {
+      document.getElementById('sizeRankTitle').innerHTML = `<img class="section-icon" src="vendor/lucide/trophy.svg" alt="" aria-hidden="true" /> Ranking within size category: ${myCategory}`;
+      const sizeRankBars = document.getElementById('sizeRankBars');
+      const sortedCat = [...sameCategory].sort((a, b) => b.overall_accuracy - a.overall_accuracy);
+      sortedCat.forEach(r => {
+        const isFocus = r.model_id === model.model_id;
+        const isCatTop = r.model_id === sotaCatModel?.model_id;
+        const fillClass = isFocus ? 'is-focus' : isCatTop ? 'is-sota' : 'is-other';
+        const labelClass = isFocus ? 'is-focus' : '';
+        const pctVal = ((r.overall_accuracy || 0) * 100).toFixed(1);
+        sizeRankBars.innerHTML += `
+          <div class="rank-bar-item">
+            <div class="rank-bar-label ${labelClass}" title="${esc(r.display_name)}">${esc(r.display_name)}</div>
+            <div class="rank-bar-track">
+              <div class="rank-bar-fill ${fillClass}" style="width:${pctVal}%"></div>
+            </div>
+            <div class="rank-bar-pct ${labelClass}">${pctVal}%</div>
+          </div>`;
+      });
+    }
+
+  }).catch(err => {
+    document.getElementById('modelName').textContent = 'Failed to load data.json';
+    console.error(err);
+  });
+}
+</script>
+</body>
+</html>
