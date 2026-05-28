@@ -14,10 +14,8 @@ SEEDS="42 123 777"
 # Map: "model_api_id seed_override"
 # seed_override can be "42,123,777" (all) or "42,123" (partial)
 MODELS=(
-  # kimu-2b-q8_0 and kimu-9b-q8_0 not available via API
-  # Everything up to gemma4-31b seed 42 already completed
-  "gemma4-31b           123,777"
-  "qwen3.5-27b          42,123,777"
+  # Pending after crash:
+  "qwen3.5-27b          123,777"
   "qwen3.6-27b          42,123,777"
 )
 
@@ -43,6 +41,7 @@ for entry in "${MODELS[@]}"; do
       --seed "${seed}" \
       --out "${out_file}" \
       --merge \
+      --checkpoint \
       --benchmark "${NEW_BENCHMARKS}"
 
     total=$((total + 1))

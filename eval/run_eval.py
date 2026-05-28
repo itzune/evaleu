@@ -543,6 +543,7 @@ def main():
                          "Defaults: EusTrivia,XNLIeu,BasqueGLUE_qnli (limit=100 each)")
     ap.add_argument("--out", default="eval/results.json")
     ap.add_argument("--merge", action="store_true", help="Merge into existing --out file instead of overwriting (skips benchmarks already present)")
+    ap.add_argument("--checkpoint", action="store_true", help="Write intermediate results after each item so a killed run can be resumed. Implies --merge.")
     args = ap.parse_args()
 
     base_url = _resolve_base_url(args.base_url)
@@ -552,8 +553,29 @@ def main():
 
     items, limits, bench_specs = build_items(args)
 
+    out_path = Path(args.out)
+    ckpt_path = out_path.with_suffix(out_path.suffix + ".ckpt.jsonl")
+
+    # Load existing checkpoint so we can skip already-evaluated items.
+    done_ids: set[str] = set()
+    ckpt_preds: List[dict] = []
+    if args.checkpoint and ckpt_path.exists():
+        for line in ckpt_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            rec = json.loads(line)
+            done_ids.add(rec["id"])
+            ckpt_preds.append(rec)
+        if done_ids:
+            print(f"[checkpoint] Resuming — {len(done_ids)} items already evaluated, {len(items) - len(done_ids)} remaining")
+
     preds: List[Pred] = []
     for i, it in enumerate(items, 1):
+        # Skip already-checkpointed items
+        if it["id"] in done_ids:
+            continue
+
         ans = chat_completion(
             base_url,
             api_key,
@@ -577,6 +599,17 @@ def main():
             status = ", ".join(f"{k}={v:.1f}" for k, v in m.items() if k != "pred_label")
         print(f"[{i}/{len(items)}] {it['bench']} {it['id']}: {status} | ans={ans!r}")
 
+        # Write checkpoint after each item
+        if args.checkpoint:
+            with open(ckpt_path, "a", encoding="utf-8") as cf:
+                cf.write(json.dumps({
+                    "bench": it["bench"],
+                    "id": it["id"],
+                    "answer": ans,
+                    "gold": it.get("gold"),
+                    "metrics": m,
+                }, ensure_ascii=False) + "\n")
+
     summary = aggregate(preds)
     out = {
         "base_url": "${OPENAI_API_BASE}",
@@ -598,11 +631,16 @@ def main():
         ],
     }
 
-    out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Build preds list: checkpoint items + newly evaluated items
+    if args.checkpoint and ckpt_preds:
+        # Prepend checkpointed items so aggregate sees everything
+        ckpt_pobj = [Pred(r["bench"], r["id"], r["answer"], r.get("gold"), r.get("metrics", {})) for r in ckpt_preds]
+        preds = ckpt_pobj + preds
+
     # Merge into existing results if --merge and file exists
-    if args.merge and out_path.exists():
+    if (args.merge or args.checkpoint) and out_path.exists():
         _backup_file(out_path)
         existing = json.loads(out_path.read_text(encoding="utf-8"))
         existing_bms = set(item["bench"] for item in existing.get("items", []))
@@ -648,6 +686,11 @@ def main():
         print(f"[merge] Total: {out['n_items']} items across {len(out['by_benchmark'])} benchmarks.")
 
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # Remove checkpoint file on successful completion
+    if args.checkpoint and ckpt_path.exists():
+        ckpt_path.unlink()
+        print(f"[checkpoint] Removed {ckpt_path}")
 
     print("\n=== SUMMARY ===")
     print("Model:", args.model)
