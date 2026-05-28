@@ -400,6 +400,15 @@
       display: block;
     }
 
+    .radar-plot {
+      height: 600px;
+    }
+
+    .radar-plot canvas {
+      height: 540px !important;
+      max-height: 540px;
+    }
+
     .protocol-table td:first-child { white-space: nowrap; }
 
     .skills-grid {
@@ -613,7 +622,7 @@
           <div id="barGroupLegend" class="group-legend" aria-label="Figure 1 group legend"></div>
           <canvas id="barOverall"></canvas>
         </div>
-        <div class="plot">
+        <div class="plot radar-plot">
           <h3>Figure 2. Accuracy profile by classification eval</h3>
           <canvas id="radarBench"></canvas>
         </div>
