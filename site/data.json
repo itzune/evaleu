@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-05-28T10:53:23.679046+00:00",
+  "generated_at_utc": "2026-06-06T14:57:14.536759+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "skill_categories": [
     {
@@ -341,6 +341,7 @@
       "upstream_model_id": "deepseek-ai/DeepSeek-V4-Pro",
       "release_date_utc": "2026-05-25T00:00:00Z",
       "release_source_url": "https://api-docs.deepseek.com/",
+      "visual": false,
       "overall_accuracy": 0.7522222222222221,
       "overall_accuracy_std": 0.06555202438700554,
       "n_items": 1280,
@@ -567,6 +568,7 @@
       "upstream_model_id": "HiTZ/Latxa-Llama-3.1-70B-Instruct",
       "release_date_utc": "2025-03-28T18:51:01Z",
       "release_source_url": "https://huggingface.co/HiTZ/Latxa-Llama-3.1-70B-Instruct",
+      "visual": false,
       "overall_accuracy": 0.7323529411764707,
       "overall_accuracy_std": 0.004492721269564594,
       "n_items": 1280,
@@ -774,6 +776,7 @@
       "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-32B-Instruct",
       "release_date_utc": "2026-02-19T08:19:00Z",
       "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-32B-Instruct",
+      "visual": true,
       "overall_accuracy": 0.7186111111111111,
       "overall_accuracy_std": 0.00645609280132025,
       "n_items": 1280,
@@ -988,6 +991,7 @@
       "upstream_model_id": "Qwen/Qwen3.5-27B",
       "release_date_utc": "2026-02-24T09:41:56Z",
       "release_source_url": "https://huggingface.co/Qwen/Qwen3.5-27B",
+      "visual": false,
       "overall_accuracy": 0.710625,
       "overall_accuracy_std": 0.003632415786283877,
       "n_items": 1280,
@@ -1202,6 +1206,7 @@
       "upstream_model_id": "Qwen/Qwen3.6-27B",
       "release_date_utc": "2026-04-24T00:00:00Z",
       "release_source_url": "https://huggingface.co/Qwen/Qwen3.6-27B",
+      "visual": false,
       "overall_accuracy": 0.7036805555555556,
       "overall_accuracy_std": 0.013025971208548193,
       "n_items": 1280,
@@ -1416,6 +1421,7 @@
       "upstream_model_id": "google/gemma-4-31B-it",
       "release_date_utc": "2026-03-11T18:22:36Z",
       "release_source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "visual": true,
       "overall_accuracy": 0.6669444444444445,
       "overall_accuracy_std": 0.005104520962760424,
       "n_items": 1280,
@@ -1630,6 +1636,7 @@
       "upstream_model_id": "orai-nlp/Gemma-Kimu-9b-it",
       "release_date_utc": "2025-10-06T13:19:11Z",
       "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-9b-it",
+      "visual": false,
       "overall_accuracy": 0.5926388888888888,
       "overall_accuracy_std": 0.00439150326493404,
       "n_items": 1280,
@@ -1844,6 +1851,7 @@
       "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-4B-Instruct",
       "release_date_utc": "2025-12-12T11:42:03Z",
       "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-4B-Instruct",
+      "visual": true,
       "overall_accuracy": 0.5894444444444445,
       "overall_accuracy_std": 0.031582490460755376,
       "n_items": 1280,
@@ -2067,6 +2075,7 @@
       "upstream_model_id": "HiTZ/Latxa-Llama-3.1-8B-Instruct",
       "release_date_utc": "2025-02-27T16:48:02Z",
       "release_source_url": "https://huggingface.co/HiTZ/Latxa-Llama-3.1-8B-Instruct",
+      "visual": false,
       "overall_accuracy": 0.5775000000000001,
       "overall_accuracy_std": 0.015420889061414233,
       "n_items": 1280,
@@ -2281,6 +2290,7 @@
       "upstream_model_id": "HiTZ/Latxa-Qwen3-VL-8B-Instruct",
       "release_date_utc": "2026-02-19T08:51:04Z",
       "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3-VL-8B-Instruct",
+      "visual": true,
       "overall_accuracy": 0.5749305555555555,
       "overall_accuracy_std": 0.0046226220112896114,
       "n_items": 1280,
@@ -2486,6 +2496,230 @@
       "source_file": "eval/summary.json"
     },
     {
+      "model_id": "gemma-4-12B-it-bf16.gguf",
+      "display_name": "Gemma 4 12B (no-thinking)",
+      "family": "Gemma 4",
+      "params": "12B",
+      "weights_quant": "BF16",
+      "kv_cache": "f16/f16",
+      "upstream_model_id": "google/gemma-4-12B-it",
+      "release_date_utc": "2026-03-11T18:22:36Z",
+      "release_source_url": "https://huggingface.co/ggml-org/gemma-4-12B-it-GGUF",
+      "visual": true,
+      "overall_accuracy": 0.5746527777777778,
+      "overall_accuracy_std": 0.00873593446208972,
+      "n_items": 1280,
+      "n_seeds": 3,
+      "seed_ids": [
+        42,
+        123,
+        777
+      ],
+      "by_benchmark": {
+        "EusTrivia": {
+          "n": 3,
+          "accuracy": 0.42083333333333334,
+          "accuracy_std": 0.019094065395649323,
+          "coverage": 0.9958333333333332,
+          "family": "Core",
+          "coverage_std": 0.007216878364870297
+        },
+        "XNLIeu": {
+          "n": 3,
+          "accuracy": 0.65,
+          "accuracy_std": 0.04506939094329988,
+          "coverage": 1.0,
+          "family": "Core",
+          "coverage_std": 0.0
+        },
+        "BasqueGLUE_qnli": {
+          "n": 3,
+          "accuracy": 0.6208333333333332,
+          "accuracy_std": 0.047324236215002306,
+          "coverage": 1.0,
+          "family": "BasqueGLUE",
+          "coverage_std": 0.0
+        },
+        "BasqueGLUE_bec": {
+          "n": 3,
+          "accuracy": 0.5666666666666667,
+          "accuracy_std": 0.014433756729740593,
+          "coverage": 1.0,
+          "family": "BasqueGLUE",
+          "coverage_std": 0.0
+        },
+        "BasqueGLUE_wic": {
+          "n": 3,
+          "accuracy": 0.5041666666666667,
+          "accuracy_std": 0.050518148554092264,
+          "coverage": 1.0,
+          "family": "BasqueGLUE",
+          "coverage_std": 0.0
+        },
+        "BasqueGLUE_intent": {
+          "n": 3,
+          "accuracy": 0.8583333333333334,
+          "accuracy_std": 0.019094065395649326,
+          "coverage": 1.0,
+          "family": "BasqueGLUE",
+          "coverage_std": 0.0
+        },
+        "LatxaEval_eusexams": {
+          "n": 3,
+          "accuracy": 0.5750000000000001,
+          "accuracy_std": 0.04506939094329988,
+          "coverage": 0.9916666666666667,
+          "family": "LatxaEvalSuite",
+          "coverage_std": 0.007216878364870297
+        },
+        "LatxaEval_eusproficiency": {
+          "n": 3,
+          "accuracy": 0.33749999999999997,
+          "accuracy_std": 0.021650635094610952,
+          "coverage": 1.0,
+          "family": "LatxaEvalSuite",
+          "coverage_std": 0.0
+        },
+        "LatxaEval_eusreading": {
+          "n": 3,
+          "accuracy": 0.6416666666666667,
+          "accuracy_std": 0.007216878364870361,
+          "coverage": 0.9958333333333332,
+          "family": "LatxaEvalSuite",
+          "coverage_std": 0.007216878364870297
+        },
+        "FloresTranslation_eu_en": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 22.818221523167995,
+          "bleu_std": 0.9793673825449705,
+          "chrf": 54.906777391390314,
+          "chrf_std": 0.3840823175046823
+        },
+        "FloresTranslation_en_eu": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 7.846824453449655,
+          "bleu_std": 0.8372648822671723,
+          "chrf": 43.53824181223238,
+          "chrf_std": 0.5995670030926064
+        },
+        "FloresTranslation_eu_es": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 15.662647272162081,
+          "bleu_std": 0.38089856886357804,
+          "chrf": 45.89590541988044,
+          "chrf_std": 1.095752899238233
+        },
+        "FloresTranslation_es_eu": {
+          "n": 3,
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "coverage": 1.0,
+          "family": "FLORES",
+          "bleu": 6.176480385498016,
+          "bleu_std": 0.8181428713942266,
+          "chrf": 41.17161147940695,
+          "chrf_std": 1.3185686231610323
+        },
+        "MMLU_eu": {
+          "n": 3,
+          "accuracy": 0.5750000000000001,
+          "accuracy_std": 0.012500000000000011,
+          "coverage": 1.0,
+          "family": "MMLU",
+          "coverage_std": 0.0
+        },
+        "BertaQA_eu": {
+          "n": 3,
+          "accuracy": 0.48333333333333334,
+          "accuracy_std": 0.06884463184107628,
+          "coverage": 0.9916666666666667,
+          "family": "BertaQA",
+          "coverage_std": 0.007216878364870297
+        },
+        "MGSM_eu": {
+          "n": 3,
+          "accuracy": 0.6625,
+          "accuracy_std": 0.012500000000000011,
+          "coverage": 1.0,
+          "family": "MathReasoning",
+          "coverage_std": 0.0
+        }
+      },
+      "by_family": {
+        "Core": {
+          "accuracy": 0.5354166666666667,
+          "accuracy_std": 0.0320817281694746,
+          "benchmarks": [
+            "EusTrivia",
+            "XNLIeu"
+          ]
+        },
+        "BasqueGLUE": {
+          "accuracy": 0.6375,
+          "accuracy_std": 0.03284255172362112,
+          "benchmarks": [
+            "BasqueGLUE_qnli",
+            "BasqueGLUE_bec",
+            "BasqueGLUE_wic",
+            "BasqueGLUE_intent"
+          ]
+        },
+        "LatxaEvalSuite": {
+          "accuracy": 0.5180555555555556,
+          "accuracy_std": 0.024645634800927064,
+          "benchmarks": [
+            "LatxaEval_eusexams",
+            "LatxaEval_eusproficiency",
+            "LatxaEval_eusreading"
+          ]
+        },
+        "FLORES": {
+          "accuracy": 0.0,
+          "accuracy_std": 0.0,
+          "benchmarks": [
+            "FloresTranslation_eu_en",
+            "FloresTranslation_en_eu",
+            "FloresTranslation_eu_es",
+            "FloresTranslation_es_eu"
+          ]
+        },
+        "MMLU": {
+          "accuracy": 0.5750000000000001,
+          "accuracy_std": 0.012500000000000011,
+          "benchmarks": [
+            "MMLU_eu"
+          ]
+        },
+        "BertaQA": {
+          "accuracy": 0.48333333333333334,
+          "accuracy_std": 0.06884463184107628,
+          "benchmarks": [
+            "BertaQA_eu"
+          ]
+        },
+        "MathReasoning": {
+          "accuracy": 0.6625,
+          "accuracy_std": 0.012500000000000011,
+          "benchmarks": [
+            "MGSM_eu"
+          ]
+        }
+      },
+      "source_file": "eval/summary.json"
+    },
+    {
       "model_id": "kimu-2b",
       "display_name": "Kimu 2B",
       "family": "Gemma-Kimu",
@@ -2495,6 +2729,7 @@
       "upstream_model_id": "orai-nlp/Gemma-Kimu-2b-it",
       "release_date_utc": "2025-10-06T13:25:43Z",
       "release_source_url": "https://huggingface.co/orai-nlp/Gemma-Kimu-2b-it",
+      "visual": false,
       "overall_accuracy": 0.44706666666666667,
       "overall_accuracy_std": 0.0034063665882188014,
       "n_items": 1280,
@@ -2795,6 +3030,12 @@
           "n_benchmarks": 4
         },
         {
+          "model_id": "gemma-4-12B-it-bf16.gguf",
+          "display_name": "Gemma 4 12B (no-thinking)",
+          "score": 51.35416666666667,
+          "n_benchmarks": 4
+        },
+        {
           "model_id": "kimu-2b",
           "display_name": "Kimu 2B",
           "score": 48.041666666666664,
@@ -2871,6 +3112,12 @@
           "model_id": "latxa-qwen3-vl-8b",
           "display_name": "Latxa Qwen3 VL 8B",
           "score": 67.3611111111111,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "gemma-4-12B-it-bf16.gguf",
+          "display_name": "Gemma 4 12B (no-thinking)",
+          "score": 63.75,
           "n_benchmarks": 3
         },
         {
@@ -2979,6 +3226,12 @@
           "display_name": "Latxa Qwen3 VL 4B",
           "score": 41.5,
           "n_benchmarks": 1
+        },
+        {
+          "model_id": "gemma-4-12B-it-bf16.gguf",
+          "display_name": "Gemma 4 12B (no-thinking)",
+          "score": 33.75,
+          "n_benchmarks": 1
         }
       ]
     },
@@ -3033,6 +3286,12 @@
           "model_id": "latxa-qwen3-vl-32b-q8",
           "display_name": "Latxa Qwen3 VL 32B (no-thinking)",
           "score": 61.583333333333336,
+          "n_benchmarks": 3
+        },
+        {
+          "model_id": "gemma-4-12B-it-bf16.gguf",
+          "display_name": "Gemma 4 12B (no-thinking)",
+          "score": 57.77777777777777,
           "n_benchmarks": 3
         },
         {
@@ -3133,6 +3392,12 @@
         {
           "model_id": "deepseek-ai/DeepSeek-V4-Pro",
           "display_name": "DeepSeek V4 Pro",
+          "score": 85.83333333333334,
+          "n_benchmarks": 1
+        },
+        {
+          "model_id": "gemma-4-12B-it-bf16.gguf",
+          "display_name": "Gemma 4 12B (no-thinking)",
           "score": 85.83333333333334,
           "n_benchmarks": 1
         },
