@@ -104,6 +104,8 @@ def add_common_eval_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--no-summarize", action="store_true", help="Do not run summarize step")
     p.add_argument("--no-build", action="store_true", help="Do not run site build step")
     p.add_argument("--disable-thinking", action="store_true", help="Forward --disable-thinking to runner (chat_template_kwargs.enable_thinking=false)")
+    p.add_argument("--base-url", default=None, help="OpenAI-compatible API base URL (overrides OPENAI_API_BASE from .env)")
+    p.add_argument("--api-key", default=None, help="API key (overrides OPENAI_API_KEY from .env)")
 
     p.add_argument("--benchmark", action="append", default=None, metavar="FAMILY/NAME[/LIMIT]",
                    help="Benchmarks to evaluate. Format: FAMILY/NAME or FAMILY/NAME/LIMIT. "
@@ -157,6 +159,11 @@ def run_one_model_eval(args: argparse.Namespace, model_id: str) -> None:
         if args.benchmark:
             for bm_spec in args.benchmark:
                 cmd += ["--benchmark", bm_spec]
+
+        if getattr(args, "base_url", None):
+            cmd += ["--base-url", args.base_url]
+        if getattr(args, "api_key", None):
+            cmd += ["--api-key", args.api_key]
 
         if "max_tokens" in card:
             cmd += ["--max-tokens", str(card["max_tokens"])]
@@ -286,7 +293,16 @@ def cmd_model(args: argparse.Namespace) -> int:
     elif args.unhide or args.published:
         site_visibility = "published"
 
+    disposable = getattr(args, "no_thinking", False) or getattr(args, "disable_thinking", False)
+
+    # Preserve any extra fields from the existing card (e.g. max_tokens, timeout)
+    preserved = {k: v for k, v in existing.items()
+                 if k not in ("display_name", "family", "params", "weights_quant", "kv_cache",
+                              "upstream_model_id", "release_date_utc", "release_source_url",
+                              "site_visibility", "visual", "disable_thinking")}
+
     cards[args.id] = {
+        **preserved,
         "display_name": display_name,
         "family": pick("family", args.family),
         "params": pick("params", args.params),
@@ -296,6 +312,8 @@ def cmd_model(args: argparse.Namespace) -> int:
         "release_date_utc": pick("release_date_utc", args.release_date_utc),
         "release_source_url": pick("release_source_url", args.release_source_url),
         "site_visibility": site_visibility,
+        "visual": existing.get("visual", False) if args.visual is None else args.visual,
+        **({"disable_thinking": True} if disposable else {}),
     }
     save_model_cards(cards)
     print(f"Added/updated model card: {args.id}")
@@ -518,6 +536,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_model.add_argument("--weights-quant", default=None)
     p_model.add_argument("--kv-cache", default=None)
     p_model.add_argument("--no-thinking", action="store_true", help="Append '(no-thinking)' to display name")
+    p_model.add_argument("--visual", action="store_true", default=None,
+                          help="Model is a vision-language model (VLM)")
     visibility_group = p_model.add_mutually_exclusive_group()
     visibility_group.add_argument(
         "--site-visibility",
