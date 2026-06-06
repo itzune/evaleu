@@ -290,6 +290,7 @@ def main():
             "upstream_model_id": meta.get("upstream_model_id"),
             "release_date_utc": meta.get("release_date_utc"),
             "release_source_url": meta.get("release_source_url"),
+            "visual": meta.get("visual", False),
             "overall_accuracy": s.get("overall_mean", 0.0),
             "overall_accuracy_std": s.get("overall_std", 0.0),
             "n_items": 80 * len(by_benchmark),
