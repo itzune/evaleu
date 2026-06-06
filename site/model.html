@@ -56,6 +56,10 @@
       border-color: rgba(124,140,255,0.45); color: #b7bfff;
       background: rgba(124,140,255,0.08);
     }
+    .pill-visual {
+      border-color: rgba(124,200,124,0.45); color: #a0e6a0;
+      background: rgba(124,200,124,0.10);
+    }
 
     .section {
       margin-top: 12px;
@@ -323,9 +327,10 @@ if (!targetId) {
       model.params,
       model.weights_quant ? `Quant: ${model.weights_quant}` : null,
       model.kv_cache ? `KV: ${model.kv_cache}` : null,
+      model.visual ? '👁 Visual' : null,
     ].filter(Boolean);
     document.getElementById('metaPills').innerHTML = pills.map((p, i) =>
-      `<span class="pill${i === 0 ? ' pill-accent' : ''}">${esc(p)}</span>`
+      `<span class="pill${i === 0 ? ' pill-accent' : ''}${p === '👁 Visual' ? ' pill-visual' : ''}">${esc(p)}</span>`
     ).join('') + (model.release_source_url
       ? `<a href="${esc(model.release_source_url)}" target="_blank" rel="noopener" class="pill" style="text-decoration:none;color:#a5b4fc">↗ HuggingFace</a>`
       : '');
