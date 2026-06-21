@@ -1,0 +1,18 @@
+{
+  "id": "Belebele_eu",
+  "description": "Belebele — Basque reading comprehension (facebook/belebele, eus_Latn)",
+  "dataset": {
+    "source": "custom"
+  },
+  "prompt": {
+    "type": "multiple_choice",
+    "template": "Aukeratu aukera zuzena (A/B/C/D bakarrik).\nTestua: {context}\nGaldera: {question}\n{options}\nErantzuna:"
+  },
+  "scoring": {
+    "type": "multiple_choice",
+    "extraction": "letter_or_index",
+    "fallback": "candidate_text_match"
+  },
+  "plugin": "belebele_eu",
+  "default_limit": 100
+}

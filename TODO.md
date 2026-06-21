@@ -8,26 +8,33 @@
   - `alexandrainst/m_mmlu`
   - `jon-tow/okapi_mmlu`
 
-## Additional Basque Benchmarks to Add (pending)
+## Already Implemented
 
-- [x] **Math reasoning in Basque**
-  - [x] `mgsm_native_cot_eu` → implemented as `MGSM_eu` (HiTZ/MGSM-eu, 3-shot CoT)
+- [x] **MMLU EU** — `orai-nlp/MMLU_HT_eu_sample`
+- [x] **Math reasoning** — `MGSM_eu` (HiTZ/MGSM-eu, 3-shot CoT)
+- [x] **Basque QA** — `BertaQA_eu` (combined local + global, HiTZ/BertaQA)
+- [x] **Exam / proficiency / trivia**
+  - [x] `EusTrivia` (HiTZ/EusTrivia)
+  - [x] `LatxaEval_eusexams` (HiTZ/EusExams)
+  - [x] `LatxaEval_eusproficiency` (HiTZ/EusProficiency)
+- [x] **BasqueGLUE** — `BasqueGLUE_qnli`, `BasqueGLUE_bec`, `BasqueGLUE_wic`, `BasqueGLUE_intent`
+- [x] **XNLI** — `XNLIeu`
+- [x] **LatxaEval reading** — `LatxaEval_eusreading`
+- [x] **Flores translation** — `eu↔en`, `eu↔es` (4 directions)
+
+## Still Pending
+
 - [ ] **Reading comprehension in Basque**
+  - [x] `Belebele_eu` (facebook/belebele, eus_Latn, 4-way MC reading comprehension)
   - Candidate: `xstorycloze_eu`
-  - Candidate: `belebele_eus_Latn`
 - [ ] **Science / commonsense QA in Basque**
   - Candidate: `arc_eu_easy_mc`
   - Candidate: `arc_eu_challenge_mc`
   - Candidate: `piqa_eu_mc`
   - Candidate: `siqa_eu_mc`
-- [ ] **Exam / proficiency / trivia coverage alignment**
-  - Candidate: `eus_exams_eu`
-  - Candidate: `eus_proficiency`
-  - Candidate: `eus_trivia`
-- [x] **Basque QA variants**
-  - [x] `bertaqa_eu` (combined local + global, HiTZ/BertaQA)
-- [ ] **Other candidate benchmark from discussion**
+- [ ] **Other candidates**
   - Candidate: `bl2mp`
+  - Multilingual alternatives: `alexandrainst/m_mmlu`, `jon-tow/okapi_mmlu`
 
 ## Integration Planning (no implementation yet)
 
@@ -35,3 +42,4 @@
 - [ ] Define evaluation order for incremental rollout (start with MMLU EU, then high-impact tasks).
 - [ ] Add acceptance criteria for each new benchmark before publishing to site.
 - [ ] Decide which benchmarks are shown in public leaderboard vs experimental section.
+- [ ] Decide and document whether `orai-nlp/MMLU_HT_eu_sample` is temporary (pilot) or long-term benchmark source.

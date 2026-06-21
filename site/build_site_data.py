@@ -75,6 +75,13 @@ ALL_BENCHMARKS = [
         "labels": "index of correct choice",
     },
     {
+        "id": "Belebele_eu",
+        "family": "LatxaEvalSuite",
+        "task": "Cross-lingual reading comprehension in Basque (Belebele)",
+        "metric": "Accuracy",
+        "labels": "4 options (A/B/C/D)",
+    },
+    {
         "id": "FloresTranslation_eu_en",
         "family": "FLORES",
         "task": "Translation Basque → English",
@@ -133,6 +140,7 @@ BENCH_LABELS = {
     "LatxaEval_eusexams": "LatxaEval-EusExams",
     "LatxaEval_eusproficiency": "LatxaEval-EusProficiency",
     "LatxaEval_eusreading": "LatxaEval-EusReading",
+    "Belebele_eu": "Belebele EU",
     "FloresTranslation_eu_en": "FLORES EU→EN",
     "FloresTranslation_en_eu": "FLORES EN→EU",
     "FloresTranslation_eu_es": "FLORES EU→ES",
@@ -154,7 +162,7 @@ SKILL_DEFS = [
         "id": "reading",
         "label": "READING",
         "description": "How well the model understands text",
-        "benchmarks": ["XNLIeu", "LatxaEval_eusreading", "BasqueGLUE_qnli"],
+        "benchmarks": ["XNLIeu", "LatxaEval_eusreading", "Belebele_eu", "BasqueGLUE_qnli"],
     },
     {
         "id": "writing",
