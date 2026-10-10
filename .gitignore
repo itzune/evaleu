@@ -21,3 +21,4 @@ eval/run.log
 
 # Editor artifacts
 *.swp
+.venv/

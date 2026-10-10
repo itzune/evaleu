@@ -4,9 +4,11 @@ This project is operated through `uv run evaleu.py`.
 
 ## 1) Preflight
 ```bash
+uv venv .venv && uv pip install --python .venv/bin/python datasets requests  # once
 python3 -m py_compile evaleu.py eval/run_eval.py eval/summarize_multiseed.py site/build_site_data.py
 python3 -m json.tool site/model_cards.json >/dev/null
 ```
+`evaleu.py` automatically uses `.venv/bin/python` for the evaluator subprocesses when present.
 
 ## 2) Add model metadata (if new model)
 ```bash
@@ -28,6 +30,28 @@ Outputs:
 - per-seed json: `eval/<model-id>_seed<seed>.json`
 - summary: `eval/summary.json`
 - website data: `site/data.json`
+
+### llama.cpp inference VM
+
+The GGUF models are served by `llama-server` (llama.cpp prebuilt
+`b11541`, CUDA) on the GPU inference VM (NVIDIA L40, 46 GB — host in
+local `.env`/team secrets, never in tracked files):
+
+| Model | Endpoint | systemd unit |
+|---|---|---|
+| `latxa-qwen3.5-4b` (Q8_0 + mmproj Q8_0) | `http://${EVAL_VM_HOST}:8080` | `llama-latxa-qwen35-4b.service` |
+| `latxa-qwen3.5-2b` (Q8_0 + mmproj Q8_0) | `http://${EVAL_VM_HOST}:8081` | `llama-latxa-qwen35-2b.service` |
+
+Both run `--jinja -ngl 99 -c 16384 --parallel 4` and are enabled at boot.
+`.env` points `OPENAI_API_BASE` at the 4B port; evaluate the 2B with
+`--base-url http://${EVAL_VM_HOST}:8081`.
+
+Management (replace `${EVAL_VM_HOST}` with the VM address from `.env`):
+```bash
+ssh root@${EVAL_VM_HOST} 'systemctl status llama-latxa-qwen35-4b'
+ssh root@${EVAL_VM_HOST} 'journalctl -u llama-latxa-qwen35-2b -f'
+```
+Binaries live in `/opt/llama-b11541`, weights in `/opt/models/latxa-qwen3.5`.
 
 ## 4) Status while running
 ```bash

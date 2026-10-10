@@ -204,5 +204,31 @@
     "site_visibility": "published",
     "visual": true,
     "disable_thinking": true
+  },
+  "latxa-qwen3.5-4b": {
+    "display_name": "Latxa Qwen3.5 4B (no-thinking)",
+    "family": "Qwen3.5 (Latxa)",
+    "params": "4B",
+    "weights_quant": "Q8_0",
+    "kv_cache": "f16/f16",
+    "upstream_model_id": "HiTZ/Latxa-Qwen3.5-4B",
+    "release_date_utc": "2026-06-24T08:56:37Z",
+    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3.5-4B",
+    "site_visibility": "published",
+    "visual": true,
+    "disable_thinking": true
+  },
+  "latxa-qwen3.5-2b": {
+    "display_name": "Latxa Qwen3.5 2B (no-thinking)",
+    "family": "Qwen3.5 (Latxa)",
+    "params": "2B",
+    "weights_quant": "Q8_0",
+    "kv_cache": "f16/f16",
+    "upstream_model_id": "HiTZ/Latxa-Qwen3.5-2B",
+    "release_date_utc": "2026-06-24T08:58:17Z",
+    "release_source_url": "https://huggingface.co/HiTZ/Latxa-Qwen3.5-2B",
+    "site_visibility": "published",
+    "visual": true,
+    "disable_thinking": true
   }
 }

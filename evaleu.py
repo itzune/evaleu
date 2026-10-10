@@ -68,6 +68,10 @@ def run_cmd(cmd: list[str], cwd: Path = ROOT) -> None:
 
 
 def default_python() -> str:
+    """Prefer the repo's .venv interpreter, falling back to system python3."""
+    venv_python = ROOT / ".venv" / "bin" / "python"
+    if venv_python.exists():
+        return str(venv_python)
     return "/usr/bin/python3" if Path("/usr/bin/python3").exists() else "python3"
 
 

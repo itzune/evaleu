@@ -1,7 +1,7 @@
 {
   "title": "Basque LLM Evaluation",
   "subtitle": "Comparative evaluation on EusTrivia, XNLIeu, BasqueGLUE-QNLI, BasqueGLUE-BEC, BasqueGLUE-WiC, BasqueGLUE-Intent, LatxaEval-EusExams, LatxaEval-EusProficiency, LatxaEval-EusReading, FLORES EU→EN, FLORES EN→EU, FLORES EU→ES, FLORES ES→EU, MMLU EU, BertaQA EU, MGSM EU (multi-seed robust view)",
-  "generated_at_utc": "2026-06-06T14:57:14.536759+00:00",
+  "generated_at_utc": "2026-10-10T13:40:35.867003+00:00",
   "endpoint": "${OPENAI_API_BASE}",
   "skill_categories": [
     {
@@ -516,7 +516,7 @@
           ]
         },
         "LatxaEvalSuite": {
-          "accuracy": 0.7277777777777777,
+          "accuracy": 0.7277777777777779,
           "accuracy_std": 0.06903238714119177,
           "benchmarks": [
             "LatxaEval_eusexams",
@@ -940,7 +940,7 @@
         },
         "LatxaEvalSuite": {
           "accuracy": 0.7291666666666666,
-          "accuracy_std": 0.035677587544125,
+          "accuracy_std": 0.035677587544125006,
           "benchmarks": [
             "LatxaEval_eusexams",
             "LatxaEval_eusproficiency",
@@ -1369,7 +1369,7 @@
           ]
         },
         "LatxaEvalSuite": {
-          "accuracy": 0.6541666666666668,
+          "accuracy": 0.6541666666666667,
           "accuracy_std": 0.0307052116335149,
           "benchmarks": [
             "LatxaEval_eusexams",
@@ -1585,7 +1585,7 @@
         },
         "LatxaEvalSuite": {
           "accuracy": 0.6513888888888889,
-          "accuracy_std": 0.04750668145307071,
+          "accuracy_std": 0.047506681453070694,
           "benchmarks": [
             "LatxaEval_eusexams",
             "LatxaEval_eusproficiency",
@@ -1790,7 +1790,7 @@
         },
         "BasqueGLUE": {
           "accuracy": 0.6291666666666667,
-          "accuracy_std": 0.028682043650241608,
+          "accuracy_std": 0.028682043650241604,
           "benchmarks": [
             "BasqueGLUE_qnli",
             "BasqueGLUE_bec",
@@ -1799,7 +1799,7 @@
           ]
         },
         "LatxaEvalSuite": {
-          "accuracy": 0.598611111111111,
+          "accuracy": 0.5986111111111111,
           "accuracy_std": 0.038180549995551115,
           "benchmarks": [
             "LatxaEval_eusexams",
@@ -2228,7 +2228,7 @@
           ]
         },
         "BasqueGLUE": {
-          "accuracy": 0.5906250000000001,
+          "accuracy": 0.590625,
           "accuracy_std": 0.02875430577647766,
           "benchmarks": [
             "BasqueGLUE_qnli",
@@ -2443,8 +2443,8 @@
           ]
         },
         "BasqueGLUE": {
-          "accuracy": 0.55,
-          "accuracy_std": 0.026154509515504125,
+          "accuracy": 0.5499999999999999,
+          "accuracy_std": 0.02615450951550412,
           "benchmarks": [
             "BasqueGLUE_qnli",
             "BasqueGLUE_bec",
@@ -3008,13 +3008,13 @@
         {
           "model_id": "latxa-qwen3-vl-8b",
           "display_name": "Latxa Qwen3 VL 8B",
-          "score": 61.04166666666668,
+          "score": 61.04166666666667,
           "n_benchmarks": 4
         },
         {
           "model_id": "kimu-9b",
           "display_name": "Kimu 9B",
-          "score": 60.22916666666666,
+          "score": 60.229166666666664,
           "n_benchmarks": 4
         },
         {
@@ -3026,7 +3026,7 @@
         {
           "model_id": "latxa-8b",
           "display_name": "Latxa 8B",
-          "score": 58.18749999999999,
+          "score": 58.1875,
           "n_benchmarks": 4
         },
         {
@@ -3038,7 +3038,7 @@
         {
           "model_id": "kimu-2b",
           "display_name": "Kimu 2B",
-          "score": 48.041666666666664,
+          "score": 48.04166666666667,
           "n_benchmarks": 4
         }
       ]
@@ -3061,10 +3061,10 @@
       "runner_up": {
         "model_id": "gemma4-31b",
         "display_name": "Gemma 4 31B",
-        "score": 76.11111111111113,
+        "score": 76.11111111111111,
         "n_benchmarks": 3
       },
-      "margin": 0.9722222222222001,
+      "margin": 0.9722222222222143,
       "ranking": [
         {
           "model_id": "latxa-qwen3-vl-32b-q8",
@@ -3075,7 +3075,7 @@
         {
           "model_id": "gemma4-31b",
           "display_name": "Gemma 4 31B",
-          "score": 76.11111111111113,
+          "score": 76.11111111111111,
           "n_benchmarks": 3
         },
         {
@@ -3099,7 +3099,7 @@
         {
           "model_id": "latxa-70b",
           "display_name": "Latxa 70B",
-          "score": 73.61111111111113,
+          "score": 73.61111111111111,
           "n_benchmarks": 3
         },
         {
