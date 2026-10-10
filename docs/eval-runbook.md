@@ -4,14 +4,15 @@ This project is operated through `uv run evaleu.py`.
 
 ## 1) Preflight
 ```bash
-# Pin these versions: newer `datasets` (>=4) drops loading-script support
-# (basqueGLUE) and its cache format breaks 2.21; newer `huggingface-hub`
-# is incompatible with `datasets` 2.21.
-uv venv .venv && uv pip install --python .venv/bin/python "datasets==2.21.0" "huggingface-hub==0.25.2" requests
+# The eval environment is fully defined by pyproject.toml + uv.lock
+# (datasets and huggingface-hub are pinned exactly: newer `datasets` (>=4)
+# drops loading-script support (basqueGLUE) and its cache format breaks 2.21;
+# newer `huggingface-hub` is incompatible with `datasets` 2.21).
+uv sync
 python3 -m py_compile evaleu.py eval/run_eval.py eval/summarize_multiseed.py site/build_site_data.py
 python3 -m json.tool site/model_cards.json >/dev/null
 ```
-`evaleu.py` automatically uses `.venv/bin/python` for the evaluator subprocesses when present.
+`uv run` (and `evaleu.py`) automatically use the lock-managed `.venv` for the evaluator subprocesses when present.
 
 ## 2) Add model metadata (if new model)
 ```bash

@@ -1,0 +1,21 @@
+[project]
+name = "evaleu"
+version = "0.1.0"
+description = "Basque LLM evaluation suite and results site"
+readme = "README.md"
+requires-python = ">=3.12"
+# Pinned exactly on purpose: these two are the fragile core of the eval
+# pipeline.  datasets >= 3 drops script-based datasets (e.g. orai-nlp/basqueGLUE)
+# and huggingface-hub >= 2 is incompatible with datasets 2.21.  Upgrade only
+# after validating the full 16-benchmark suite, then update uv.lock together.
+dependencies = [
+    "datasets==2.21.0",
+    "huggingface-hub==0.25.2",
+    "requests>=2.31,<3",
+    "sacrebleu>=2.4,<3",
+]
+
+[tool.uv]
+# Script repository, not an installable package: uv sync installs only the
+# dependencies above into .venv.
+package = false

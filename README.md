@@ -8,6 +8,11 @@ The operational interface is **one CLI**:
 uv run evaleu.py <command> [options]
 ```
 
+First-time setup: `uv sync` — creates/updates the lock-managed `.venv` from
+`pyproject.toml` + `uv.lock` (dependencies are pinned; see the comments in
+`pyproject.toml` for why `datasets`/`huggingface-hub` must not be upgraded
+casually).
+
 ---
 
 ## Commands
