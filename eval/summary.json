@@ -4926,7 +4926,209 @@
           "n": 3
         }
       }
+    },
+    "latxa-qwen3.5-2b": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        123,
+        777
+      ],
+      "overall_mean": 0.5555555555555557,
+      "overall_std": 0.013877773329774246,
+      "runs": [
+        {
+          "seed": 42,
+          "overall": 0.56,
+          "by_benchmark": {
+            "EusTrivia": {
+              "n": 100,
+              "accuracy": 0.52,
+              "coverage": 1.0
+            },
+            "XNLIeu": {
+              "n": 100,
+              "accuracy": 0.61,
+              "coverage": 1.0
+            },
+            "BasqueGLUE_qnli": {
+              "n": 100,
+              "accuracy": 0.55,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3.5-2b_seed42.json"
+        },
+        {
+          "seed": 123,
+          "overall": 0.54,
+          "by_benchmark": {
+            "EusTrivia": {
+              "n": 100,
+              "accuracy": 0.46,
+              "coverage": 1.0
+            },
+            "XNLIeu": {
+              "n": 100,
+              "accuracy": 0.65,
+              "coverage": 1.0
+            },
+            "BasqueGLUE_qnli": {
+              "n": 100,
+              "accuracy": 0.51,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3.5-2b_seed123.json"
+        },
+        {
+          "seed": 777,
+          "overall": 0.5666666666666668,
+          "by_benchmark": {
+            "EusTrivia": {
+              "n": 100,
+              "accuracy": 0.51,
+              "coverage": 1.0
+            },
+            "XNLIeu": {
+              "n": 100,
+              "accuracy": 0.66,
+              "coverage": 1.0
+            },
+            "BasqueGLUE_qnli": {
+              "n": 100,
+              "accuracy": 0.53,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3.5-2b_seed777.json"
+        }
+      ],
+      "benchmarks": {
+        "EusTrivia": {
+          "accuracy_mean": 0.49666666666666665,
+          "accuracy_std": 0.03214550253664318,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
+        "XNLIeu": {
+          "accuracy_mean": 0.64,
+          "accuracy_std": 0.026457513110645932,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
+        "BasqueGLUE_qnli": {
+          "accuracy_mean": 0.53,
+          "accuracy_std": 0.020000000000000018,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        }
+      }
+    },
+    "latxa-qwen3.5-4b": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        123,
+        777
+      ],
+      "overall_mean": 0.6111111111111112,
+      "overall_std": 0.03686813338452681,
+      "runs": [
+        {
+          "seed": 42,
+          "overall": 0.6066666666666667,
+          "by_benchmark": {
+            "EusTrivia": {
+              "n": 100,
+              "accuracy": 0.63,
+              "coverage": 1.0
+            },
+            "XNLIeu": {
+              "n": 100,
+              "accuracy": 0.63,
+              "coverage": 1.0
+            },
+            "BasqueGLUE_qnli": {
+              "n": 100,
+              "accuracy": 0.56,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3.5-4b_seed42.json"
+        },
+        {
+          "seed": 123,
+          "overall": 0.5766666666666667,
+          "by_benchmark": {
+            "EusTrivia": {
+              "n": 100,
+              "accuracy": 0.56,
+              "coverage": 1.0
+            },
+            "XNLIeu": {
+              "n": 100,
+              "accuracy": 0.62,
+              "coverage": 1.0
+            },
+            "BasqueGLUE_qnli": {
+              "n": 100,
+              "accuracy": 0.55,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3.5-4b_seed123.json"
+        },
+        {
+          "seed": 777,
+          "overall": 0.65,
+          "by_benchmark": {
+            "EusTrivia": {
+              "n": 100,
+              "accuracy": 0.67,
+              "coverage": 1.0
+            },
+            "XNLIeu": {
+              "n": 100,
+              "accuracy": 0.72,
+              "coverage": 1.0
+            },
+            "BasqueGLUE_qnli": {
+              "n": 100,
+              "accuracy": 0.56,
+              "coverage": 1.0
+            }
+          },
+          "file": "/home/xezpeleta/Dev/itzune/evaleu/eval/latxa-qwen3.5-4b_seed777.json"
+        }
+      ],
+      "benchmarks": {
+        "EusTrivia": {
+          "accuracy_mean": 0.62,
+          "accuracy_std": 0.05567764362830021,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
+        "XNLIeu": {
+          "accuracy_mean": 0.6566666666666666,
+          "accuracy_std": 0.05507570547286101,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        },
+        "BasqueGLUE_qnli": {
+          "accuracy_mean": 0.5566666666666668,
+          "accuracy_std": 0.005773502691896262,
+          "coverage_mean": 1.0,
+          "coverage_std": 0.0,
+          "n": 3
+        }
+      }
     }
   },
-  "n_runs": 48
+  "n_runs": 54
 }
